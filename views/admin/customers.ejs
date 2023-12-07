@@ -746,6 +746,14 @@
                         <div class="nk-tb-col tb-col-md">
                           <span class="tb-sub"><%= user.country %></span>
                         </div>
+
+                        <form action="/admin/customers/delete-user/<%= user._id %>" method="POST">
+
+                            
+                          <button type="submit" class="btn <%= user.listed ? 'btn-danger' : 'btn-success' %>">
+                            <%= user.listed ? 'list' : 'UnList' %>
+                          </button>
+                        </form>
                         <div class="nk-tb-col nk-tb-col-tools">
                           <ul class="nk-tb-actions gx-1 my-n1">
                             <li class="me-n1">
@@ -761,12 +769,12 @@
                                         <span>Edit Product</span>
                                       </a>
                                     </li>
-                                    <li>
+                                    <!-- <li>
                                       <a href="#" onclick="unlistUser('<%= user._id %>')">
                                           <em class="icon ni ni-toggle-off"></em>
                                           <span>Unlist Product</span>
                                       </a>
-                                  </li>
+                                  </li> -->
                                     <!-- Other options -->
                                   </ul>
                                 </div>

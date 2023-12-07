@@ -222,6 +222,7 @@ const insertUser= async(req,res)=>{
        const userData= await user.save()
 
        if(userData){
+        req.session.user_id = userData._id; 
         sendverifymail(req.body.name,req.body.email,userData._id)
         // res.redirect('/home')
         res.render('users/login',{message:"Your regestration has been susseccfull,please verify your mail."})
@@ -257,6 +258,7 @@ const verifylogin= async(req,res)=>{
              const passwordmatch= await bcrypt.compare(password,userData.password)
              if(passwordmatch){
                 if(userData.is_admin===0){
+                  req.session.user_id = userData._id;
                   res.render('users/indexhome', { categories, products });
                 }else{
                     req.session.user_id=userData._id
@@ -319,153 +321,6 @@ const userLogout=async(req,res)=>{
 
 // ================sending otp========================
 
-// const sendOTP = (mobile, OTP) => {
-//     return new Promise((resolve, reject) => {
-//       const phoneNumber = `+91${mobile}`; // Add the country code
-//       client.messages
-//         .create({ body: `DO NOT SHARE: your  OTP is ${OTP}`, to: mobile, from: '+14788181316' })
-//         .then((send) => {
-//           resolve(send);
-//         })
-//         .catch((error) => {
-//           console.log('error sending OTP' + error.message);
-//           reject(error);
-//         });
-//     });
-//   };
-  
-//   // / ================signup backend validation and OTP generating ========================
-  
-//   const signupUser = async (req, res) => {
-//     try {
-//       console.log('signup user');
-//       console.log(req.body);
-//       const { email, mobile, password, confirm_password, name } = req.body;
-  
-//       const [emailExist, mobileExist] = await Promise.all([User.findOne({ email }), User.findOne({ mobile })]);
-  
-//       if (emailExist != null) {
-//         return res.render('users/register', { message: ' Email already used' });
-//       } else if (mobileExist != null) {
-//         return res.render('users/register', { message: 'Mobile number already exists' });
-//       } else if (password != cPassword) {
-//         return res.render('users/register', { message: "passwords doesn't match" });
-//       } else if (password != '' && confirm_password!= '' && email != '' && mobile != '' && name != '') {
-//         const OTP = generateOTP();
-//         req.session.OTPofuser = OTP;
-//         req.session.otpmobile = { mobile, name, email, password };
-//         sendOTP(mobile, OTP);
-//         return res.render('users/otpVerify', { message: '' });
-//       } else {
-//         console.log('why');
-//       }
-//     } catch (error) {
-//       console.log(error.message);
-//     }
-//   };
-//   // ================verify otp========================
-  
-//   const verifyOTP = (req, res) => {
-//     return new Promise((resolve, reject) => {
-//       if (req.session.otpmobile) {
-//         const otpdata = req.session.otpmobile;
-//         const OTP = req.session.OTPofuser;
-//         if (req.query.otp == OTP && req.query.otp != '') {
-//           securepassword(otpdata.password)
-//             .then((passwordHash) => {
-//               const user = new User({
-//                 name: otpdata.name,
-//                 mobile: otpdata.mobile,
-//                 email: otpdata.email,
-//                 password: passwordHash,
-//                 token: OTP,
-//               });
-//               return user.save();
-//             })
-//             .then((userData) => {
-//               if (userData) {
-//                 req.session.userData = userData;
-//                 req.session.user = true;
-//                 res.redirect('/users');
-//                 resolve();
-//               } else {
-//                 res.render('users/otpVerify', { message: 'the registration failed' });
-//                 reject(new Error('Registration failed'));
-//               }
-//             })
-//             .catch((error) => {
-//               console.log(error.message);
-//               reject(error);
-//             });
-//         } else {
-//           res.render('users/otpVerify', { message: 'the otp is incorrect' });
-//         }
-//       } else {
-//         if (req.session.verifyPage) {
-//           const otp = req.query.otp;
-//           User.findOne({ token: otp })
-//             .then((result) => {
-//               if (result) {
-//                 if (req.session.changePassword) {
-//                   res.render('users/forgetPassword', { message: '' });
-//                 } else {
-//                   req.session.userData = result;
-//                   req.session.user = true;
-//                   res.redirect('/users');
-//                   resolve();
-//                 }
-//               } else {
-//                 res.render('users/otpVerify', { message: 'the otp is incorrect' });
-//               }
-//             })
-//             .catch((error) => {
-//               console.log(error.message);
-//               reject(error);
-//             });
-//         }
-//       }
-//     });
-//   };
-  
-//   // ======================mobile otp login=============================
-  
-  // const mobileOtp = async (req, res) => {
-  //   try {    
-  //     res.render('users/mobileOtp', { message: '' });
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-  
-//   const sendOtp = (req, res) => {
-//     const mobile = req.body.mobile;
-//     if (mobile.length == 10 && mobile != '') {
-//       User.findOne({ mobile: mobile })
-//         .then((user) => {
-//           if (user) {
-//             const OTP = generateOTP();
-//             sendOTP(mobile, OTP);
-//             User.updateOne({ mobile: mobile }, { $set: { token: OTP } })
-//               .then(() => {
-//                 req.session.verifyPage = true;
-//                 res.render('users/otpVerify', { message: '' });
-//               })
-//               .catch((error) => {
-//                 console.log(error.message);
-//               });
-//           } else {
-//             const message = 'invalid credintials';
-//             res.render('users/mobileOtp', { message });
-//           }
-//         })
-//         .catch((error) => {
-//           console.log(error.message);
-//         });
-//     } else {
-//       const message = 'fields cannot be empty';
-//       res.render('users/mobileOtp', { message });
-//     }
-//   };
 const sendEmailOtp = async (req, res) => {
   try {
     res.render('users/emailOTP', { message: '' });
@@ -532,7 +387,10 @@ const loginotp = async (req, res) => {
          
   
     if (userData) {
+      req.session.user_id = userData._id;
+
       if (userData.is_varified === 0) {
+
         res.render('users/emailOTP', { message: "Please verify your mail" });
       } else {
         const OTP = generateOTP();
@@ -551,8 +409,10 @@ const loginotp = async (req, res) => {
 
 const verifyotp = async (req, res) => {
   try {
-    console.log('Session EnterOTP:', req.session.enterotp);
+    console.log( req.session.enterotp);
     if (req.session.enterotp) {
+      req.session.user_id = userData._id;
+
       const user=await User.findOne({email})
       const enteredOTP = req.body.otp; // Assuming OTP is sent via query params (e.g., /verifyotp?otp=123456)
       console.log('Entered OTP:', enteredOTP);

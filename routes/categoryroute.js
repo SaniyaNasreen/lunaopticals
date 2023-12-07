@@ -104,26 +104,26 @@ router.post("/", upload.single('icon'), async (req, res) => {
 // Define your Category model (schema) and import necessary modules
 
 // Route to unlist a category by ID
-router.put('/admin/categories/:categoryId/unlist', async (req, res) => {
-  try {
-    const categoryId = req.params.categoryId;
+// router.put('/admin/categories/:categoryId/unlist', async (req, res) => {
+//   try {
+//     const categoryId = req.params.categoryId;
 
-    // Update the 'listed' field of the category to mark it as unlisted
-    const updatedCategory = await Category.findByIdAndUpdate(
-      categoryId,
-      { listed: false },
-      { new: true }
-    );
+//     // Update the 'listed' field of the category to mark it as unlisted
+//     const updatedCategory = await Category.findByIdAndUpdate(
+//       categoryId,
+//       { listed: false },
+//       { new: true }
+//     );
 
-    if (updatedCategory) {
-      res.status(200).json({ message: 'Category unlisted successfully' });
-    } else {
-      res.status(404).json({ message: 'Category not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+//     if (updatedCategory) {
+//       res.status(200).json({ message: 'Category unlisted successfully' });
+//     } else {
+//       res.status(404).json({ message: 'Category not found' });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 // Assuming this is your route handler for rendering the categories view
 router.get("/admin/categories", async (req, res) => {

@@ -33,45 +33,46 @@ user_route.get('/sendEmailOtp', usercontroller.sendEmailOtp);
 // Route for rendering the OTP entry form
 user_route.get('/enterotp', usercontroller.enterOtpForm);
 
+user_route.post('/verifyotp', usercontroller.verifyotp);
 // Route for setting the EnterOTP session
-user_route.get('/setEnterOtp', (req, res) => {
-  req.session.enterotp = true;
-  console.log('Session EnterOTP set:', req.session.enterotp); // Add log for debugging
-  res.redirect('/verifyotp');
-});
+// user_route.get('/setEnterOtp', (req, res) => {
+//   req.session.enterotp = true;
+//   console.log('Session EnterOTP set:', req.session.enterotp); // Add log for debugging
+//   res.redirect('/verifyotp');
+// });
 
 // Route for rendering the OTP verification form
-user_route.get('/verifyotp', (req, res) => {
-  if (req.session.enterotp) {
-    res.render('enterotp'); // Render your OTP verification form here
-  } else {
-    res.redirect('/emailOTP'); // Redirect to the OTP entry form if session is not set
-  }
-});
+// user_route.get('/verifyotp', (req, res) => {
+//   if (req.session.enterotp) {
+//     res.render('enterotp'); // Render your OTP verification form here
+//   } else {
+//     res.redirect('/emailOTP'); // Redirect to the OTP entry form if session is not set
+//   }
+// });
 
-user_route.post('/verifyotp', async (req, res) => {
-    console.log('Reached the verifyotp route');
-    try {
-        const { email,otp} = req.body;
-        const user = await User.findOne({ email });
-        if (!user) {
-          // Handle case where user is not found
-          return res.redirect('/enterotp');
-      }
-      console.log(generatedOTP);
-      console.log(enteredOTP);
-      if ( generatedOTP !== enteredOTP) {
-        // Handle case where user is not found or OTP doesn't match
-        return res.redirect('/enterotp');
-      } // Redirect to the appropriate route after successful OTP verification
-      return res.redirect('/indexhome');
+// user_route.post('/verifyotp', async (req, res) => {
+//     console.log('Reached the verifyotp route');
+//     try {
+//         const { email,otp} = req.body;
+//         const user = await User.findOne({ email });
+//         if (!user) {
+//           // Handle case where user is not found
+//           return res.redirect('/enterotp');
+//       }
+//       console.log(generatedOTP);
+//       console.log(enteredOTP);
+//       if ( generatedOTP !== enteredOTP) {
+//         // Handle case where user is not found or OTP doesn't match
+//         return res.redirect('/enterotp');
+//       } // Redirect to the appropriate route after successful OTP verification
+//       return res.redirect('/indexhome');
  
-    } catch (error) {
-      // Handle other potential errors
-      console.error(error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+//     } catch (error) {
+//       // Handle other potential errors
+//       console.error(error);
+//       res.status(500).send('Internal Server Error');
+//     }
+//   });
 // Route for handling login OTP submission
 // user_route.post('/loginotp', async (req, res) => {
 //   try {

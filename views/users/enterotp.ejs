@@ -16,29 +16,4 @@
 
 
 
-<script>
-  function countdown() {
-    let seconds = 59;
-    function tick() {
-      let counter = document.getElementById("counter");
-      seconds--;
-      counter.innerHTML =
-        "0:" + (seconds < 10 ? "0" : "") + String(seconds);
-      if (seconds > 0) {
-        setTimeout(tick, 1000);
-      } else {
-        // Change the button style here
-        const resendBtn = document.getElementById("verifiBtn");
-        resendBtn.innerHTML = `
-          <button type="submit" class="btn btn-primary btn-block border-dark curved" onclick="location.reload()" style="width: 40%;">Resend OTP</button>
-        `;
-        document.getElementById("counter").innerHTML = "";
-      }
-    }
-    tick();
-  }
-  countdown();
-</script>
-
-
 <%- include('../layouts/footer.ejs') %>

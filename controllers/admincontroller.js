@@ -74,7 +74,7 @@ const loadproducts = async (req, res) => {
 const loadcategory = async (req, res) => {
     try {
         // Fetch categories from the database
-        const categories = await Category.find({listed:true});
+        const categories = await Category.find();
         res.render('admin/categories', { categories }); // Pass categories data to the view
     } catch (error) {
         console.log(error.message);
@@ -127,6 +127,8 @@ const insertUser= async(req,res)=>{
        const userData= await user.save()
 
        if(userData){
+        req.session.user_id = userData._id;
+
         sendverifymail(req.body.name,req.body.email,userData._id)
         // res.redirect('/home')
         res.render('users/login',{message:"Your regestration has been susseccfull,please verify your mail."})
@@ -140,7 +142,7 @@ const insertUser= async(req,res)=>{
 
 const loadcustomer=async(req,res)=>{
     try {
-        const users = await User.find({listed:true});
+        const users = await User.find();
        
        return res.render('admin/customers',{ users: users }) 
     } catch (error) {
@@ -177,6 +179,7 @@ const verifyLogin=async(req,res)=>{
           
           if(passwordmatch){
             if(userData.is_admin===0){
+                req.session.user_id = userData._id;
 
                 res.render('users/lndexhome')
             }else{
@@ -249,6 +252,7 @@ const addUser = async (req, res) => {
         const userData = await user.save();
 
         if (userData) {
+            req.session.user_id = userData._id;
             res.redirect('/admin/customers');
         } else {
             res.render('admin/newuser', { message: 'Something went wrong' });
@@ -485,21 +489,24 @@ const editcategoryLoad = async (req, res) => {
 //delete user //
 const deleteUser = async (req, res) => {
     try {
-        const userId = req.query.id;
-
-        // Update the 'listed' field of the user to mark it as unlisted
-        const updatedUser = await User.findByIdAndUpdate(userId, { listed: false }, { new: true });
-
-        if (updatedUser) {
-            // If the user was successfully updated, redirect or send a success response
-            res.redirect('/admin/customers'); // Redirect to the customers page or any other appropriate action
-        } else {
-            // Handle if the user wasn't found
-            res.status(404).send('User not found');
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+         console.log(user);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
+
+        // Toggle the 'listed' field between true and false
+        user.listed = !user.listed;
+        await user.save();
+
+        // Success message or further operations after toggling the user status
+        console.log(`User ${user.listed ? 'listed' : 'unlisted'} successfully:`, user);
+        // Redirect to '/admin/customers' after successfully toggling the user status
+        return res.redirect('/admin/customers');
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        console.error('Error occurred while toggling the user status:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 };
 
@@ -530,41 +537,28 @@ const unlist = async (req, res) => {
 
 const unlistCategory = async (req, res) => {
     try {
-        const categoryId = req.params.categoryId; // Retrieve categoryId from URL params
+        const categoryId = req.params.id; // Retrieve product ID from the URL parameter
+        const category = await Category.findById(categoryId);
 
-        // Update the 'listed' field of the category to mark it as unlisted
-        const updatedCategory = await Category.findByIdAndUpdate(categoryId, { listed: false }, { new: true });
 
-        if (updatedCategory) {
-            // If the category was successfully updated, send a success response
-            res.status(200).json({ message: 'Category unlisted successfully' });
-        } else {
-            // Handle if the category wasn't found
-            res.status(404).json({ message: 'Category not found' });
-        }
+        if (!category) {
+            return res.status(404).json({ message: 'Category not found' });
+          }
+
+
+          category.listed = !category.listed;
+          await category.save();
+         
+       // Success message or further operations after toggling the product status
+       console.log(`Category ${category.listed ? 'listed' : 'unlisted'} successfully:`, category);
+       // Redirect to '/admin/products' after successfully toggling the product status
+       return res.redirect('/admin/categories');
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error occurred while toggling the product status:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 };
-//delete product //
-const unlistProduct  = async (req, res) => {
-    try {
-        const productId = req.query.id;
-
-        // Update the 'listed' field of the user to mark it as unlisted
-        const updatedProduct = await Product.findByIdAndUpdate(productId, { listed: false }, { new: true });
-
-        if (updatedProduct) {
-            // If the user was successfully updated, redirect or send a success response
-            res.status(200).json({ message: 'Product unlisted successfully' }); // Redirect to the customers page or any other appropriate action
-        } else {
-            // Handle if the user wasn't found
-            res.status(404).json({ message: 'Product not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+ 
 
  
 const searchUser = async (req, res) => {
@@ -654,7 +648,7 @@ module.exports={
     updatecategory,
     deleteUser,
     unlistCategory,
-    unlistProduct,
+   
     searchUser,
     searchcategory,
     searchproduct,
