@@ -1,0 +1,20 @@
+<%-include('../layouts/header')%> 
+
+<div class="container-fluid2">
+  <div class="logoimage"><img src="/images (1).jpg" alt="">
+  <div class="box-sentotp">
+    <h1 class="headsentotp1">OTPVerification</h1>
+            <!-- Mobile input -->
+             <form action="/forgotPassword" class="sentotp"  id="emailValidate" method="post">
+              <div class="formforget1" >
+                <input type="email" class="sentotp1"  name="email" required placeholder="Enter email">
+                  <br>
+                  <input type="submit"  class="sentotp2" value="Sent OTP"><br>
+                  <div class="error " id="emailErr"></div>
+              </div>
+               <h5 class=""><%= message %></h5>  
+           
+</div>
+</div>
+</div>
+ <%-include('../layouts/footer')%>  

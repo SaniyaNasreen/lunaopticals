@@ -1,0 +1,31 @@
+<%- include('../layouts/header.ejs') %>
+
+<div class="container-fluid2">
+    <div class="logoimage"><img src="/images (1).jpg" alt="">
+    <div class="box-forget1">
+<h1 class="headforget2">ResetPassword</h1>
+
+<% 
+
+if(typeof message !== 'undefined'){
+%>
+<h4><%= message %></h4>
+<%
+}
+
+%>
+<form action="/forget" class="forgetpassword1" method="post">
+    <input type="email" class="formforget11" name="email" required placeholder="Enter email">
+    <br><br>
+  
+    <input type="submit"  class="formforget22"value="Send Reset Link">
+     
+     
+     
+</form>
+</div>
+</div>
+</div>
+ 
+
+<%- include('../layouts/footer.ejs') %>

@@ -1,0 +1,42 @@
+<%- include('../layouts/header.ejs') %>
+<div class="container-fluid1">
+<div class="logoimage"><img src="/images (1).jpg" alt="">
+<div class="box-login">
+ 
+<h1 class="head1-login">Login</h1>
+
+<% 
+
+if(typeof message !== 'undefined'&&message.trim()!==''){
+%>
+(<%= message %>)
+<%
+}
+%>
+<!-- <img src="/public/ecommerce18.jpg" alt=""> -->
+
+
+<form action="/login" class="form1-login" method="post">
+    <input type="email" class="form-control1-login"  name="email" required placeholder="Enter email">
+    <br><br>
+    <input type="password"  class="form-control1-login" name="password" required placeholder="Enter password">
+    <h4  class="sub1-login">Forgot your password?<a href="/forget">Click here</a></h4>
+    <input type="submit"  class="form-control2-login" value="Login"><br>
+   
+</form>
+<form action="/forgotPassword" method="get">
+    <input type="submit" class="form-control3-login " value="login with otp" >
+</form>
+<form action="/register" class="form2-login " method="get">
+    <input type="submit"  class="form-control4-login" value="Sign-Up">
+</form>
+</div>
+</div>
+</div>  
+ 
+
+<%- include('../layouts/footer.ejs') %>
+ 
+
+
+   

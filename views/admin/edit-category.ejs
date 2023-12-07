@@ -1,0 +1,22 @@
+<%- include('../layouts/header.ejs') %>
+
+<div class="container-fluid6">
+    <div class="logo-image"><img src="/images (1).jpg" alt=""></div>
+<div class="box-editc">
+<h1 class="head1-editc">EditCategory</h1>
+
+<form action="/admin/edit-category" class="form1-editc" method="POST">
+
+    <input type="file" class="form-control2-editc" name="icon" value="<%= category.icon %>" required>
+    <br><br>
+    <input type="text" class="form-control1-editc" name="name" value="<%= category.name %>" required>
+    <br><br>
+    <input type="hidden" name="id" value="<%= category._id %>" >
+    <input type="submit" class="form-control4-editc" value="Update Category">
+
+</form>
+
+<a href="/admin/categories" class="form-control4-editc">Go To Categories</a>
+</div>
+</div>
+<%- include('../layouts/footer.ejs') %>

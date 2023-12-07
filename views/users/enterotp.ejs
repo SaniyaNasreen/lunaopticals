@@ -1,0 +1,44 @@
+<%- include('../layouts/header.ejs') %>
+<div class="container-fluid2">
+  <div class="logoimage">
+    <img src="/images (1).jpg" alt="">
+    <div class="box-checkotp">
+      <h1 class="headcheckotp">OTP Verification</h1>
+      <!-- Update the action attribute to point to the correct route for OTP verification -->
+      <form action="/verifyotp" class="form-checkotp" method="post">
+        <input type="number" class="checkotp1" name="otp" required placeholder="Enter your OTP">
+        <br><br>
+        <input type="submit" class="checkotp2" value="Login">
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  function countdown() {
+    let seconds = 59;
+    function tick() {
+      let counter = document.getElementById("counter");
+      seconds--;
+      counter.innerHTML =
+        "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+      if (seconds > 0) {
+        setTimeout(tick, 1000);
+      } else {
+        // Change the button style here
+        const resendBtn = document.getElementById("verifiBtn");
+        resendBtn.innerHTML = `
+          <button type="submit" class="btn btn-primary btn-block border-dark curved" onclick="location.reload()" style="width: 40%;">Resend OTP</button>
+        `;
+        document.getElementById("counter").innerHTML = "";
+      }
+    }
+    tick();
+  }
+  countdown();
+</script>
+
+
+<%- include('../layouts/footer.ejs') %>

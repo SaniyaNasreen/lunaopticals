@@ -1,0 +1,31 @@
+<%- include('../layouts/header.ejs') %>
+
+<div class="container-fluid4">
+    <div class="logo-image"><img src="/images (1).jpg" alt=""></div>
+<div class="box-editp">
+<h1 class="head1-editp">EditProduct</h1>
+
+<form action="" class="form1-editp" method="POST">
+    <input type="file" class="form-control2-editp" name="image" required >
+    <input type="name" class="form-control1-editp" name="name"  placeholder="Enter name" value="<%= product.name %>" required>
+    <br><br>
+    <input type="name" class="form-control1-editp" name="description"  placeholder="Enter description" value="<%= product.description %>" required>
+    <br><br>
+    <input type="name" class="form-control1-editp" name="brand"  placeholder="Enter Brand" value="<%= product.brand %>" required>
+    <br><br>
+    <input type="name" class="form-control1-editp" name="price"  placeholder="Enter price" value="<%= product.price %>" required>
+    <br><br>
+    <input type="name" class="form-control1-editp" name="category"  placeholder="Enter Category" value="<%= product.category %>" required>
+    <br><br>
+     <input type="hidden" name="id" value="<%= product._id %>" >
+    <input type="submit" class="form-control4-editp" value="Update product" >
+
+</form>
+    
+     
+  
+
+<a href="/admin/products"class="form-control4-editp">Go To Products</a>
+</div>
+</div>
+<%- include('../layouts/footer.ejs') %>

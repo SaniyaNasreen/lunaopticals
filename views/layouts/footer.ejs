@@ -1,0 +1,153 @@
+ 
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</script>
+
+
+<script>
+  function countdown() {
+    let seconds = 59;
+    function tick() {
+      let counter = document.getElementById("counter");
+      seconds--;
+      counter.innerHTML =
+        "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+      if (seconds > 0) {
+        setTimeout(tick, 1000);
+      } else {
+          // Change the button style here 
+          const resendBtn = document.getElementById("verifiBtn");
+        resendBtn.innerHTML = `
+          <button type="submit" class="btn btn-primary btn-block border-dark curved" onclick="location.reload()" style="width: 40%;">Resend OTP</button>
+        `;
+        document.getElementById("counter").innerHTML = "";
+      }
+    }
+    tick();
+  }
+  countdown();
+ </script> 
+
+
+
+<script>
+  $(document).ready(function() {
+    $('.dropdown-toggle').dropdown();
+  });
+</script>
+
+
+
+ 
+
+
+
+<script>
+ function unlistProduct(productId) {
+    if (confirm('Are you sure you want to unlist this product?')) {
+        fetch(`/admin/products/${productId}/unlist`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Product unlisted successfully!');
+                // Handle success (refresh the product list or take appropriate action)
+            } else {
+                throw new Error('Failed to unlist the product.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            alert(error.message);
+        });
+    }
+    return false; // Prevent the default behavior of the anchor tag
+}
+</script>
+
+ 
+
+<script>
+    // Function to fetch categories and render them in the HTML
+    async function fetchAndRenderCategories() {
+      try {
+        const response = await fetch('/categories'); // Replace with your API endpoint
+        const categories = await response.json();
+
+        const categoryList = document.getElementById('categoryList');
+        categoryList.innerHTML = ''; // Clear existing categories
+
+        categories.forEach(category => {
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            <span>${category.name}</span>
+            <button onclick="unlistCategory('${category._id}')">Unlist</button>
+          `;
+          categoryList.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error('Error fetching categories:', error.message);
+      }
+    }
+
+    // Function to unlist a category
+    async function unlistCategory(categoryId) {
+      try {
+        const response = await fetch(`/admin/categories/${categoryId}/unlist`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          alert('Category unlisted successfully!');
+          fetchAndRenderCategories(); // Refresh category list after unlisting
+        } else {
+          throw new Error('Failed to unlist the category.');
+        }
+      } catch (error) {
+        console.error('Error:', error.message);
+        alert(error.message);
+      }
+    }
+
+
+
+
+    // Initial fetch and render categories when the page loads
+    window.onload = fetchAndRenderCategories;
+  </script>
+
+<!-- <script src="js/vendor/jquery.min.js"></script>
+  <script src="js/vendor/modernizr-3.11.2.min.js"></script>
+  <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/vendor/popper.min.js"></script>
+  <script src="js/vendor/jquery-mean-menu.min.js"></script>
+  <script src="js/vendor/owl.carousel.min.js"></script>
+  <script src="js/vendor/slick.min.js"></script>
+  <script src="js/vendor/jquery.magnific-popup.min.js"></script>
+  <script src="js/vendor/isotope.min.js"></script>
+  <script src="js/vendor/jquery.nice-number.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/scripts.js"></script> -->
+
+
+</body>
+
+
+
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script> -->
+
+
+</html>
