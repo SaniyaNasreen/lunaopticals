@@ -504,8 +504,29 @@ const deleteUser = async (req, res) => {
 };
 
 
-
-
+const unlist = async (req, res) => {
+    try {
+        const productId = req.params.id; // Retrieve product ID from the URL parameter
+        const product = await Product.findById(productId);
+    
+        if (!product) {
+          return res.status(404).json({ message: 'Product not found' });
+        }
+    
+        // Toggle the 'listed' field between true and false
+        product.listed = !product.listed;
+        await product.save();
+    
+        // Success message or further operations after toggling the product status
+        console.log(`Product ${product.listed ? 'listed' : 'unlisted'} successfully:`, product);
+        // Redirect to '/admin/products' after successfully toggling the product status
+        return res.redirect('/admin/products');
+      } catch (error) {
+        console.error('Error occurred while toggling the product status:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+    };
+  
 
 const unlistCategory = async (req, res) => {
     try {
