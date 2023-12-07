@@ -170,25 +170,28 @@
             
         })
 
+       
 
-        router.put('/admin/products/:productId/unlist', async (req, res) => {
-            try {
-                const productId = req.params.productId;
+
+        // router.put('/admin/products/:productId/unlist', async (req, res) => {
+        //     console.log(productId);
+        //     try {
+        //         const productId = req.params.productId;
         
-                // Update the 'listed' field of the product to mark it as unlisted
-                const updatedProduct = await Product.findByIdAndUpdate(productId, { listed: false }, { new: true });
+        //         // Update the 'listed' field of the product to mark it as unlisted
+        //         const updatedProduct = await Product.findByIdAndUpdate(productId, { listed: false }, { new: true });
         
-                if (updatedProduct) {
-                    // If the product was successfully updated, send a success response
-                    res.status(200).json({ message: 'Product unlisted successfully' });
-                } else {
-                    // Handle if the product wasn't found
-                    res.status(404).json({ message: 'Product not found' });
-                }
-            } catch (error) {
-                res.status(500).json({ error: error.message });
-            }
-        });
+        //         if (updatedProduct) {
+        //             // If the product was successfully updated, send a success response
+        //             res.status(200).json({ message: 'Product unlisted successfully' });
+        //         } else {
+        //             // Handle if the product wasn't found
+        //             res.status(404).json({ message: 'Product not found' });
+        //         }
+        //     } catch (error) {
+        //         res.status(500).json({ error: error.message });
+        //     }
+        // });
 
         // router.put('/products/:productId/unlist', async (req, res) => {
         //     try {
@@ -228,19 +231,7 @@
             }
         });
 
-        // router.get('/users/shopdetails', async (req, res) => {
-        //     try {
-        //       // Fetch products from the database (or any other source)
-        //       const product = await Product.find(); // Assuming Product is your Mongoose model
         
-        //       // Render the 'admin/products' view and pass the 'products' variable to it
-        //       res.render('users/shopdetails', { product: product });
-        //     } catch (error) {
-        //       console.error(error);
-        //       res.status(500).send('Error retrieving products');
-        //     }
-        //   });
-
 
 
 
@@ -281,39 +272,8 @@
                 res.send(products)
                 })
 
+ 
 
-                // router.put(
-                //     '/gallery-images/:id',
-                //     uploadOptions.array('images',10),
-                //     async(req,res)=>{
-                //         if(!mongoose.isValidObjectId(req.params.id)){
-                //             return res.status(400).send('Invalid Product Id')
-                //         }
-                //             const files= req.files
-                //         let imagesPaths=[];
-                //         const basePath=`${req.protocol}://${req.get('host')}/public/upload/`
-
-                //         if(files){
-                //             files.map(file=>{
-                //                 imagesPaths.push(`${basePath}${file.fileName}`)
-                //             })
-                //         }
-
-                //         const product=await Product.findByIdAndUpdate(
-                //             req.params.id,
-                //             {
-                //                 images:imagesPaths
-                //             },
-                //             {new:true}
-                    
-                //         )
-                //         if(!product)
-                //             return res.status(500).send('the product cannot be updated!')
-                
-                //         res.send(product);
-                    
-                //     }
-                // )
                 router.get('/admin/products', async (req, res) => {
                     try {
                     // Fetch products from the database (or any other source)
@@ -327,39 +287,16 @@
                     }
                 });
 
-
-                //   router.get('/users/shoplist', async (req, res) => {
+ 
+                // router.get('/products', async (req, res) => {
                 //     try {
-                //       // Fetch products from the database (or any other source)
-                //       const products = await Product.find(); // Assuming Product is your Mongoose model
-                
-                //       // Render the 'admin/products' view and pass the 'products' variable to it
-                //       res.render('users/shoplist', { products: products });
-                //     } catch (error) {
-                //       console.error(error);
-                //       res.status(500).send('Error retrieving products');
+                //     const products = await Product.find(); // Fetch all products from the database
+                //     res.render('your_ejs_template', { products }); // Pass products data to your EJS template
+                //     } catch (err) {
+                //     res.status(500).json({ message: err.message });
                 //     }
-                //   });
-
-                router.get('/products', async (req, res) => {
-                    try {
-                    const products = await Product.find(); // Fetch all products from the database
-                    res.render('your_ejs_template', { products }); // Pass products data to your EJS template
-                    } catch (err) {
-                    res.status(500).json({ message: err.message });
-                    }
-                });
-    //   // Example route handler in Express.js
-    // router.get('/admin/product', (req, res) => {
-    //     try {
-    //         // Your logic here to fetch product data or render a page
-    //         res.render('admin/product', { /* some data */ });
-    //     } catch (error) {
-    //         console.error(error);
-    //         res.status(500).send('Internal Server Error');
-    //     }
-    // });
-
+                // });
+    
 
                 // Example route handler in Express.js
                 router.get('/admin/edit-product', (req, res) => {

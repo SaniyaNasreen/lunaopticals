@@ -766,6 +766,14 @@
                           <div class="nk-tb-col tb-col-md">
                             <span class="tb-sub"><%= product.category %></span>
                           </div>
+                          <form action="/admin/products/unlist/<%= product._id %>" method="POST">
+                            
+                            <button type="submit" class="btn <%= product.listed ? 'btn-danger' : 'btn-success' %>">
+                              <%= product.listed ? 'list' : 'UnList' %>
+                            </button>
+                          </form>
+                          
+                          
                           <div class="nk-tb-col nk-tb-col-tools">
                             <ul class="nk-tb-actions gx-1 my-n1">
                               <li class="me-n1">
@@ -782,10 +790,10 @@
                                         </a>
                                       </li>
                                       <li>
-                                        <a href="#" onclick="unlistProduct('<%= product._id %>')">
+                                        <!-- <a href="/admin/unlist-product?id=<%= product._id %>">
                                             <em class="icon ni ni-toggle-off"></em>
                                             <span>Unlist Product</span>
-                                        </a>
+                                        </a> -->
                                     </li>
                                       <!-- Other options -->
                                     </ul>

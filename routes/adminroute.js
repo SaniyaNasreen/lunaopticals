@@ -3,6 +3,7 @@ const express = require("express");
     const auth = require("../miidleware/adminauth");
     const admincontroller = require("../controllers/admincontroller");
     const session = require("express-session");
+    const usercontroller=require('../controllers/usercontroller')
     // const config = require("config");
     // const path = require("path");
 
@@ -23,16 +24,16 @@ const express = require("express");
 
     // Routes with middleware
     // admin_route.get("/", auth.isLogout, admincontroller.loadLogin);
-    admin_route.get("/indexhome", admincontroller.loadindex);
+    admin_route.get("/indexhome",auth.isLogin,admincontroller.loadindex);
     admin_route.get("/products", admincontroller.loadproducts);
     admin_route.get("/categories",admincontroller.loadcategory)
     admin_route.get("/categories",admincontroller.fetchCategories)
-
+    admin_route.get('/login',auth.isLogin,usercontroller.loginLoad)
     admin_route.get("/customers", admincontroller.loadcustomer);
     admin_route.get("/register", admincontroller.loadregister);
     admin_route.post("/register", admincontroller.insertUser);
     admin_route.get('/',admincontroller.loadLogin)
-    admin_route.get('/login',admincontroller.loadLogin)
+  
     admin_route.post("/", admincontroller.verifyLogin);
     admin_route.get("/home", auth.isLogin, admincontroller.loadDashboard);
     admin_route.get("/logout", auth.isLogin, admincontroller.logout);
@@ -51,7 +52,8 @@ const express = require("express");
     admin_route.post("/edit-category", admincontroller.updatecategory);
     admin_route.get("/delete-user", admincontroller.deleteUser);
     admin_route.get("/unlist-category", admincontroller.unlistCategory);
-    admin_route.get("/unlist-product", admincontroller.unlistProduct);
+    // admin_route.get("/unlist-product", admincontroller.unlistProduct);
+    admin_route.post('/products/unlist/:id',admincontroller.unlist );
     admin_route.get("/search-user",  admincontroller.searchUser);
     admin_route.get("/search-category",  admincontroller.searchcategory);
     admin_route.get("/search-product",  admincontroller.searchproduct);

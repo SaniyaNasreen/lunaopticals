@@ -63,7 +63,7 @@ const loadindex=async(req,res)=>{
 
 const loadproducts = async (req, res) => {
     try {
-        const products = await Product.find({listed:true}); // Fetch products from the database
+        const products = await Product.find(); // Fetch products from the database
         return res.render('admin/products', { products }); // Pass products to the view
     } catch (error) {
         console.error(error.message);
@@ -174,13 +174,15 @@ const verifyLogin=async(req,res)=>{
         const userData = await User.findOne({email:email})
         if(userData){
           const passwordmatch=  await  bcrypt.compare(password,userData.password)
-
+          
           if(passwordmatch){
             if(userData.is_admin===0){
+
                 res.render('users/lndexhome')
             }else{
-                req.session.user_id=userData._id
+                req.session.admin_id=userData._id
                 res.redirect("/admin/indexhome")
+                
 
             }
           }else{
@@ -431,6 +433,7 @@ const updateproduct=async(req,res)=>{
     }
 }
 
+
 const editcategoryLoad = async (req, res) => {
     try {
       const id = req.query.id;
@@ -499,6 +502,9 @@ const deleteUser = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
+
+
 
 
 const unlistCategory = async (req, res) => {
@@ -630,5 +636,6 @@ module.exports={
     unlistProduct,
     searchUser,
     searchcategory,
-    searchproduct
+    searchproduct,
+    unlist
 }
