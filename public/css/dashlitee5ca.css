@@ -29051,6 +29051,40 @@ div.dataTables_wrapper div.dataTables_filter .nk-header-search input {
     margin-top: 0;
   }
 }
+.logo1{
+  width: 50px;
+  height: 50px;
+  background-size:60px;
+  border-radius: 30px;
+  position: relative;
+  right: 80px;
+}
+ 
+
+.emailverify{
+  width: 500px;
+  height: 300px;
+  
+  background-color: #000;
+  color: chocolate;
+  margin-left: 500px;
+  margin-top: 200px;
+}
+
+.content{
+  color: chocolate;
+  font-size: 30px;
+  font-family: sans-serif;
+  padding-top: 80px;
+  padding-left: 50px;
+}
+
+.content1{
+  color: chocolate;
+  font-size: 10px;
+  padding-top: 80px;
+  padding-left: 150px;
+}
 .quick-icon {
   display: inline-flex;
   height: 24px;
@@ -43259,7 +43293,67 @@ padding-right: 100px;
   } 
 
 
+
+  .wishlist-div {
+    position: relative;
+  }
+  
+  .wishlist-div a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #000; /* Change the color as needed */
+  }
+  
+  .badge {
+    margin-left: 5px;
+    height: 15px;
+    border-radius: 10px;
+  }
+  .small-badge {
+    position: absolute;
+    top: -5px; /* Adjust the top position as needed */
+    right: -5px; /* Adjust the right position as needed */
+    font-size: 6px; /* Adjust the font size as needed */
+    
+    border-radius: 50%;
    
+}
+.wishlist-link {
+  position: relative;
+  display: inline-block;
+}
+  /* Adjust the position as needed */
+  .wishlist-div {
+    position: relative;
+    top: 2px;
+    left: 30px;
+   
+     
+  }
+
+
+  .userinfo{
+    position: relative;
+   left: 10px;
+  }
+
+  .userinfo .icon {
+  font-size: 24px; /* Change the size to your desired value */
+  color: #000;
+}
+.logout-div{
+  position: relative;
+  padding-bottom: 10px;
+  left: 70px;
+ 
+}
+.add-to-cart{
+  position: relative;
+  padding-bottom: 10px;
+  left: 50px;
+}
+ 
   .form1-editp{
     padding-left: 250px; 
     position: relative;

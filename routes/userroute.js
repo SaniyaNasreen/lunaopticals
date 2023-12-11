@@ -1,5 +1,4 @@
 
-
 const express=require("express")
 const user_route =express.Router()
 // const config=require('../config/config')
@@ -20,10 +19,11 @@ user_route.get('/register',usercontroller.loadRegister)
 user_route.post('/register',usercontroller.insertUser)
 user_route.get('/verify',usercontroller.verifymail)
 user_route.get('/',auth.isLogout,usercontroller.loginLoad)
-user_route.get('/login',auth.isLogout,usercontroller.loginLoad)
+user_route.get('/login',auth.isLogin,usercontroller.loginLoad)
 user_route.post('/login',usercontroller.verifylogin)
 user_route.get('/home',auth.isLogin,usercontroller.loadHome)
-user_route.get('/logout',auth.isLogin,usercontroller.userLogout)
+  
+user_route.get('/logout', auth.isLogout,usercontroller.userLogout); 
 user_route.get('/forgotPassword', usercontroller.sendEmailOtp);
 // user_route.post('/forgotPassword', usercontroller.emailOtp);
 user_route.post('/forgotPassword', usercontroller.loginotp);
@@ -34,64 +34,7 @@ user_route.get('/sendEmailOtp', usercontroller.sendEmailOtp);
 user_route.get('/enterotp', usercontroller.enterOtpForm);
 
 user_route.post('/verifyotp', usercontroller.verifyotp);
-// Route for setting the EnterOTP session
-// user_route.get('/setEnterOtp', (req, res) => {
-//   req.session.enterotp = true;
-//   console.log('Session EnterOTP set:', req.session.enterotp); // Add log for debugging
-//   res.redirect('/verifyotp');
-// });
-
-// Route for rendering the OTP verification form
-// user_route.get('/verifyotp', (req, res) => {
-//   if (req.session.enterotp) {
-//     res.render('enterotp'); // Render your OTP verification form here
-//   } else {
-//     res.redirect('/emailOTP'); // Redirect to the OTP entry form if session is not set
-//   }
-// });
-
-// user_route.post('/verifyotp', async (req, res) => {
-//     console.log('Reached the verifyotp route');
-//     try {
-//         const { email,otp} = req.body;
-//         const user = await User.findOne({ email });
-//         if (!user) {
-//           // Handle case where user is not found
-//           return res.redirect('/enterotp');
-//       }
-//       console.log(generatedOTP);
-//       console.log(enteredOTP);
-//       if ( generatedOTP !== enteredOTP) {
-//         // Handle case where user is not found or OTP doesn't match
-//         return res.redirect('/enterotp');
-//       } // Redirect to the appropriate route after successful OTP verification
-//       return res.redirect('/indexhome');
  
-//     } catch (error) {
-//       // Handle other potential errors
-//       console.error(error);
-//       res.status(500).send('Internal Server Error');
-//     }
-//   });
-// Route for handling login OTP submission
-// user_route.post('/loginotp', async (req, res) => {
-//   try {
-//     const user = await User.findOne({ email: req.body.email });
-
-//     if (!user || user.token !== req.body.otp) {
-//       // Handle invalid OTP scenario, maybe redirect back to the OTP verification form
-//       return res.redirect('/enterotp');
-//     }
-
-//     // Redirect to the indexhome page after successful OTP verification
-//     return res.redirect('/indexhome');
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Internal Server Error');
-//   }
-// });
- 
-
 user_route.get('/forget',auth.isLogout,usercontroller.forgetload)
 user_route.post('/forget',usercontroller.forgetverify)
 user_route.get('/forgetPassword',auth.isLogout,usercontroller.forgetpasswordload)
@@ -109,6 +52,6 @@ user_route.get('/api/users', async (req, res) => {
     }
 });
 
- 
+user_route.get("/search-product",  usercontroller.searchproduct);
 
 module.exports=user_route

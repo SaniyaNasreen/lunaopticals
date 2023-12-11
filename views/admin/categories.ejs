@@ -754,32 +754,34 @@
                                 </div>
                                  
                               
-                               
-                                <form action="/admin/categories/unlistCategory/<%= category._id %>" method="POST">
-
-                            
-                                  <button type="submit" class="btn <%= category.listed ? 'btn-danger' : 'btn-success' %>">
-                                    <%= category.listed ? 'list' : 'UnList' %>
-                                  </button>
-                                </form>
                                 
                                 <!-- ... (render other category details accordingly) -->
                                 <div class="nk-tb-col nk-tb-col-tools">
                                   <ul class="nk-tb-actions gx-1 my-n1">
                                     <li class="me-n1">
-                                      <div class="dropdown">
+                                      <div class="nk-tb-col tb-col-sm">
+                                        <form action="/admin/categories/unlistCategory/<%= category._id %>" method="POST">
+                                          <button type="submit" class="btn <%= category.listed ? 'btn-danger' : 'btn-success' %>">
+                                            <%= category.listed ? 'list' : 'UnList' %>
+                                          </button>
+                                        </form>
+                                        </div>
+                                        <div class="nk-tb-col tb-col-sm">
+                                        <a href="/admin/edit-category?id=<%= category._id %>" class="btn btn-danger">
+                                                       
+                                          Edit Category
+                                        </a>
+                                        </div>
+                                      <!-- <div class="dropdown">
                                         <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown">
                                           <em class="icon ni ni-more-h"></em>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end">
                                           <ul class="link-list-opt no-bdr">
-                                            <li>
+                                            <li> -->
                                               <!-- Link to view/edit category details or perform actions -->
-                                              <a href="/admin/edit-category?id=<%= category._id %>">
-                                                <em class="icon ni ni-edit"></em>
-                                                <span>Edit Category</span>
-                                              </a>
-                                            </li>
+                                             
+                                            <!-- </li> -->
                                             
                                             <!-- <li>
                                               <a href="#" onclick="unlistCategory('<%= category._id %>')">
@@ -789,9 +791,9 @@
                                           </li> -->
                                           
                                             <!-- Other category-related actions -->
-                                          </ul>
+                                          <!-- </ul>
                                         </div>
-                                      </div>
+                                      </div> -->
                                     </li>
                                   </ul>
                                 </div>

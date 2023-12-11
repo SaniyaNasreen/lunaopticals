@@ -63,7 +63,11 @@
         listed:{
             type:Boolean,
             default:true
-        }
+        },
+        is_blocked: {
+            type: Boolean,
+            default: false,
+          },
 
     })
 

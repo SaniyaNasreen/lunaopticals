@@ -5,6 +5,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+
 </script>
 
 
@@ -32,6 +33,17 @@
   countdown();
  </script>  
 
+<!-- <script>
+  // Check if there's a message to display in the modal and show the modal accordingly
+  const blockedMessage = '<%= typeof blockedMessage !== "undefined" %>';
+  const errorMessage = '<%= typeof errorMessage !== "undefined" %>';
+
+  if (blockedMessage || errorMessage) {
+    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+    messageModal.show();
+  }
+</script> -->
+ 
 
 
 <script>
@@ -39,11 +51,34 @@
     $('.dropdown-toggle').dropdown();
   });
 </script>
-
-
-
+<script>
+function blockUser(userId) {
+  fetch('/admin/users/block/' + userId, { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === 'User blocked successfully') {
+        // Update UI to reflect blocked state
+      } else {
+        // Handle error response
+      }
+    })
+    .catch(error => console.error(error));
+}
  
-
+function unblockUser(userId) {
+  fetch('/admin/users/unblock/' + userId, { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+      if (data.message === 'User unblocked successfully') {
+        // Update UI to reflect unblocked state
+      } else {
+        // Handle error response
+      }
+    })
+    .catch(error => console.error(error));
+}
+ 
+</script>
 
 
 <!-- <script>

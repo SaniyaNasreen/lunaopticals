@@ -1,6 +1,26 @@
 <%- include('../layouts/header.ejs') %>
 <div class="container-fluid">
-<div class="logoimage"><img src="/images (1).jpg" alt="">
+    <header>
+        <div class="header-1 pt-35">
+          <div class="container">
+            <div class="row align-items-center"> <!-- Added align-items-center for vertical alignment -->
+              <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1">
+                <div class="logo1 text-md-center text-lg-left">
+                  <a href="/indexhome">
+                    <div class="logo1" style="background-image: url('/images\ \(1\).jpg');"></div>
+                  </a> 
+                </div>
+              </div>
+    
+              <div class="col-xl-7 col-lg-7 col-md-3 order-md-1 offset-sm-2 offset-md-0 order-lg-2 col-sm-auto">
+                <nav>
+                   
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- header area ends -->
 <h1 class="head1-register">Sign-Up</h1>
 <h4 class="sub1-register">please fill in this form to create a new account</h4>
 <form action="/register" class="form-register" method="post">

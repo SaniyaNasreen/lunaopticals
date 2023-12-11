@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 const session = require("express-session");
+const nocache=require("nocache")
 const logger = require("morgan");
 const path = require("path");
 
@@ -20,11 +21,13 @@ app.use(
     saveUninitialized: true,
   })
 );
+app.use(nocache())
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 
 
+ 
 
 // Routes //
 

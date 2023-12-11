@@ -39,7 +39,24 @@ const transporter = nodemailer.createTransport({
            if(error){
                console.log(error);
            }else{
-               console.log("Email has been sent:-",info.response);
+            const modal = `
+            <div class="modal" tabindex="-1" id="myModal">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Email Sent</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Email has been sent: ${info.response}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
            }
        })
     } catch (error) {
@@ -49,8 +66,9 @@ const transporter = nodemailer.createTransport({
    
 const loadindex=async(req,res)=>{
     try {
-         
+       if(req.session.user_id){  
        return res.render('admin/indexhome') 
+       }
     } catch (error) {
       console.log(error.message);  
     }
@@ -131,7 +149,7 @@ const insertUser= async(req,res)=>{
 
         sendverifymail(req.body.name,req.body.email,userData._id)
         // res.redirect('/home')
-        res.render('users/login',{message:"Your regestration has been susseccfull,please verify your mail."})
+        res.render('admin/login',{message:"Your regestration has been susseccfull,please verify your mail."})
        }else{
         res.render('/registration',{message:"Your registration has been failed"})
        }
@@ -142,7 +160,7 @@ const insertUser= async(req,res)=>{
 
 const loadcustomer=async(req,res)=>{
     try {
-        const users = await User.find();
+        const users = await User.find({is_admin:0});
        
        return res.render('admin/customers',{ users: users }) 
     } catch (error) {
@@ -162,7 +180,7 @@ const loadcustomer=async(req,res)=>{
 
 const loadLogin=async(req,res)=>{
     try {
-        res.render('users/login')
+        res.render('admin/login')
     } catch (error) {
         console.log(error.message);
     }
@@ -189,78 +207,33 @@ const verifyLogin=async(req,res)=>{
 
             }
           }else{
-            res.render('users/login',{message:"Email or password is incorrect"})
+            res.render('admin/login',{message:"Email or password is incorrect"})
           }
         }else{
-            res.render('users/login',{message:"Email or password is incorrect"})
+            res.render('admin/login',{message:"Email or password is incorrect"})
         }
     } catch (error) {
         console.log(error.message);
     }
 }
-const loadDashboard=async(req,res)=>{
+ const loadlogged=async(req,res)=>{
     try {
-       const userData=await User.findById({_id:req.session.user_id})
-       res.render('dashboard',{admin:userData}) 
+        res.render('admin/logged')
     } catch (error) {
-        console.log(error.message);
+       console.log(error); 
     }
-}
-const logout=async(req,res)=>{
+ }
+ const logout = async (req, res) => {
     try {
-        req.session.destroy()
-        res.redirect('/admin')
+      req.session.destroy();
+      res.setHeader('Cache-Control', 'no-cache, no-store');
+      res.redirect('admin/logged')
     } catch (error) {
-        console.log(error.message);
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
     }
-}
-
-const admindashboard=async(req,res)=>{
-    try {
-        const usersData=await User.find({is_admin:0})
-        res.render('/dashboard',{users:usersData})
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-// add new user //
-const newuserLoad=async(req,res)=>{
-    try {
-        res.render('admin/newuser')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-const addUser = async (req, res) => {
-    try {
-        const { name, email, mobile, password, cpassword, country } = req.body;
-
-        const spassword = await securepassword(password);
-
-        const user = new User({
-            name: name,
-            email: email,
-            mobile: mobile,
-            password: spassword,
-            cpassword: spassword,
-            country: country,
-            is_admin: 0 // Assuming this is the only required field for user creation
-        });
-
-        const userData = await user.save();
-
-        if (userData) {
-            req.session.user_id = userData._id;
-            res.redirect('/admin/customers');
-        } else {
-            res.render('admin/newuser', { message: 'Something went wrong' });
-        }
-    } catch (error) {
-        console.log(error.message);
-    }
-}
+  };
+ 
 
 // Add product //
 
@@ -377,47 +350,13 @@ const addcategory = async (req, res) => {
 };
 
 
-// edit user functionality //
-const edituserLoad = async (req, res) => {
-    try {
-        const id = req.query.id;
-        const userData = await User.findById({ _id: id });
-
-        if (userData) {
-            res.render('admin/edit-user', { user: userData });
-        } else {
-            res.redirect('/admin/customers');
-        }
-    } catch (error) {
-        console.log(error.message);
-    }
-};
-
-const updateUsers = async (req, res) => {
-    try {
-        const { id, name, email, mobile } = req.body;
-        const updatedUserData = await User.findByIdAndUpdate(
-            { _id: id },
-            { $set: { name, email, mobile } }
-        );
-
-        if (updatedUserData) {
-            res.redirect('/admin/customers');
-        } else {
-            res.status(404).send('User not found');
-        }
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Error updating user details');
-    }
-};
-
+ 
 
 
 const editproductLoad = async (req, res) => {
     try {
-        const id = req.query.id;
-        const productData = await Product.findById({ _id: id });
+        const id = req.params.id;// Retrieve the 'id' query parameter
+        const productData = await Product.findById(id); // Use the 'id' directly
         if (productData) {
             res.render('admin/edit-product', { product: productData });
         } else {
@@ -430,7 +369,8 @@ const editproductLoad = async (req, res) => {
 };
 const updateproduct=async(req,res)=>{
     try {
-      const productData=  await Product.findByIdAndUpdate({_id:req.body.id},{ $set:{image:req.body.image,name:req.body.name,description:req.body.description,richDescription:req.body.richDescription,brand:req.body.brand,price:req.body.price,category:req.body.category,dateCreated:req.body.dateCreated}})
+        const productId = req.params.id;
+      const productData=  await Product.findByIdAndUpdate({_id: productId },{ $set:{image:req.body.image,name:req.body.name,description:req.body.description,richDescription:req.body.richDescription,brand:req.body.brand,price:req.body.price,category:req.body.category,dateCreated:req.body.dateCreated}})
       res.redirect('/admin/products')
     } catch (error) {
         console.log(error.message);
@@ -497,11 +437,11 @@ const deleteUser = async (req, res) => {
         }
 
         // Toggle the 'listed' field between true and false
-        user.listed = !user.listed;
+        user.is_blocked = !user.is_blocked;
         await user.save();
 
         // Success message or further operations after toggling the user status
-        console.log(`User ${user.listed ? 'listed' : 'unlisted'} successfully:`, user);
+        console.log(`User ${user.is_blocked ? 'unblocked' : 'blocked'} successfully:`, user);
         // Redirect to '/admin/customers' after successfully toggling the user status
         return res.redirect('/admin/customers');
     } catch (error) {
@@ -585,7 +525,7 @@ const searchcategory = async (req, res) => {
         const searchquery = req.query.search || ''; // Set a default value when searchquery is not provided
 
         const categoryData = await Category.find({
-            is_admin: 0,
+             
             $or: [
                 { name: { $regex: searchquery, $options: 'i' } },
                  
@@ -599,27 +539,28 @@ const searchcategory = async (req, res) => {
     }
 };
 
-const searchproduct = async (req, res) => {
-    try {
-        const searchquery = req.query.search || ''; // Set a default value when searchquery is not provided
+    const searchproduct = async (req, res) => {
+        try {
+            const searchquery = req.query.search || ''; // Set a default value when searchquery is not provided
 
-        const productData = await Product.find({
-            is_admin: 0,
-            $or: [
-                { name: { $regex: searchquery, $options: 'i' } },
-                { brand: { $regex: searchquery, $options: 'i' } },
-                { description: { $regex: searchquery, $options: 'i' } },
-                { category: { $regex: searchquery, $options: 'i' } },
-                 
-            ],
-        });
+            const productData = await Product.find({
+                
+                $or: [
+                
+                    { name: { $regex: searchquery, $options: 'i' } },
+                    { brand: { $regex: searchquery, $options: 'i' } },
+                    { description: { $regex: searchquery, $options: 'i' } },
+                    { category: { $regex: searchquery, $options: 'i' } },
+                    
+                ],
+            });
 
-        res.render('admin/products', { products: productData, searchquery }); // Pass searchquery to the template
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
-};
+            res.render('admin/products', { products: productData, searchquery }); // Pass searchquery to the template
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).send('Internal Server Error');
+        }
+    };
 
 module.exports={
     loadindex,
@@ -635,13 +576,11 @@ module.exports={
     newcategoryLoad,
     loadLogin,
     verifyLogin,
-    loadDashboard,
+   
     logout,
-    admindashboard,
-    newuserLoad,            
-    addUser,
-    edituserLoad,
-    updateUsers,
+    loadlogged,
+    
+     
     editproductLoad,
     updateproduct,
     editcategoryLoad,

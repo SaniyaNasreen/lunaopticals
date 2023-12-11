@@ -99,10 +99,10 @@ const transporter = nodemailer.createTransport({
 const loadindex = async (req, res) => {
   try {
     // Fetch only two categories from the database (assuming you have a condition or some logic to limit the categories)
-    const categories = await Category.find().limit(2); // Adjust the condition or logic to limit the categories
+    const categories = await Category.find({listed:true}).limit(2); // Adjust the condition or logic to limit the categories
 
     // Fetch other necessary data like products (assuming you need them)
-    const products = await Product.find() // Fetch products data as needed
+    const products = await Product.find({listed:true}) // Fetch products data as needed
 
     // Render the 'indexhome' view and pass 'categories' and 'products' to it
     res.render('users/indexhome', { categories, products });
@@ -115,7 +115,7 @@ const loadindex = async (req, res) => {
 
 const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find();
+    const categories = await Category.find({listed:true});
     res.status(200).json(categories); // Assuming you're sending JSON response
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -131,7 +131,7 @@ const getCategories = async (req, res) => {
 
 const loadsales = async (req, res) => {
   try {
-    const products = await Product.find(); // Fetch products data as needed
+    const products = await Product.find({listed:true}); // Fetch products data as needed
 
     res.render('users/shoplist', { products }); // Pass 'products' to the view
   } catch (error) {
@@ -254,14 +254,15 @@ const verifylogin= async(req,res)=>{
            const products = await Product.find() // Fetch products data as needed
          const userData= await User.findOne({email:email}) 
          if(userData){
-          
+          if (!userData.is_blocked) {
+          req.session.user_id = userData._id;
              const passwordmatch= await bcrypt.compare(password,userData.password)
              if(passwordmatch){
                 if(userData.is_admin===0){
-                  req.session.user_id = userData._id;
+                
                   res.render('users/indexhome', { categories, products });
                 }else{
-                    req.session.user_id=userData._id
+                    req.session.admin_id=userData._id
                     res.redirect("admin/indexhome")
     
                 } 
@@ -269,8 +270,9 @@ const verifylogin= async(req,res)=>{
                 res.render('users/login',{message:"Email or password incorrect"})
             }
          }else{
-          res.render('users/login',{message:"Email or password incorrect"})
+          res.render('users/login',{message:"Your account has been blocked due to some reasons"})
          }
+        }
         } catch (error) {
             console.log(error.message);
         }
@@ -310,14 +312,36 @@ const loaddetails = async (req, res) => {
   }
 };
 
-const userLogout=async(req,res)=>{
-    try {
-        req.session.destroy()
-        res.redirect('/')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
+const checkAuth = (req, res, next) => {
+  if (req.session && req.session.user) {
+    // If user session exists, proceed to next middleware/route handler
+    next();
+  } else {
+    // If user session doesn't exist, redirect to login
+    res.redirect('/login');
+  }
+};
+
+// Route for logout
+const userLogout = async (req, res) => {
+  try {
+    req.session.destroy();
+    res.redirect('/login');
+  } catch (error) {
+    console.log(error.message);
+    res.redirect('/');
+     // Redirect to home or handle error accordingly
+  }
+};
+
+// Route for rendering the index home or login based on user session
+// const renderIndexOrLogin = (req, res) => {
+//   if (req.session && req.session.user) {
+//     res.render('indexhome'); // Render indexhome if user is logged in
+//   } else {
+//     res.render('login'); // Render login if user is not logged in
+//   }
+// };
 
 // ================sending otp========================
 
@@ -409,35 +433,30 @@ const loginotp = async (req, res) => {
 
 const verifyotp = async (req, res) => {
   try {
-    console.log( req.session.enterotp);
-    if (req.session.enterotp) {
-      req.session.user_id = userData._id;
+    const { email, otp } = req.body; // Destructure email and OTP from request body
 
-      const user=await User.findOne({email})
-      const enteredOTP = req.body.otp; // Assuming OTP is sent via query params (e.g., /verifyotp?otp=123456)
-      console.log('Entered OTP:', enteredOTP);
+    console.log('Email received:', email); // Add this line for debugging
+    const user = await User.findOne({ email });
 
-      // Retrieve the previously generated OTP from the session
-      const generatedOTP = user.token; // Assuming the generated OTP is stored in req.session.enterotp
+    if (!user) {
+      console.log("No user found for email:", email); // Log the email to identify any mismatch
+      return res.render('users/login', { message: 'User not found' });
+    }
 
-      if (enteredOTP === generatedOTP) {
-        // OTPs match, proceed to home page
-        console.log('OTP Matched. Redirecting to home page.');
-        req.session.user = true; // Set a user session flag or any necessary session data
-        res.redirect('users/indexhome'); // Redirect to the home page or any other appropriate route
-      } else {
-        // OTPs don't match, render enterotp page with an error message
-        console.log('Rendering enterotp with error message');
-        res.render('users/enterotp', { message: 'The OTP is incorrect' });
-      }
+    const generatedOTP = user.token; // Fetch the OTP associated with the user from the database
+
+    if (otp === generatedOTP) {
+      req.session.user_id = user._id; // Set user_id in session upon successful OTP verification
+      req.session.user = true;  // Set other necessary session data
+      console.log('OTP Matched. Redirecting to home page.');
+      return res.redirect('users/indexhome'); // Redirect to the home page or appropriate route
     } else {
-      console.log('Session EnterOTP is false or undefined');
-      res.render('users/enterotp', { message: 'Session Expired or OTP not generated' });
-      // Or handle session expiration/error as needed
+      console.log('Rendering enterotp with error message');
+      return res.render('users/enterotp', { message: 'The OTP is incorrect' });
     }
   } catch (error) {
     console.log('Error:', error.message);
-    res.render('users/enterotp', { message: 'An error occurred. Please try again later.' });
+    return res.render('users/enterotp', { message: 'An error occurred. Please try again later.' });
     // Handle other errors gracefully
   }
 };
@@ -514,6 +533,30 @@ const resetpassword=async(req,res)=>{
         console.log(error.message);
     } 
 }
+
+const searchproduct = async (req, res) => {
+  try {
+      const searchquery = req.query.search || ''; // Set a default value when searchquery is not provided
+
+      const productData = await Product.find({
+          
+          $or: [
+            
+              { name: { $regex: searchquery, $options: 'i' } },
+              { brand: { $regex: searchquery, $options: 'i' } },
+              { description: { $regex: searchquery, $options: 'i' } },
+              { category: { $regex: searchquery, $options: 'i' } },
+               
+          ],
+      });
+
+      res.render('users/shoplist', { products: productData, searchquery }); // Pass searchquery to the template
+  } catch (error) {
+      console.log(error.message);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
 module.exports={
     loadindex,
     loadsales,
@@ -543,7 +586,8 @@ module.exports={
     forgetverify,
     forgetpasswordload,
     resetpassword,
-    getCategories
+    getCategories,
+    searchproduct
 }
 
 
