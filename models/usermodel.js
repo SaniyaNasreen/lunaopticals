@@ -78,7 +78,7 @@
 
     userSchema.set('toJSON',{
         virtuals:true
-    })
+    }) 
 
 
     // const User = mongoose.model('User', userSchema);

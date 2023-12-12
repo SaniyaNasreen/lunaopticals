@@ -1,45 +1,52 @@
-const User=require("../models/usermodel")
-const Product=require("../models/productmodel")
-const bcrypt=require('bcrypt')
-const nodemailer=require("nodemailer")
-const randomstring=require("randomstring")
-const { name } = require("ejs")
-const mongoose=require("mongoose")
+const User = require("../models/usermodel");
+const Product = require("../models/productmodel");
+const Admin=require("../models/adminmodel")
+const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
+const randomstring = require("randomstring");
+const { name } = require("ejs");
+const mongoose = require("mongoose");
 const Category = require("../models/categorymodel");
-const securepassword= async(password)=>{
-    try {
-       const saltRounds=10;
-       const passwordHash= await bcrypt.hash(password,saltRounds)
-       return passwordHash
-    } catch (error) {
-      console.log(error.message);   
-      
-    }
-   
-   }
 
-   const sendverifymail=async(name,email,user_id)=>{
-    try {
 
-const transporter = nodemailer.createTransport({
-   service:'gmail',
- auth: {
-   user:config.emailUser,     // Use environment variables
-   pass:config.emailpassword // Use environment variables
- }
-});
 
-       const mailOption={
-           from:"jafferkuwait0916@gmail.com",
-           to: email,
-           subject:'For varification mail',
-           html:'<p>Hy '+name+',please click here to <a href="http://localhost:4000/verify?id='+user_id+' ">Verify </a> your mail.</p> '
-       }
-       transporter.sendMail(mailOption,function(error,info){
-           if(error){
-               console.log(error);
-           }else{
-            const modal = `
+
+const securepassword = async (password) => {
+  try {
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+    return passwordHash;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const sendverifymail = async (name, email, user_id) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: config.emailUser, // Use environment variables
+        pass: config.emailpassword, // Use environment variables
+      },
+    });
+
+    const mailOption = {
+      from: "jafferkuwait0916@gmail.com",
+      to: email,
+      subject: "For varification mail",
+      html:
+        "<p>Hy " +
+        name +
+        ',please click here to <a href="http://localhost:4000/verify?id=' +
+        user_id +
+        ' ">Verify </a> your mail.</p> ',
+    };
+    transporter.sendMail(mailOption, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        const modal = `
             <div class="modal" tabindex="-1" id="myModal">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -57,116 +64,81 @@ const transporter = nodemailer.createTransport({
               </div>
             </div>
           `;
-           }
-       })
-    } catch (error) {
-      console.log(error.message); 
-    }
-}
-   
-const loadindex=async(req,res)=>{
-    try {
-       if(req.session.user_id){  
-       return res.render('admin/indexhome') 
-       }
-    } catch (error) {
-      console.log(error.message);  
-    }
-}
- 
-
-
-
-
-
-const loadproducts = async (req, res) => {
-    try {
-        const products = await Product.find(); // Fetch products from the database
-        return res.render('admin/products', { products }); // Pass products to the view
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).send('Error loading products'); // Handle error response
-    }
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 
-const loadcategory = async (req, res) => {
-    try {
-        // Fetch categories from the database
-        const categories = await Category.find();
-        res.render('admin/categories', { categories }); // Pass categories data to the view
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+const loadindex = async (req, res) => {
+  try {
+    if (req.session.user_id) {
+      return res.render("admin/indexhome");
     }
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 
-// Define the route handler for fetching categories
-const fetchCategories = async (req, res) => {
-    try {
-      // Fetch categories from your database or source
-      const categories = await Category.find({}); // Fetch all categories, adjust query as needed
-  
-      // Send the categories data as a JSON response
-      res.status(200).json(categories);
-    } catch (error) {
-      // Handle errors in case of failure
-      console.error('Error fetching categories:', error.message);
-      res.status(500).json({ error: 'Failed to fetch categories' });
+
+
+const loadregister = async (req, res) => {
+  try {
+    return res.render("admin/registration");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const insertAdmin = async (req, res) => {
+  try {
+    console.log(req.body);
+    if (req.body.password !== req.body.confirm_password) {
+      res.render("registration", {
+        message: "Password and Confirm Password do not match",
+      });
+      return;
     }
-  };
-  
 
-const loadregister=async(req,res)=>{
-    try {
-         
-       return res.render('users/registration') 
-    } catch (error) {
-      console.log(error.message);  
+    const spassword = await securepassword(req.body.password);
+    const admin = new Admin({
+      name: req.body.name,
+      email: req.body.email,
+      mobile: req.body.mobile,
+      password: spassword,
+      is_admin: 1,
+    });
+    const adminData = await admin.save();
+
+    if (adminData) {
+      req.session.admin_id = adminData._id;
+
+      sendverifymail(req.body.name, req.body.email, adminData._id);
+      // res.redirect('/home')
+      res.render("admin/login", {
+        message:
+          "Your regestration has been susseccfull,please verify your mail.",
+      });
+    } else {
+      res.render("/registration", {
+        message: "Your registration has been failed",
+      });
     }
-}
+  } catch (error) {
+    res.send(error.message);
+  }
+};
 
-const insertUser= async(req,res)=>{
-    try {
-        console.log(req.body)
-        if (req.body.password !== req.body.confirm_password) {
-            res.render('registration', {  message: "Password and Confirm Password do not match" });
-            return;
-          }
-          
-        const spassword=await securepassword(req.body.password)
-        const user= new User({
-            name:req.body.name,
-            email:req.body.email, 
-            mobile:req.body.mobile,
-            password:spassword,  
-            is_admin:0
-          
-        })
-       const userData= await user.save()
+const loadcustomer = async (req, res) => {
+  try {
+    const users = await User.find({ is_admin: 0 });
 
-       if(userData){
-        req.session.user_id = userData._id;
-
-        sendverifymail(req.body.name,req.body.email,userData._id)
-        // res.redirect('/home')
-        res.render('admin/login',{message:"Your regestration has been susseccfull,please verify your mail."})
-       }else{
-        res.render('/registration',{message:"Your registration has been failed"})
-       }
-    } catch (error) {
-     res.send(error.message)        
-    }
-}
-
-const loadcustomer=async(req,res)=>{
-    try {
-        const users = await User.find({is_admin:0});
-       
-       return res.render('admin/customers',{ users: users }) 
-    } catch (error) {
-      console.log(error.message);  
-    }
-}
+    return res.render("admin/customers", { users: users });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 // const loadproducts = async (req, res) => {
 //     try {
@@ -178,418 +150,126 @@ const loadcustomer=async(req,res)=>{
 //     }
 // };
 
-const loadLogin=async(req,res)=>{
-    try {
-        res.render('admin/login')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
+const loadLogin = async (req, res) => {
+  try {
+    res.render("admin/login");
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
-const verifyLogin=async(req,res)=>{
-    try {
-        const email=req.body.email
-        const password=req.body.password
+const verifyLogin = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
 
-        const userData = await User.findOne({email:email})
-        if(userData){
-          const passwordmatch=  await  bcrypt.compare(password,userData.password)
-          
-          if(passwordmatch){
-            if(userData.is_admin===0){
-                req.session.user_id = userData._id;
+    const adminData = await Admin.findOne({ email: email });
+    if (adminData) {
+      const passwordmatch = await bcrypt.compare(password, userData.password);
 
-                res.render('users/lndexhome')
-            }else{
-                req.session.admin_id=userData._id
-                res.redirect("/admin/indexhome")
-                
+      if (passwordmatch) {
+        if (adminData.is_admin === 1) {
+          req.session.user_id = userData._id;
 
-            }
-          }else{
-            res.render('admin/login',{message:"Email or password is incorrect"})
-          }
-        }else{
-            res.render('admin/login',{message:"Email or password is incorrect"})
+          res.render("admin/lndexhome");
+        } else {
+           
+          res.redirect("/admin/login");
         }
-    } catch (error) {
-        console.log(error.message);
-    }
-}
- const loadlogged=async(req,res)=>{
-    try {
-        res.render('admin/logged')
-    } catch (error) {
-       console.log(error); 
-    }
- }
- const logout = async (req, res) => {
-    try {
-      req.session.destroy();
-      res.setHeader('Cache-Control', 'no-cache, no-store');
-      res.redirect('admin/logged')
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
-    }
-  };
- 
-
-// Add product //
-
-
-
-const newproductLoad=async(req,res)=>{
-    try {
-        res.render('admin/addproduct')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-
-const addproduct=async(req,res)=>{
-    console.log(req.body)
-    try {
-        const name=req.body.name
-        const description=req.body.description
-        const richDescription=req.body.richDescription
-        const image=req.body.image
-        const images=req.body.images
-        const brand =req.body.brand
-        const price=req.body.price
-              const countInStock=req.body.countInStock
-        const rating=req.body.rating
-        const numReviews=req.body.numReviews
-        const dateCreated=req.body.dateCreated
-        const category = await Category.findOne({ name: req.body.category });
-if (!category) {
-    console.log('Category not found or undefined');
-}
-  
-         
-
-        
-
-        // const spassword=await securepassword(password)
-
-        const product= new Product({
-            name:name,
-             description:description,
-             richDescription:richDescription,
-             image:image,
-             images:images,
-             brand :brand,
-             price:price,
-             category: category,
-             countInStock: 30,
-              rating:rating,
-             numReviews:numReviews,
-              dateCreated:new Date(),
-            
-            is_admin:0
-        })
-
-        const productData=await product.save()
-
-        if(productData){
-
-            res.redirect('/admin/products?success=Product added successfully');
-        }else{
-            res.status(500).send('Failed to add product');
-        }
-    } catch (error) {
-       console.log(error.message); 
-       res.status(500).send('Internal Server Error');
-    }
-}
-
-
-
-
-
-const newcategoryLoad=async(req,res)=>{
-    try {
-        res.render('admin/addcategory')
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
-}
-
-
-const addcategory = async (req, res) => {
-    try {
-        const { name, icon } = req.body;
-
-        // Ensure 'name' is present in the request body before creating a new category
-        if (!name) {
-            return res.status(400).send('Name is required for creating a category');
-        }
-
-        // Create a new category with the required fields
-        const category = new Category({
-            name: name,
-            icon: icon,
-            // Other properties...
+      } else {
+        res.render("admin/login", {
+          message: "Email or password is incorrect",
         });
-
-        // Save the category to the database
-        const categoryData = await category.save();
-
-        if (categoryData) {
-            return res.redirect('/admin/categories?success=Category added successfully');
-            
-        } else {
-            return res.status(500).send('Failed to add category');
-        }
-    } catch (error) {
-        console.log(error.message);
-        return res.status(500).send('Internal Server Error');
+      }
+    } else {
+      res.render("admin/login", { message: "Email or password is incorrect" });
     }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+const loadlogged = async (req, res) => {
+  try {
+    res.render("admin/logged");
+  } catch (error) {
+    console.log(error);
+  }
+};
+const logout = async (req, res) => {
+  try {
+    req.session.destroy();
+    res.setHeader("Cache-Control", "no-cache, no-store");
+    res.redirect("admin/logged");
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 
- 
 
 
-const editproductLoad = async (req, res) => {
-    try {
-        const id = req.params.id;// Retrieve the 'id' query parameter
-        const productData = await Product.findById(id); // Use the 'id' directly
-        if (productData) {
-            res.render('admin/edit-product', { product: productData });
-        } else {
-            res.redirect('/admin/products');
-        }
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
-};
-const updateproduct=async(req,res)=>{
-    try {
-        const productId = req.params.id;
-      const productData=  await Product.findByIdAndUpdate({_id: productId },{ $set:{image:req.body.image,name:req.body.name,description:req.body.description,richDescription:req.body.richDescription,brand:req.body.brand,price:req.body.price,category:req.body.category,dateCreated:req.body.dateCreated}})
-      res.redirect('/admin/products')
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-
-const editcategoryLoad = async (req, res) => {
-    try {
-      const id = req.query.id;
-  
-      // Ensure the 'id' parameter is provided and it's a valid ObjectId
-      if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send('Invalid Category ID');
-      }
-  
-      const categoryData = await Category.findById(id);
-      if (categoryData) {
-        res.render('admin/edit-category', { category: categoryData });
-      } else {
-        res.redirect('/admin/categories');
-      }
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
-    }
-  };
-  const updatecategory = async (req, res) => {
-    try {
-      const categoryId = req.body.id; // Assuming the ID is sent in the request body
-  
-      // Ensure categoryId is provided and is a valid ObjectId
-      if (!categoryId || !mongoose.Types.ObjectId.isValid(categoryId)) {
-        return res.status(400).send('Invalid Category ID');
-      }
-  
-      // Retrieve category data by ID and update the fields
-      const updatedCategory = await Category.findByIdAndUpdate(
-        categoryId,
-        { name: req.body.name, icon: req.body.icon },
-        { new: true } // To get the updated document after the update
-      );
-  
-      if (updatedCategory) {
-        // If the category was updated successfully, redirect to the categories page
-        res.redirect('/admin/categories');
-      } else {
-        // If the category was not found, redirect back to the edit page or handle appropriately
-        res.redirect('/admin/edit-category?id=' + categoryId);
-      }
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
-    }
-  };
 //delete user //
 const deleteUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        const user = await User.findById(userId);
-         console.log(user);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Toggle the 'listed' field between true and false
-        user.is_blocked = !user.is_blocked;
-        await user.save();
-
-        // Success message or further operations after toggling the user status
-        console.log(`User ${user.is_blocked ? 'unblocked' : 'blocked'} successfully:`, user);
-        // Redirect to '/admin/customers' after successfully toggling the user status
-        return res.redirect('/admin/customers');
-    } catch (error) {
-        console.error('Error occurred while toggling the user status:', error.message);
-        return res.status(500).json({ message: 'Internal server error' });
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    // Toggle the 'listed' field between true and false
+    user.is_blocked = !user.is_blocked;
+    await user.save();
+
+    // Success message or further operations after toggling the user status
+    console.log(
+      `User ${user.is_blocked ? "unblocked" : "blocked"} successfully:`,
+      user
+    );
+    // Redirect to '/admin/customers' after successfully toggling the user status
+    return res.redirect("/admin/customers");
+  } catch (error) {
+    console.error(
+      "Error occurred while toggling the user status:",
+      error.message
+    );
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
-
-const unlist = async (req, res) => {
-    try {
-        const productId = req.params.id; // Retrieve product ID from the URL parameter
-        const product = await Product.findById(productId);
-    
-        if (!product) {
-          return res.status(404).json({ message: 'Product not found' });
-        }
-    
-        // Toggle the 'listed' field between true and false
-        product.listed = !product.listed;
-        await product.save();
-    
-        // Success message or further operations after toggling the product status
-        console.log(`Product ${product.listed ? 'listed' : 'unlisted'} successfully:`, product);
-        // Redirect to '/admin/products' after successfully toggling the product status
-        return res.redirect('/admin/products');
-      } catch (error) {
-        console.error('Error occurred while toggling the product status:', error.message);
-        return res.status(500).json({ message: 'Internal server error' });
-      }
-    };
-  
-
-const unlistCategory = async (req, res) => {
-    try {
-        const categoryId = req.params.id; // Retrieve product ID from the URL parameter
-        const category = await Category.findById(categoryId);
-
-
-        if (!category) {
-            return res.status(404).json({ message: 'Category not found' });
-          }
-
-
-          category.listed = !category.listed;
-          await category.save();
-         
-       // Success message or further operations after toggling the product status
-       console.log(`Category ${category.listed ? 'listed' : 'unlisted'} successfully:`, category);
-       // Redirect to '/admin/products' after successfully toggling the product status
-       return res.redirect('/admin/categories');
-    } catch (error) {
-        console.error('Error occurred while toggling the product status:', error.message);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-};
- 
-
- 
 const searchUser = async (req, res) => {
-    try {
-        const searchquery = req.query.search || ''; // Set a default value when searchquery is not provided
+  try {
+    const searchquery = req.query.search || ""; // Set a default value when searchquery is not provided
 
-        const userData = await User.find({
-            is_admin: 0,
-            $or: [
-                { name: { $regex: searchquery, $options: 'i' } },
-                { email: { $regex: searchquery, $options: 'i' } },
-            ],
-        });
+    const userData = await User.find({
+      is_admin: 0,
+      $or: [
+        { name: { $regex: searchquery, $options: "i" } },
+        { email: { $regex: searchquery, $options: "i" } },
+      ],
+    });
 
-        res.render('admin/customers', { users: userData, searchquery }); // Pass searchquery to the template
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
+    res.render("admin/customers", { users: userData, searchquery }); // Pass searchquery to the template
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send("Internal Server Error");
+  }
 };
 
-const searchcategory = async (req, res) => {
-    try {
-        const searchquery = req.query.search || ''; // Set a default value when searchquery is not provided
 
-        const categoryData = await Category.find({
-             
-            $or: [
-                { name: { $regex: searchquery, $options: 'i' } },
-                 
-            ],
-        });
 
-        res.render('admin/categories', { categories: categoryData, searchquery }); // Pass searchquery to the template
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
+module.exports = {
+  loadindex,
+  loadcustomer,
+  loadregister,
+  insertAdmin,
+  loadLogin,
+  verifyLogin,
+  logout,
+  loadlogged,
+  deleteUser,
+  searchUser,
+ 
 };
-
-    const searchproduct = async (req, res) => {
-        try {
-            const searchquery = req.query.search || ''; // Set a default value when searchquery is not provided
-
-            const productData = await Product.find({
-                
-                $or: [
-                
-                    { name: { $regex: searchquery, $options: 'i' } },
-                    { brand: { $regex: searchquery, $options: 'i' } },
-                    { description: { $regex: searchquery, $options: 'i' } },
-                    { category: { $regex: searchquery, $options: 'i' } },
-                    
-                ],
-            });
-
-            res.render('admin/products', { products: productData, searchquery }); // Pass searchquery to the template
-        } catch (error) {
-            console.log(error.message);
-            res.status(500).send('Internal Server Error');
-        }
-    };
-
-module.exports={
-    loadindex,
-    loadproducts,
-    loadcategory,
-    fetchCategories,
-    loadcustomer,
-    loadregister,
-    insertUser,
-    addproduct,
-    newproductLoad,
-    addcategory,
-    newcategoryLoad,
-    loadLogin,
-    verifyLogin,
-   
-    logout,
-    loadlogged,
-    
-     
-    editproductLoad,
-    updateproduct,
-    editcategoryLoad,
-    updatecategory,
-    deleteUser,
-    unlistCategory,
-   
-    searchUser,
-    searchcategory,
-    searchproduct,
-    unlist
-}

@@ -7,7 +7,7 @@ const User=require("../models/usermodel")
 const usercontroller= require("../controllers/usercontroller")
 const { token } = require("morgan")
 
-user_route.get('/indexhome',usercontroller.loadindex)
+user_route.get('/',usercontroller.loadindex)
 user_route.get("/shopdetails", usercontroller.loaddetails); 
 user_route.get('/shopdetails/:id', usercontroller.loaddetails);
 user_route.get('/categories', usercontroller.getCategories);
@@ -18,12 +18,10 @@ user_route.get('/women',usercontroller.loadwomen)
 user_route.get('/register',usercontroller.loadRegister)
 user_route.post('/register',usercontroller.insertUser)
 user_route.get('/verify',usercontroller.verifymail)
-user_route.get('/',auth.isLogout,usercontroller.loginLoad)
-user_route.get('/login',auth.isLogin,usercontroller.loginLoad)
+user_route.get('/login',usercontroller.loginLoad)
 user_route.post('/login',usercontroller.verifylogin)
-user_route.get('/home',auth.isLogin,usercontroller.loadHome)
-  
-user_route.get('/logout', auth.isLogout,usercontroller.userLogout); 
+ 
+user_route.post('/logout',auth.isLogin,auth.isLogout,usercontroller.userLogout); 
 user_route.get('/forgotPassword', usercontroller.sendEmailOtp);
 // user_route.post('/forgotPassword', usercontroller.emailOtp);
 user_route.post('/forgotPassword', usercontroller.loginotp);
@@ -52,6 +50,8 @@ user_route.get('/api/users', async (req, res) => {
     }
 });
 
+
+ 
 user_route.get("/search-product",  usercontroller.searchproduct);
 
 module.exports=user_route

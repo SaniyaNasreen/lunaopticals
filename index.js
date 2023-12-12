@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 const session = require("express-session");
-const nocache=require("nocache")
+
 const logger = require("morgan");
 const path = require("path");
 
@@ -20,19 +20,23 @@ app.use(
     resave: false,
     saveUninitialized: true,
   })
-);
-app.use(nocache())
+); 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static("public"));
 
+const noCache = (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '-1');
+  next();
+};
 
- 
+app.use(noCache);
 
 // Routes //
 
-const productsRouter= require('./routes/productroute');
-const categoryRouter=require('./routes/categoryroute')
+ 
 const userroute = require("./routes/userroute");
 const adminroute = require("./routes/adminroute");
 //  
@@ -43,8 +47,7 @@ const api=process.env.API_URL
 
 app.use("/", userroute);
 app.use("/admin", adminroute);
-app.use(`${api}/products`,productsRouter)
-app.use(`${api}/category`,categoryRouter)
+ 
 
 
 // Database //

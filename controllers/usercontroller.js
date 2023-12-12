@@ -98,6 +98,7 @@ const transporter = nodemailer.createTransport({
 
 const loadindex = async (req, res) => {
   try {
+    
     // Fetch only two categories from the database (assuming you have a condition or some logic to limit the categories)
     const categories = await Category.find({listed:true}).limit(2); // Adjust the condition or logic to limit the categories
 
@@ -105,7 +106,8 @@ const loadindex = async (req, res) => {
     const products = await Product.find({listed:true}) // Fetch products data as needed
 
     // Render the 'indexhome' view and pass 'categories' and 'products' to it
-    res.render('users/indexhome', { categories, products });
+    res.render('users/indexhome', { categories, products ,is_blocked:false});
+    
   } catch (error) {
     console.error(error.message);
     res.status(500).send('Error loading indexhome');
@@ -222,7 +224,7 @@ const insertUser= async(req,res)=>{
        const userData= await user.save()
 
        if(userData){
-        req.session.user_id = userData._id; 
+        
         sendverifymail(req.body.name,req.body.email,userData._id)
         // res.redirect('/home')
         res.render('users/login',{message:"Your regestration has been susseccfull,please verify your mail."})
@@ -259,7 +261,7 @@ const verifylogin= async(req,res)=>{
              const passwordmatch= await bcrypt.compare(password,userData.password)
              if(passwordmatch){
                 if(userData.is_admin===0){
-                
+                  
                   res.render('users/indexhome', { categories, products });
                 }else{
                     req.session.admin_id=userData._id
@@ -277,21 +279,7 @@ const verifylogin= async(req,res)=>{
             console.log(error.message);
         }
 }
-const loadHome=async(req,res)=>{
-    try {
-      const categories = await Category.find().limit(2); // Adjust the condition or logic to limit the categories
-
-      // Fetch other necessary data like products (assuming you need them)
-      const products = await Product.find() // Fetch products data as needed
-  
-      // Render the 'indexhome' view and pass 'categories' and 'products' to it
-      res.render('users/indexhome', { categories, products });
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send('Error loading indexhome');
-    }
-  };
-``
+ 
 const loaddetails = async (req, res) => {
   try {
       const productId = req.params.id; 
@@ -322,15 +310,14 @@ const checkAuth = (req, res, next) => {
   }
 };
 
-// Route for logout
 const userLogout = async (req, res) => {
   try {
-    req.session.destroy();
-    res.redirect('/login');
+    await req.session.destroy();
+    res.clearCookie('session_id');
+    res.redirect('/');
   } catch (error) {
     console.log(error.message);
-    res.redirect('/');
-     // Redirect to home or handle error accordingly
+    res.redirect('/login');
   }
 };
 
@@ -449,7 +436,7 @@ const verifyotp = async (req, res) => {
       req.session.user_id = user._id; // Set user_id in session upon successful OTP verification
       req.session.user = true;  // Set other necessary session data
       console.log('OTP Matched. Redirecting to home page.');
-      return res.redirect('users/indexhome'); // Redirect to the home page or appropriate route
+      return res.redirect('users/'); // Redirect to the home page or appropriate route
     } else {
       console.log('Rendering enterotp with error message');
       return res.render('users/enterotp', { message: 'The OTP is incorrect' });
@@ -565,22 +552,16 @@ module.exports={
     loadwomen,
     loadRegister,
     insertUser,
-    // sendOTP,
-    // mobileOtp,
-    // verifyOTP,
     verifymail,
-    // signupUser,
     loginLoad,
     loaddetails,
     verifylogin,
-    // sendOtp,
    enterOtpForm,
     verifyotp,
     loginotp,
     loginLoad,
     sendEmailOtp,
     emailOtp, 
-    loadHome,
     userLogout,
     forgetload,
     forgetverify,
