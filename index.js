@@ -23,7 +23,7 @@ app.use(
 ); 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(express.static("public"));
+app.use('/public',express.static("public"));
 
 const noCache = (req, res, next) => {
   res.setHeader('Cache-Control', 'no-cache, no-store');
@@ -34,6 +34,37 @@ const noCache = (req, res, next) => {
 
 app.use(noCache);
 
+
+// Regular middleware
+app.get('/', (req, res, next) => {
+  // Some processing that might throw an error
+  try {
+    // ...
+    throw new Error('Oops! Something went wrong.');
+  } catch (error) {
+    next(error); // Pass the error to the next middleware
+  }
+});
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+  res.status(500).json({ error: error.message }); // Respond with an error message
+});
+
+
+// Error handling middleware function
+const errorHandler = (err, req, res, next) => {
+  res.status(500).render("error", {
+    message: "Something went wrong!",
+    error: err.message // Display the error message to the user
+  });
+};
+
+
+// Apply the error handling middleware globally
+app.use(errorHandler);
+
+ 
 // Routes //
 
  

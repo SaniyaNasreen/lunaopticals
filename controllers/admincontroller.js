@@ -11,6 +11,8 @@ const Category = require("../models/categorymodel");
 
 
 
+
+
 const securepassword = async (password) => {
   try {
     const saltRounds = 10;
@@ -67,7 +69,7 @@ const sendverifymail = async (name, email, user_id) => {
       }
     });
   } catch (error) {
-    console.log(error.message);
+     next(error);
   }
 };
 
@@ -121,22 +123,26 @@ const insertAdmin = async (req, res) => {
           "Your regestration has been susseccfull,please verify your mail.",
       });
     } else {
-      res.render("/registration", {
-        message: "Your registration has been failed",
-      });
+      throw new Error("Your registration has failed");
     }
   } catch (error) {
-    res.send(error.message);
+    // Pass the caught error to the error handling middleware
+    next(error);
   }
 };
 
 const loadcustomer = async (req, res) => {
   try {
     const users = await User.find({ is_admin: 0 });
-
+    if (!users) {
+      // If no users are found, you might want to throw a specific error
+      const error = new Error('No customers found');
+      error.statusCode = 404; // Set a specific status code for this error
+      throw error;
+    }
     return res.render("admin/customers", { users: users });
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
@@ -171,21 +177,21 @@ const verifyLogin = async (req, res) => {
         if (adminData.is_admin === 1) {
           req.session.user_id = userData._id;
 
-          res.render("admin/lndexhome");
+          return res.render("admin/lndexhome");
         } else {
            
-          res.redirect("/admin/login");
+          return res.redirect("/admin/login");
         }
       } else {
-        res.render("admin/login", {
+       return res.render("admin/login", {
           message: "Email or password is incorrect",
         });
       }
     } else {
-      res.render("admin/login", { message: "Email or password is incorrect" });
+     return res.render("admin/login", { message: "Email or password is incorrect" });
     }
   } catch (error) {
-    console.log(error.message);
+   next(error);
   }
 };
 const loadlogged = async (req, res) => {
@@ -201,8 +207,7 @@ const logout = async (req, res) => {
     res.setHeader("Cache-Control", "no-cache, no-store");
     res.redirect("admin/logged");
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Internal Server Error");
+     next(error);
   }
 };
 
@@ -216,7 +221,9 @@ const deleteUser = async (req, res) => {
     const user = await User.findById(userId);
     console.log(user);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
     }
 
     // Toggle the 'listed' field between true and false
@@ -231,11 +238,7 @@ const deleteUser = async (req, res) => {
     // Redirect to '/admin/customers' after successfully toggling the user status
     return res.redirect("/admin/customers");
   } catch (error) {
-    console.error(
-      "Error occurred while toggling the user status:",
-      error.message
-    );
-    return res.status(500).json({ message: "Internal server error" });
+next(error);
   }
 };
 
@@ -253,8 +256,7 @@ const searchUser = async (req, res) => {
 
     res.render("admin/customers", { users: userData, searchquery }); // Pass searchquery to the template
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Internal Server Error");
+   next(error)
   }
 };
 

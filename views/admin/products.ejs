@@ -10,14 +10,14 @@
         >
           <div class="nk-sidebar-element nk-sidebar-head">
             <div class="nk-sidebar-brand">
-              <a href="/indexhome" class="logo-link nk-sidebar-logo"
+              <a href="/" class="logo-link nk-sidebar-logo"
                 ><img
-                  class="logo-light logo-img"
-                  src="../images/logo.png"
+                  class="logo1"
+                  src="/images (1).jpg"
                   srcset="/demo2/images/logo2x.png 2x"
                   alt="logo" /><img
-                  class="logo-dark logo-img"
-                  src="../images/logo-dark.png"
+                  class="logo1 " 
+                  src="/images (1).jpg"
                   srcset="/demo2/images/logo-dark2x.png 2x"
                   alt="logo-dark" /><img
                   class="logo-small logo-img logo-img-small"
@@ -45,7 +45,7 @@
               <div class="nk-sidebar-menu" data-simplebar>
                 <ul class="nk-menu">
                   <li class="nk-menu-item">
-                    <a href="indexhome" class="nk-menu-link"
+                    <a href="/admin/indexhome" class="nk-menu-link"
                       ><span class="nk-menu-icon"
                         ><em class="icon ni ni-dashboard-fill"></em></span
                       ><span class="nk-menu-text">Dashboard</span></a
@@ -136,14 +136,11 @@
                   ></a>
                 </div>
                 <div class="nk-header-brand d-xl-none">
-                  <a href="../index.html" class="logo-link"
+                  <a href="/" class="logo-link"
                     ><img
-                      class="logo-light logo-img"
-                      src="../images/logo.png"
-                      srcset="/demo2/images/logo2x.png 2x"
-                      alt="logo" /><img
+                      
                       class="logo-dark logo-img"
-                      src="../images/logo-dark.png"
+                      src="/images (1).jpg"
                       srcset="/demo2/images/logo-dark2x.png 2x"
                       alt="logo-dark"
                   /></a>
@@ -598,9 +595,7 @@
                             <ul class="nk-block-tools g-3">
                               <li>
                                 <div class="form-control-wrap">
-                                  <div class="form-icon form-icon-right">
-                                    <em class="icon ni ni-search"></em>
-                                  </div>
+                                  
                                    
                                   <form action="/admin/search-product" method="get">
                                      <input type="text" name="search" placeholder="Search ">
@@ -681,7 +676,10 @@
                           <span>Category</span>
                         </div>
                         <div class="nk-tb-col tb-col-md">
-                         &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; <span >Action</span>
+                       
+                        </div>
+                        <div class="nk-tb-col tb-col-md">
+                       
                         </div>
                         <!-- <div class="nk-tb-col tb-col-md">
                           <em class="tb-asterisk icon ni ni-star-round"></em>
@@ -703,8 +701,13 @@
                           <!-- Render product details -->
                           <div class="nk-tb-col tb-col-sm">
                             <span class="tb-product">
-                           
-                              <img src="/<%= product.image %>" alt="" class="thumb" />
+                              <% if (product.images && product.images.length > 0) { %>
+                                <!-- Display the first image from the images array -->
+                                <img src="<%= product.images[0] %>" alt="Image Description" class="thumb" />
+                              <% } else { %>
+                                <!-- Placeholder image or default image if no images are available -->
+                                <img src="/placeholder.jpg" alt="No Image" class="thumb" />
+                              <% } %>
                             </span>
                           </div>
                           <div class="nk-tb-col tb-col-sm">
@@ -730,8 +733,13 @@
                             <span class="tb-sub"><%= product.code %></span>
                           </div>
                           <div class="nk-tb-col tb-col-md">
-                            <span class="tb-sub"><%= product.category %></span>
+                            <% if (product.category) { %>
+                              <span class="tb-sub"><%= product.category.name %></span>
+                            <% } else { %>
+                              <span class="tb-sub">No category available</span>
+                            <% } %>
                           </div>
+                          
                           <div class="nk-tb-col tb-col-md">
                           <form action="/admin/products/unlist/<%= product._id %>" method="POST">
                             <button type="submit" class="btn <%= product.listed ? 'btn-danger' : 'btn-success' %>">
@@ -751,25 +759,6 @@
                           <div class="nk-tb-col nk-tb-col-tools">
                             <ul class="nk-tb-actions gx-1 my-n1">
                               <li class="me-n1">
-                                <!-- <div class="dropdown">
-                                  <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown">
-                                    <em class="icon ni ni-more-h"></em>
-                                  </a>
-                                  <div class="dropdown-menu dropdown-menu-end">
-                                    <ul class="link-list-opt no-bdr">
-                                      <li>
-                                        <a href="/admin/edit-product?id=<%= product._id %>">
-                                          <em class="icon ni ni-edit"></em>
-                                          <span>Edit Product</span>
-                                        </a>
-                                      </li>
-                                      <li>
-                                       
-                                    </li>
-                                      
-                                    </ul>
-                                  </div>
-                                </div> -->
                               </li>
                             </ul>
                           </div>

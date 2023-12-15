@@ -888,13 +888,19 @@ hr {
 .form-register {
     padding-left: 570px;
   }
-.container-fluid {
+/* .container-fluid {
   height: 739px;
   background-color: rgb(15, 15, 15);
+} */
+
+
+ /* CSS Stylesheet */
+.existing-image {
+  /* Your styles here */
+  width: 50px; /* Example width */
+  height: auto; /* Maintain aspect ratio */
+  /* Additional styles */
 }
-
-
- 
  
  
  
@@ -1591,13 +1597,16 @@ hr {
   overflow: hidden;
 }
 
-.arrival-img img {
-  transition: 0.3s;
-  -webkit-transition: 0.3s;
-  -moz-transition: 0.3s;
-  -ms-transition: 0.3s;
-  -o-transition: 0.3s;
-}
+  .arrival-img img {
+    transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -moz-transition: 0.3s;
+    -ms-transition: 0.3s;
+    -o-transition: 0.3s;
+      height: 350px;
+       width: 300px;
+       margin-top: 100px;
+  }
 
 .arrival-img:hover img {
   transform: scale(1.1);

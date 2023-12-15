@@ -728,39 +728,82 @@
                           <div class="dropdown-menu dropdown-menu-end">
                             <ul class="link-list-opt no-bdr"> -->
                             
-                        
-                        
-                        <div class="nk-tb-col nk-tb-col-tools">
-                          <ul class="nk-tb-actions gx-1 my-n1">
-                            <li class="me-n1">
-                              <div class="nk-tb-col tb-col-md">
-                                <form action="/admin/customers/delete-user/<%= user._id %>" method="POST">
-                                  <button type="submit" class="btn <%= user.is_blocked ? 'btn-danger' : 'btn-success' %>">
-                                    <%= user.is_blocked ? 'Unblock' : 'Block' %>
-                                  </button>
-                                </form>
-                                </div>
-                                
-                                    <!-- <li>
-                                      <a href="#" onclick="unlistUser('<%= user._id %>')">
-                                          <em class="icon ni ni-toggle-off"></em>
-                                          <span>Unlist Product</span>
-                                      </a>
-                                  </li> -->
-                                    <!-- Other options -->
-                                  <!-- </ul>
-                                </div>
-                              </div> -->
-                            </li>
-                          </ul>
+                              <div class="nk-tb-col nk-tb-col-tools">
+                                <ul class="nk-tb-actions gx-1 my-n1">
+                                  <li class="me-n1">
+                                    <div class="nk-tb-col tb-col-md">
+                                      <form id="userForm_<%= user._id %>" action="/admin/customers/delete-user/<%= user._id %>" method="POST">
+                                        <button type="button" class="btn <%= user.is_blocked ? 'btn-danger' : 'btn-success' %>"
+                                                data-user-id="<%= user._id %>" data-is-blocked="<%= user.is_blocked %>"
+                                                onclick="openConfirmationModal('<%= user._id %>')">
+                                          <%= user.is_blocked ? 'Unblock' : 'Block' %>
+                                        </button>
+                                      </form>
+                                    </div>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          <% }) %>
+                          
+
+
+                          <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to <span id="actionText"></span> this user?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+                          </div>
                         </div>
-                      
-                
-                        <!-- Render other product details similarly -->
                       </div>
-                    <% }) %>
- 
- 
+                    </div>
+
+
+                    <script>
+                      function openConfirmationModal(userId) {
+                        const modal = document.getElementById('confirmationModal');
+                        const actionText = modal.querySelector('#actionText');
+                        const confirmActionBtn = modal.querySelector('#confirmActionBtn');
+                    
+                        // Modify modal content based on the clicked user action
+                        const user = getUserById(userId); // A function to retrieve user information (name, status, etc.)
+                        actionText.textContent = user.is_blocked ? 'unblock' : 'block';
+                    
+                        // Show the modal
+                        const bootstrapModal = new bootstrap.Modal(modal);
+                        bootstrapModal.show();
+                    
+                        // Handle confirm action button click
+                        confirmActionBtn.onclick = function () {
+                          // Submit the corresponding form
+                          const form = document.getElementById(`userForm_${userId}`);
+                          form.submit();
+                    
+                          // Hide the modal after the action is confirmed
+                          bootstrapModal.hide();
+                        };
+                      }
+                    
+                      // This is a sample function; replace it with your function to get user details
+                      function getUserById(userId) {
+                        // This function should return user details based on the provided userId
+                        // Replace this with your logic to fetch user details
+                        // For example:
+                        return {
+                          _id: userId,
+                          is_blocked: true, // Replace this with the actual user status
+                          // Other user details...
+                        };
+                      }
+                    </script>
                      
         
 

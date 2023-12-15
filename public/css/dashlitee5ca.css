@@ -4651,6 +4651,7 @@ fieldset:disabled .dual-listbox .dual-listbox__button {
   margin-right: calc(-0.5 * var(--bs-card-cap-padding-x));
   margin-left: calc(-0.5 * var(--bs-card-cap-padding-x));
 }
+ 
 .card-img-overlay {
   position: absolute;
   top: 0;
@@ -4664,6 +4665,8 @@ fieldset:disabled .dual-listbox .dual-listbox__button {
 .card-img-bottom,
 .card-img-top {
   width: 100%;
+   
+  
 }
 .card-img,
 .card-img-top {
@@ -43910,7 +43913,11 @@ font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-
+/* Target the SVG within the alert */
+.alert-danger svg {
+  width: 1em; /* Adjust the width as needed */
+  height: 1em; /* Maintain aspect ratio */
+}
 /* .body{
  background-color: black;
  padding-top: 10px;

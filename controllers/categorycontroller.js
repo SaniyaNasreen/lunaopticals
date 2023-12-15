@@ -1,5 +1,6 @@
 const User = require("../models/usermodel");
 const Product = require("../models/productmodel");
+const Admin=require("../models/adminmodel")
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
@@ -11,14 +12,13 @@ const Category = require("../models/categorymodel");
 
 
 
-const loadcategory = async (req, res) => {
+const loadcategory = async (req, res,next) => {
     try {
       // Fetch categories from the database
       const categories = await Category.find();
       res.render("admin/categories", { categories }); // Pass categories data to the view
     } catch (error) {
-      console.log(error.message);
-      res.status(500).send("Internal Server Error");
+    next(error);
     }
   };
 
@@ -27,7 +27,7 @@ const loadcategory = async (req, res) => {
 
   
 // Define the route handler for fetching categories
-const fetchCategories = async (req, res) => {
+const fetchCategories = async (req, res,next) => {
     try {
       // Fetch categories from your database or source
       const categories = await Category.find({}); // Fetch all categories, adjust query as needed
@@ -35,52 +35,57 @@ const fetchCategories = async (req, res) => {
       // Send the categories data as a JSON response
       res.status(200).json(categories);
     } catch (error) {
-      // Handle errors in case of failure
-      console.error("Error fetching categories:", error.message);
-      res.status(500).json({ error: "Failed to fetch categories" });
+     next(error);
     }
   };
   
 
 
-  const newcategoryLoad = async (req, res) => {
+  const newcategoryLoad = async (req, res,next) => {
     try {
       res.render("admin/addcategory");
     } catch (error) {
-      console.log(error.message);
-      res.status(500).send("Internal Server Error");
+     next(error);
     }
   };
   
-  const addcategory = async (req, res) => {
+  const addcategory = async (req, res,next) => {
     try {
-      const { name, icon } = req.body;
-  
+      const { name  } = req.body;
+     
       // Ensure 'name' is present in the request body before creating a new category
       if (!name) {
-        return res.status(400).send("Name is required for creating a category");
+        const error = new Error("Name is required for creating a category");
+        error.statusCode = 400;
+        throw error;
       }
   
+
+       // Check if the category with the same name already exists
+    const existingCategory = await Category.findOne({ name });
+    if (existingCategory) {
+      res.render('admin/addcategory', { errorMessage: "Category with this name already exists" });
+      return;
+    }
       // Create a new category with the required fields
       const category = new Category({
         name: name,
-        icon: icon,
+        image: `http://localhost:4000/${req.file.path}`,
         // Other properties...
       });
   
       // Save the category to the database
       const categoryData = await category.save();
-  
       if (categoryData) {
-        return res.redirect(
-          "/admin/categories?success=Category added successfully"
-        );
+        return res.redirect("/admin/categories?success=Category added successfully");
       } else {
-        return res.status(500).send("Failed to add category");
+        const error = new Error("Failed to add category");
+        error.statusCode = 500;
+        throw error;
       }
-    } catch (error) {
-      console.log(error.message);
-      return res.status(500).send("Internal Server Error");
+    }  catch (error) {
+      // Handle other errors
+      next(error);
     }
   };
 
@@ -94,7 +99,9 @@ const fetchCategories = async (req, res) => {
   
       // Ensure the 'id' parameter is provided and it's a valid ObjectId
       if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send("Invalid Category ID");
+        const error=new Error("Invalid Category ID");
+        error.statusCode=400;
+        throw error;
       }
   
       const categoryData = await Category.findById(id);
@@ -104,8 +111,7 @@ const fetchCategories = async (req, res) => {
         res.redirect("/admin/categories");
       }
     } catch (error) {
-      console.log(error.message);
-      res.status(500).send("Internal Server Error");
+     next(error); 
     }
   };
   const updatecategory = async (req, res) => {
@@ -114,13 +120,15 @@ const fetchCategories = async (req, res) => {
   
       // Ensure categoryId is provided and is a valid ObjectId
       if (!categoryId || !mongoose.Types.ObjectId.isValid(categoryId)) {
-        return res.status(400).send("Invalid Category ID");
+        const error=new Error("Invalid Category ID");
+        error.statusCode=400;
+        throw error;
       }
   
       // Retrieve category data by ID and update the fields
       const updatedCategory = await Category.findByIdAndUpdate(
         categoryId,
-        { name: req.body.name, icon: req.body.icon },
+        { name: req.body.name, image: `http://localhost:4000/${req.file.path}` },
         { new: true } // To get the updated document after the update
       );
   
@@ -132,8 +140,7 @@ const fetchCategories = async (req, res) => {
         res.redirect("/admin/edit-category?id=" + categoryId);
       }
     } catch (error) {
-      console.log(error.message);
-      res.status(500).send("Internal Server Error");
+next(error);
     }
   };
 
@@ -149,7 +156,9 @@ const unlistCategory = async (req, res) => {
       const category = await Category.findById(categoryId);
   
       if (!category) {
-        return res.status(404).json({ message: "Category not found" });
+        const error=new Error("Category not found");
+        error.statusCode=400;
+        throw error;
       }
   
       category.listed = !category.listed;
@@ -163,11 +172,7 @@ const unlistCategory = async (req, res) => {
       // Redirect to '/admin/products' after successfully toggling the product status
       return res.redirect("/admin/categories");
     } catch (error) {
-      console.error(
-        "Error occurred while toggling the product status:",
-        error.message
-      );
-      return res.status(500).json({ message: "Internal server error" });
+     next(error);
     }
   };
   
@@ -185,8 +190,7 @@ const unlistCategory = async (req, res) => {
   
       res.render("admin/categories", { categories: categoryData, searchquery }); // Pass searchquery to the template
     } catch (error) {
-      console.log(error.message);
-      res.status(500).send("Internal Server Error");
+     next(error);
     }
   };
 

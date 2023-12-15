@@ -25,8 +25,17 @@
 <div class="box-editp">
 <h1 class="head1-editp">EditProduct</h1>
 
-<form action="/admin/products/editProduct/<%= product._id %>" class="form1-editp" method="POST">
-    <input type="file" class="form-control2-editp" name="image" required >
+<form action="/admin/products/editProduct/<%= product._id %>" class="form1-editp" method="POST"  enctype="multipart/form-data">
+ <!-- Display existing images with an option to delete -->
+ <% product.images.forEach((image, index) => { %>
+  <div class="existing-image">
+    <img src="<%= image %>" alt="Product Image">
+    <label for="deleteImage<%= index %>">Delete Image</label>
+    <input type="checkbox" id="deleteImage<%= index %>" name="deleteImages" value="<%= index %>">
+  </div>
+<% }); %>
+    <input type="file" class="form-control2-editp" name="images" multiple>
+    
     <input type="text" class="form-control1-editp" name="name"  placeholder="Enter name" value="<%= product.name %>" required>
     <br><br>
     <input type="text" class="form-control1-editp" name="description"  placeholder="Enter description" value="<%= product.description %>" required>
@@ -37,7 +46,10 @@
     <br><br>
     <input type="text" class="form-control1-editp" name="category"  placeholder="Enter Category" value="<%= product.category %>" required>
     <br><br>
-     <input type="hidden" name="id" value="<%= product._id %>" >
+    <input type="hidden" name="id" value="<%= product._id %>" >
+    <input type="hidden" name="_method" value="PUT"> <!-- Use PUT method for update -->
+    <input type="hidden" name="_delete" value="true"> <!-- Add a hidden field to indicate image deletion -->
+  
     <input type="submit" class="form-control4-editp" value="Update product" >
 
 </form>

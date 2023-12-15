@@ -7,6 +7,7 @@ const config= require("../config/config")
 const nodemailer=require("nodemailer")
 const randomstring=require("randomstring")
 const { name } = require("ejs")
+const crypto=require("crypto")
 
 
 
@@ -30,7 +31,7 @@ const securepassword= async(password)=>{
 
 const sendverifymail=async(name,email,user_id)=>{
      try {
-        
+      const token = crypto.randomBytes(20).toString('hex');
 const transporter = nodemailer.createTransport({
     service:'gmail',
   auth: {
@@ -44,17 +45,17 @@ const transporter = nodemailer.createTransport({
             from:"saniyanasreen262@gmail.com",
             to: email,
             subject:'For varification mail',
-            html:'<p>Hy '+name+',please click here to <a href="http://localhost:4000/verify?id='+user_id+' ">Verify </a> your mail.</p> '
+            html:'<p>Please click here to <a href="http://localhost:4000/verify?token=' + token + '">Verify</a> your email.</p>'
         }
         transporter.sendMail(mailOption,function(error,info){
             if(error){
-                console.log(error);
+               next(error);
             }else{
                 console.log("Email has been sent:-",info.response);
             }
         })
      } catch (error) {
-       console.log(error.message); 
+      next(error)
      }
 }
 
@@ -81,13 +82,13 @@ const transporter = nodemailer.createTransport({
        }
        transporter.sendMail(mailOption,function(error,info){
            if(error){
-               console.log(error);
+              next(error);
            }else{
                console.log("Email has been sent:-",info.response);
            }
        })
     } catch (error) {
-      console.log(error.message); 
+      next(error);
     }
 }
 
@@ -109,8 +110,7 @@ const loadindex = async (req, res) => {
     res.render('users/indexhome', { categories, products ,is_blocked:false});
     
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send('Error loading indexhome');
+   next(error);
   }
 };
 
@@ -120,8 +120,7 @@ const getCategories = async (req, res) => {
     const categories = await Category.find({listed:true});
     res.status(200).json(categories); // Assuming you're sending JSON response
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    res.status(500).json({ error: 'Error fetching categories' });
+   next(error);
   }
 };
 
@@ -137,8 +136,7 @@ const loadsales = async (req, res) => {
 
     res.render('users/shoplist', { products }); // Pass 'products' to the view
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send('Error loading shoplist');
+ next(error);
   }
 }
  
@@ -154,8 +152,7 @@ const loadunisex = async (req, res) => {
 
     res.render('users/unisex', { products }); // Pass 'products' to the view
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send('Error loading unisex category');
+   next(error);
   }
 }
 
@@ -169,8 +166,7 @@ const loadmen = async (req, res) => {
 
     res.render('users/men', { products }); // Pass 'products' to the view
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send('Error loading mens category');
+  next(error);
   }
 }
 
@@ -183,8 +179,7 @@ const loadwomen = async (req, res) => {
 
     res.render('users/women', { products }); // Pass 'products' to the view
   } catch (error) {
-    console.log(error.message);
-    res.status(500).send('Error loading womens category');
+   next(error);
   }
 }
 
@@ -197,7 +192,7 @@ const loadRegister= async(req,res)=>{
       return  res.render('users/registration');
 
     } catch (error) {
-        console.log(error.message); 
+     next(error);
     }
 }
 
@@ -232,7 +227,7 @@ const insertUser= async(req,res)=>{
         res.render('/registration',{message:"Your registration has been failed"})
        }
     } catch (error) {
-     res.send(error.message)        
+     next(error);   
     }
 }
 
@@ -242,7 +237,7 @@ const loginLoad= async(req,res)=>{
    try {
     res.render('users/login')
    } catch (error) {
-    console.log(error.message);
+    next(error);
    }
 }
 
@@ -276,7 +271,7 @@ const verifylogin= async(req,res)=>{
          }
         }
         } catch (error) {
-            console.log(error.message);
+           next(error);
         }
 }
  
@@ -289,14 +284,15 @@ const loaddetails = async (req, res) => {
 
       if (!product) {
           // Handle case where product with the given ID is not found
-          return res.status(404).send('Product not found');
+          const error=("Product not found");
+          error.statusCode=404;
+          throw error
       }
 
       // Render the 'users/shopdetails' view and pass the product data to it
       return res.render('users/shopdetails', { product });
   } catch (error) {
-      console.error(error.message);
-      return res.status(500).send('Error loading details');
+      next(error);
   }
 };
 
@@ -316,8 +312,7 @@ const userLogout = async (req, res) => {
     res.clearCookie('session_id');
     res.redirect('/');
   } catch (error) {
-    console.log(error.message);
-    res.redirect('/login');
+    next(error);
   }
 };
 
@@ -336,7 +331,8 @@ const sendEmailOtp = async (req, res) => {
   try {
     res.render('users/emailOTP', { message: '' });
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
+   next(error);
   }
 };
 
@@ -345,7 +341,8 @@ const enterOtpForm = async (req, res) => {
   try {
     res.render('users/enterotp', { message: '' });
   } catch (error) {
-    console.log(error.message);
+    console.log(error)
+    next(error);
   }
 };
 //   // =====================email logic=============================
@@ -413,8 +410,9 @@ const loginotp = async (req, res) => {
       res.render('users/emailOTP', { message: "User email is incorrect" });
     }
   } catch (error) {
-    console.log(error.message);
-    res.render('users/emailOTP', { message: "An error occurred. Please try again later." });
+    console.error(error.message);
+    // Pass the caught error to the next middleware (error handling middleware)
+    next(error);
   }
 };
 
@@ -442,8 +440,9 @@ const verifyotp = async (req, res) => {
       return res.render('users/enterotp', { message: 'The OTP is incorrect' });
     }
   } catch (error) {
-    console.log('Error:', error.message);
-    return res.render('users/enterotp', { message: 'An error occurred. Please try again later.' });
+    console.error('Error:', error.message);
+    // Pass the caught error to the next middleware (error handling middleware)
+    next(error);
     // Handle other errors gracefully
   }
 };
@@ -453,7 +452,8 @@ const forgetload=async(req,res)=>{
     try {
         res.render('users/forget');
     } catch (error) {
-        console.log(error.message);
+      console.error('Error rendering forget password form:', error);
+        next(error);
     }
     }
 
@@ -478,7 +478,7 @@ const forgetverify=async(req,res)=>{
             res.render('users/forget',{message:"User email is incorrect"})
         }
     } catch (error) {
-       console.log(error.message); 
+      next(error);
     }
 }
 
@@ -489,7 +489,8 @@ const verifymail=async(req,res)=>{
       console.log(updateinfo);
       res.render('users/emailvarified')
     } catch (error) {
-        console.log(error.message);
+      console.log(error);
+       next(error);
     }
 }
 
@@ -505,6 +506,7 @@ const forgetpasswordload=async(req,res)=>{
      }
       } catch (error) {
         console.log(error.message);
+        next(error);
     }
 }
 const resetpassword=async(req,res)=>{
@@ -518,6 +520,7 @@ const resetpassword=async(req,res)=>{
     res.redirect('/')
     } catch (error) {
         console.log(error.message);
+        next(error);
     } 
 }
 
@@ -539,8 +542,7 @@ const searchproduct = async (req, res) => {
 
       res.render('users/shoplist', { products: productData, searchquery }); // Pass searchquery to the template
   } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
+    next(error);
   }
 };
 

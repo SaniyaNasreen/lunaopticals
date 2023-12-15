@@ -198,14 +198,7 @@
     border-color: chocolate;
     border-style: ridge;
 }
-.container-fluid{
-    
-    height: 739px;
-    /* margin-left: 400px; */
-    background-color:rgb(15, 15, 15)
-   
-  
-}
+ 
 .form-register{
     padding-left: 570px;
 }  

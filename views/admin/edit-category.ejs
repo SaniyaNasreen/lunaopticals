@@ -5,9 +5,9 @@
 <div class="box-editc">
 <h1 class="head1-editc">EditCategory</h1>
 
-<form action="/admin/edit-category" class="form1-editc" method="POST">
+<form action="/admin/edit-category" class="form1-editc" method="POST"  enctype="multipart/form-data">
 
-    <input type="file" class="form-control2-editc" name="icon" value="<%= category.icon %>" required>
+    <input type="file" class="form-control2-editc" name="image" value="<%= category.image %>" required>
     <br><br>
     <input type="text" class="form-control1-editc" name="name" value="<%= category.name %>" required>
     <br><br>
