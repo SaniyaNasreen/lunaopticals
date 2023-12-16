@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
     cb(null, 'public/uploads');
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.split('.').pop());
+    cb(null, file.originalname.split(".").shift() + '-' + Date.now() + '.' + file.originalname.split('.').pop());
   }
 });
 
@@ -45,7 +45,7 @@ const upload = multer({
   },
 });
  
-app.use(upload.array('images', 5)); 
+//app.use(upload.array('images', 5)); 
  
 
        
@@ -59,22 +59,22 @@ app.use(upload.array('images', 5));
         admin_route.get("/products", productcontroller.loadproducts);
         admin_route.get("/categories",categorycontroller.loadcategory);
         admin_route.get("/categories",categorycontroller.fetchCategories);
-        admin_route.get('/login',auth.isLogin,admincontroller.loadLogin);
+        admin_route.get('/login',admincontroller.loadLogin);
         admin_route.get("/customers", admincontroller.loadcustomer);
         admin_route.get("/registration", admincontroller.loadregister);
         admin_route.post("/registration", admincontroller.insertAdmin);
         admin_route.get('/',admincontroller.loadLogin);
         admin_route.post("/", admincontroller.verifyLogin);
-        admin_route.get("/logout", auth.isLogout, admincontroller.logout);
+        admin_route.get("/logout", admincontroller.logout);
         admin_route.get("/logged", auth.isLogin, admincontroller.loadlogged);
         admin_route.get("/addproduct", productcontroller.newproductLoad);
-        admin_route.post("/addproduct", upload.array('images',5), productcontroller.addproduct);
+        admin_route.post("/addproduct", upload.array('images'), productcontroller.addproduct);
         admin_route.get("/addcategory", categorycontroller.newcategoryLoad);
-        admin_route.post("/addcategory",upload.array('images',5), categorycontroller.addcategory);
+        admin_route.post("/addcategory",upload.single('image'), categorycontroller.addcategory);
         admin_route.get("/products/editProduct/:id",  productcontroller.editproductLoad);
         admin_route.post("/products/editProduct/:id",upload.array('images',5),productcontroller.updateproduct);
         admin_route.get("/edit-category",  categorycontroller.editcategoryLoad);
-        admin_route.post("/edit-category",upload.array('images',5), categorycontroller.updatecategory);
+        admin_route.post("/edit-category",upload.single('image'), categorycontroller.updatecategory);
        
         admin_route.post("/customers/delete-user/:id", admincontroller.deleteUser);
         admin_route.post("/categories/unlistCategory/:id", categorycontroller.unlistCategory);

@@ -1,17 +1,12 @@
 const User = require("../models/usermodel");
 const Product = require("../models/productmodel");
-const Admin=require("../models/adminmodel")
+const Admin = require("../models/adminmodel");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const { name } = require("ejs");
 const mongoose = require("mongoose");
 const Category = require("../models/categorymodel");
-
-
-
-
-
 
 const securepassword = async (password) => {
   try {
@@ -69,21 +64,19 @@ const sendverifymail = async (name, email, user_id) => {
       }
     });
   } catch (error) {
-     next(error);
+    next(error);
   }
 };
 
 const loadindex = async (req, res) => {
   try {
-    if (req.session.user_id) {
+    if (req?.session?.admin_id) {
       return res.render("admin/indexhome");
-    }
+    }else res.redirect("/admin/login")
   } catch (error) {
     console.log(error.message);
   }
 };
-
-
 
 const loadregister = async (req, res) => {
   try {
@@ -136,7 +129,7 @@ const loadcustomer = async (req, res) => {
     const users = await User.find({ is_admin: 0 });
     if (!users) {
       // If no users are found, you might want to throw a specific error
-      const error = new Error('No customers found');
+      const error = new Error("No customers found");
       error.statusCode = 404; // Set a specific status code for this error
       throw error;
     }
@@ -158,7 +151,11 @@ const loadcustomer = async (req, res) => {
 
 const loadLogin = async (req, res) => {
   try {
-    res.render("admin/login");
+    if (!req?.session?.admin_id) {
+      res.render("admin/login");
+    } else {
+      res.redirect("/admin/indexhome");
+    }
   } catch (error) {
     console.log(error.message);
   }
@@ -175,23 +172,24 @@ const verifyLogin = async (req, res) => {
 
       if (passwordmatch) {
         if (adminData.is_admin === 1) {
-          req.session.user_id = userData._id;
+          req.session.admin_id = adminData._id;
 
           return res.render("admin/lndexhome");
         } else {
-           
           return res.redirect("/admin/login");
         }
       } else {
-       return res.render("admin/login", {
+        return res.render("admin/login", {
           message: "Email or password is incorrect",
         });
       }
     } else {
-     return res.render("admin/login", { message: "Email or password is incorrect" });
+      return res.render("admin/login", {
+        message: "Email or password is incorrect",
+      });
     }
   } catch (error) {
-   next(error);
+    next(error);
   }
 };
 const loadlogged = async (req, res) => {
@@ -205,14 +203,11 @@ const logout = async (req, res) => {
   try {
     req.session.destroy();
     res.setHeader("Cache-Control", "no-cache, no-store");
-    res.redirect("admin/logged");
+    res.redirect("/admin/login");
   } catch (error) {
-     next(error);
+    next(error);
   }
 };
-
-
-
 
 //delete user //
 const deleteUser = async (req, res) => {
@@ -238,7 +233,7 @@ const deleteUser = async (req, res) => {
     // Redirect to '/admin/customers' after successfully toggling the user status
     return res.redirect("/admin/customers");
   } catch (error) {
-next(error);
+    next(error);
   }
 };
 
@@ -256,11 +251,9 @@ const searchUser = async (req, res) => {
 
     res.render("admin/customers", { users: userData, searchquery }); // Pass searchquery to the template
   } catch (error) {
-   next(error)
+    next(error);
   }
 };
-
-
 
 module.exports = {
   loadindex,
@@ -273,5 +266,4 @@ module.exports = {
   loadlogged,
   deleteUser,
   searchUser,
- 
 };

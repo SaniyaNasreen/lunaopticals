@@ -36,15 +36,15 @@ app.use(noCache);
 
 
 // Regular middleware
-app.get('/', (req, res, next) => {
-  // Some processing that might throw an error
-  try {
-    // ...
-    throw new Error('Oops! Something went wrong.');
-  } catch (error) {
-    next(error); // Pass the error to the next middleware
-  }
-});
+// app.get('/', (req, res, next) => {
+//   // Some processing that might throw an error
+//   try {
+//     // ...
+//     throw new Error('Oops! Something went wrong.');
+//   } catch (error) {
+//     next(error); // Pass the error to the next middleware
+//   }
+// });
 
 // Error handling middleware
 app.use((error, req, res, next) => {

@@ -88,12 +88,11 @@ if (!req.files || req.files.length === 0) {
 
 const fileUrls = req.files.map(file => `http://localhost:4000/${file.path}`);
 
-        
+// $addToSet: {images:{$each:fileUrls}},        
         const product = new Product({
             name,
             description,
             richDescription,
-            
             images:fileUrls, 
             brand,
             price,
@@ -149,8 +148,12 @@ const updateproduct=async(req,res,next)=>{
         return res.status(404).send('Product not found.');
       }
 
-
+      console.log(req.body.deleteImages);
+      if(typeof req.body.deleteImages!=="object"){
+        req.body.deleteImages=[req.body.deleteImages]
+      }
       if (req.body._delete && req.body.deleteImages && req.body.deleteImages.length > 0) {
+       
         const indexesToDelete = req.body.deleteImages.map(index => parseInt(index));
         product.images = product.images.filter((image, index) => !indexesToDelete.includes(index));
       }
@@ -164,7 +167,7 @@ const updateproduct=async(req,res,next)=>{
   
       if (req.files && req.files.length > 0) {
         const fileUrls = req.files.map(file => `http://localhost:4000/${file.path}`);
-        product.images = fileUrls;
+        product.images = [...product.images,...fileUrls];
       }
   
      

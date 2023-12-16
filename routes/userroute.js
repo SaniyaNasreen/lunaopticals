@@ -21,7 +21,7 @@ user_route.get('/verify',usercontroller.verifymail)
 user_route.get('/login',usercontroller.loginLoad)
 user_route.post('/login',usercontroller.verifylogin)
  
-user_route.post('/logout',auth.isLogin,auth.isLogout,usercontroller.userLogout); 
+user_route.get('/logout',usercontroller.userLogout); 
 user_route.get('/forgotPassword', usercontroller.sendEmailOtp);
 // user_route.post('/forgotPassword', usercontroller.emailOtp);
 user_route.post('/forgotPassword', usercontroller.loginotp);

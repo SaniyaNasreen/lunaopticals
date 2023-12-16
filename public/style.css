@@ -636,7 +636,7 @@ hr {
   margin-left: 150px;
   width: 200px;
   background-color: rgb(50, 50, 50);
-  
+
   border-style: hidden;
   height: 40px;
   border-radius: 10px;
@@ -670,171 +670,157 @@ hr {
   font-size: larger;
 }
 
-
-
-
-           /* forget password */
-
-
-
-           .container-fluid2 {
-            height: 739px;
-            padding-top: 10px;
-            background-color: rgb(12, 12, 12);
-          }
-          .formforget11 {
-            margin-left: 100px;
-            width: 300px;
-            background-color: rgb(50, 50, 50);
-            border-style: hidden;
-            height: 40px;
-            margin-top: 80px;
-            border-radius: 10px;
-          }
-          .formforget22 {
-            margin-left: 150px;
-            width: 200px;
-            background-color: rgb(50, 50, 50);
-            
-            border-style: hidden;
-            height: 40px;
-            border-radius: 10px;
-            color: rgb(254, 128, 44);
-          }
-          .box-forget1 {
-            background-color: rgb(13, 13, 12);
-            height: 350px;
-            margin-top: 150px;
-            width: 500px;
-            margin-left: 500px;
-            background-size: 10px;
-            border-style: groove;
-            border-color: chocolate;
-            background-image: url("public/ecommerce18.jpg");
-          }
-          .headforget2 {
-            font-size: 30px;
-            width: 170px;
-            padding-left: 150px;
-            font-weight: 700;
-            padding-top: 40px;
-            color: chocolate;
-            font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-          }
-          .formforget11::placeholder {
-            padding-left: 15px;
-            margin-left: 100px;
-            color: chocolate;
-            font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-            font-size: larger;
-          }
-
-                /* SentOTP */
-
-
+/* forget password */
 
 .container-fluid2 {
-    height: 739px;
-    padding-top: 10px;
-  
-    background-color: rgb(12, 12, 12);
-  }
-  .sentotp1 {
-    margin-left: 30px;
-    width: 300px;
-    background-color: rgb(50, 50, 50);
-  
-    border-style: hidden;
-    height: 40px;
-    border-radius: 10px;
-  }
-  .sentotp2 {
-    margin-left: 50px;
-    width: 200px;
-    background-color: rgb(50, 50, 50);
-    margin-top: 30px;
-    border-style: hidden;
-    height: 40px;
-    border-radius: 10px;
-    color: rgb(254, 128, 44);
-  }
-  .box-sentotp {
-    background-color: rgb(13, 13, 12);
-    height: 350px;
-    margin-top: 150px;
-    width: 500px;
-    margin-left: 500px;
-    background-size: 10px;
-    border-style: groove;
-    border-color: chocolate;
-    background-image: url("public/ecommerce18.jpg");
-  }
-  .headsentotp1 {
-    font-size: 30px;
-    width: 170px;
-    padding-left: 150px;
-    font-weight: 700;
-    padding-top: 100px;
-    color: chocolate;
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  }
+  height: 739px;
+  padding-top: 10px;
+  background-color: rgb(12, 12, 12);
+}
+.formforget11 {
+  margin-left: 100px;
+  width: 300px;
+  background-color: rgb(50, 50, 50);
+  border-style: hidden;
+  height: 40px;
+  margin-top: 80px;
+  border-radius: 10px;
+}
+.formforget22 {
+  margin-left: 150px;
+  width: 200px;
+  background-color: rgb(50, 50, 50);
 
+  border-style: hidden;
+  height: 40px;
+  border-radius: 10px;
+  color: rgb(254, 128, 44);
+}
+.box-forget1 {
+  background-color: rgb(13, 13, 12);
+  height: 350px;
+  margin-top: 150px;
+  width: 500px;
+  margin-left: 500px;
+  background-size: 10px;
+  border-style: groove;
+  border-color: chocolate;
+  background-image: url("public/ecommerce18.jpg");
+}
+.headforget2 {
+  font-size: 30px;
+  width: 170px;
+  padding-left: 150px;
+  font-weight: 700;
+  padding-top: 40px;
+  color: chocolate;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+.formforget11::placeholder {
+  padding-left: 15px;
+  margin-left: 100px;
+  color: chocolate;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-size: larger;
+}
 
+/* SentOTP */
 
-         /* Checkotp */
+.container-fluid2 {
+  height: 739px;
+  padding-top: 10px;
 
+  background-color: rgb(12, 12, 12);
+}
+.sentotp1 {
+  margin-left: 30px;
+  width: 300px;
+  background-color: rgb(50, 50, 50);
 
+  border-style: hidden;
+  height: 40px;
+  border-radius: 10px;
+}
+.sentotp2 {
+  margin-left: 50px;
+  width: 200px;
+  background-color: rgb(50, 50, 50);
+  margin-top: 30px;
+  border-style: hidden;
+  height: 40px;
+  border-radius: 10px;
+  color: rgb(254, 128, 44);
+}
+.box-sentotp {
+  background-color: rgb(13, 13, 12);
+  height: 350px;
+  margin-top: 150px;
+  width: 500px;
+  margin-left: 500px;
+  background-size: 10px;
+  border-style: groove;
+  border-color: chocolate;
+  background-image: url("public/ecommerce18.jpg");
+}
+.headsentotp1 {
+  font-size: 30px;
+  width: 170px;
+  padding-left: 150px;
+  font-weight: 700;
+  padding-top: 100px;
+  color: chocolate;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
 
-         .container-fluid2 {
-            height: 739px;
-            padding-top: 10px;
-          
-            background-color: rgb(12, 12, 12);
-          }
-          .checkotp1 {
-            margin-top: 50px;
-            margin-left: 100px;
-            width: 300px;
-            background-color: rgb(50, 50, 50);
-            border-style: hidden;
-            height: 40px;
-            border-radius: 10px;
-          }
-          .checkotp2 {
-            margin-left: 140px;
-            width: 200px;
-            background-color: rgb(50, 50, 50);
-           
-            border-style: hidden;
-            height: 40px;
-            border-radius: 10px;
-            color: rgb(254, 128, 44);
-          }
-          .box-checkotp {
-            background-color: rgb(13, 13, 12);
-            height: 350px;
-            margin-top: 150px;
-            width: 500px;
-            margin-left: 500px;
-            background-size: 10px;
-            border-style: groove;
-            border-color: chocolate;
-            background-image: url("public/ecommerce18.jpg");
-          }
-          .headcheckotp {
-            font-size: 30px;
-            width: 170px;
-            padding-left: 150px;
-            font-weight: 700;
-            padding-top: 100px;
-            color: chocolate;
-            font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-          }         
- 
+/* Checkotp */
 
+.container-fluid2 {
+  height: 739px;
+  padding-top: 10px;
 
-       /* Register */
+  background-color: rgb(12, 12, 12);
+}
+.checkotp1 {
+  margin-top: 50px;
+  margin-left: 100px;
+  width: 300px;
+  background-color: rgb(50, 50, 50);
+  border-style: hidden;
+  height: 40px;
+  border-radius: 10px;
+}
+.checkotp2 {
+  margin-left: 140px;
+  width: 200px;
+  background-color: rgb(50, 50, 50);
 
+  border-style: hidden;
+  height: 40px;
+  border-radius: 10px;
+  color: rgb(254, 128, 44);
+}
+.box-checkotp {
+  background-color: rgb(13, 13, 12);
+  height: 350px;
+  margin-top: 150px;
+  width: 500px;
+  margin-left: 500px;
+  background-size: 10px;
+  border-style: groove;
+  border-color: chocolate;
+  background-image: url("public/ecommerce18.jpg");
+}
+.headcheckotp {
+  font-size: 30px;
+  width: 170px;
+  padding-left: 150px;
+  font-weight: 700;
+  padding-top: 100px;
+  color: chocolate;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+/* Register */
 
 .sub1-register {
   font-size: 15px;
@@ -886,28 +872,22 @@ hr {
   border-style: ridge;
 }
 .form-register {
-    padding-left: 570px;
-  }
+  padding-left: 570px;
+}
 /* .container-fluid {
   height: 739px;
   background-color: rgb(15, 15, 15);
 } */
 
-
- /* CSS Stylesheet */
+/* CSS Stylesheet */
 .existing-image {
   /* Your styles here */
   width: 50px; /* Example width */
   height: auto; /* Maintain aspect ratio */
   /* Additional styles */
 }
- 
- 
- 
- 
- 
 
-.logoimage{
+.logoimage {
   width: 100px;
   height: 100px;
   border-radius: 0px;
@@ -915,7 +895,7 @@ hr {
 /* img{
   border-radius: 30px;
 } */
-.header{
+.header {
   height: 100px;
   width: 100%;
   z-index: 33;
@@ -928,6 +908,7 @@ hr {
   z-index: 33;
   position: fixed;
   z-index: 44;
+  background: #f4f2f2;
 }
 
 .header-1.sticky {
@@ -1167,8 +1148,6 @@ hr {
   color: #ff5235;
 }
 
-
- 
 /* Header-2 */
 /* .header-2 {
     border-bottom: 2px solid rgb(236, 235, 235);
@@ -1378,6 +1357,9 @@ hr {
 
 .slider-image-bg img {
   width: 60% !important;
+  aspect-ratio: 1/1;
+  background-color: white;
+  object-fit: contain;
   display: block;
   text-align: center;
   height: auto;
@@ -1597,16 +1579,18 @@ hr {
   overflow: hidden;
 }
 
-  .arrival-img img {
-    transition: 0.3s;
-    -webkit-transition: 0.3s;
-    -moz-transition: 0.3s;
-    -ms-transition: 0.3s;
-    -o-transition: 0.3s;
-      height: 350px;
-       width: 300px;
-       margin-top: 100px;
-  }
+.arrival-img img {
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+  height: 350px;
+  width: 300px;
+  object-fit: contain;
+  margin-top: 100px;
+  background-color: white;
+}
 
 .arrival-img:hover img {
   transform: scale(1.1);

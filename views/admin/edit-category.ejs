@@ -9,7 +9,12 @@
 
     <input type="file" class="form-control2-editc" name="image" value="<%= category.image %>" required>
     <br><br>
-    <input type="text" class="form-control1-editc" name="name" value="<%= category.name %>" required>
+    <select name="category" class="form-control1-addp" required>
+        <option value="" disabled selected>Select a category</option>
+        <% categories.forEach(category => { %>
+            <option value="<%= category.name %>"><%= category.name %></option>
+        <% }); %>
+    </select>
     <br><br>
     <input type="hidden" name="id" value="<%= category._id %>" >
     <input type="submit" class="form-control4-editc" value="Update Category">

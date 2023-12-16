@@ -43,6 +43,7 @@ const fetchCategories = async (req, res,next) => {
 
   const newcategoryLoad = async (req, res,next) => {
     try {
+      
       res.render("admin/addcategory");
     } catch (error) {
      next(error);
@@ -95,6 +96,7 @@ const fetchCategories = async (req, res,next) => {
 
   const editcategoryLoad = async (req, res) => {
     try {
+      const categories = await Category.find();
       const id = req.query.id;
   
       // Ensure the 'id' parameter is provided and it's a valid ObjectId
@@ -106,7 +108,7 @@ const fetchCategories = async (req, res,next) => {
   
       const categoryData = await Category.findById(id);
       if (categoryData) {
-        res.render("admin/edit-category", { category: categoryData });
+        res.render("admin/edit-category", { category: categoryData ,categories});
       } else {
         res.redirect("/admin/categories");
       }
