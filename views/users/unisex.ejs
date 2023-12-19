@@ -23,58 +23,25 @@
   <div class="container">
     <div class="row">
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1">
-        <div class="logo text-md-center text-lg-left">
-          <a href="indexhome"><img src="img/logo/logo.png" alt="aruk-logo"></a>
+        <div class="logo1 text-md-center text-lg-left">
+          <a href="/">
+            <div class="logo1" style="background-image: url('/public/images\ \(1\).jpg');"></div>
+          </a> 
         </div>
       </div>
+      
 
       <div class="col-xl-7 col-lg-7 col-md-3 order-md-1 offset-sm-2 offset-md-0 order-lg-2 col-sm-auto">
         <nav>
           <div id="mobile-menu" class="main-menu">
             <ul>
               <li>
-                <a href="indexhome">Home</a>
-                <ul class="sub-menu pb-10 pt-10 pl-15 pr-15">
-                  <!-- <li><a href="index.html">Home Style</a></li>
-                  <li><a href="index_2.html">Home Style 2</a></li> -->
-                </ul>
+                <a href="/">Home</a class="sub-menu pb-10 pt-10 pl-15 pr-15">
+                
               </li>
               <li>
-                <a href="shoplist">Shop</a>
-                <ul class="sub-menu menu-level pb-10 pt-20 pl-15 pr-15">
-                  <!-- <li> -->
-                    <!-- <div>
-                      <h4>Shop Grid</h4>
-                      <ul class="sub-menu">
-
-                        <li><a href="shop_grid.html">Shop Grid</a></li>
-                        <li><a href="shop_grid_left_sidebar.html">Shop Grid LS</a></li>
-                        <li><a href="shop_grid_right_sidebar.html"> Shop Grid RS</a></li>
-                      </ul>
-                    </div> -->
-                  <!-- </li>
-                  <li> -->
-                    <!-- <div>
-                      <h4>Shop List</h4>
-                      <ul class="sub-menu pb-10 pl-15 pr-15">
-                        <li><a href="shop_list.html">Shop List</a></li>
-                        <li><a href="shop_list_left_sidebar.html">Shop List LS</a></li>
-                        <li><a href="shop_list_right_sidebar.html">Shop List RS</a></li>
-
-                      </ul>
-                    </div> -->
-                  <!-- </li>
-                  <li> -->
-                    <!-- <div>
-                      <h4>Shop Details</h4>
-                      <ul class="sub-menu pb-10 pl-15 pr-15">
-                        <li><a href="shop_detalis.html">Shop Details</a></li>
-                        <li><a href="shop_detalis_left_sidebar.html">Shop Details LS</a></li>
-                        <li><a href="shop_detalis_right_sidebar.html">Shop Details RS</a></li>
-                      </ul>
-                    </div> -->
-                  <!-- </li> -->
-                </ul>
+                <a href="shoplist">Shop</a  class="sub-menu menu-level pb-10 pt-20 pl-15 pr-15">
+               
               </li>
               <li><a href="shopgrid">Collection</a></li>
               <li><a href="#">Pages</a>
@@ -94,8 +61,11 @@
                 </ul>
               </li> -->
               <li><a href="">Contact</a></li>
-              <li ><a href="/login">Login</a></li>
-                  <li ><a href="/register">Register</a></li>
+              <% if(!isUserLoggedIn===true){%>
+                <li ><a href="/login">Login</a></li>
+                <li ><a href="/register">Register</a></li>
+                <% }; %>
+                  
             </ul>
           </div>
         </nav>
@@ -186,7 +156,7 @@
     <div class="col-xl-12">
       <div class="page-titel-detalis  ">
         <div class="section-title">
-          <h2>Shop Sidebar</h2>
+          <h2>Unisex</h2>
         </div>
         <div class="page-bc">
           <nav aria-label="breadcrumb">
@@ -396,11 +366,11 @@
           <div class="container pl-0 pr-0">
             <div class="arrival-product new-arrival-2">
               <div class="row">
-                <% products.filter(product => product.category === 'Unisex').forEach(product => { %>
+                <% products.forEach(product => { %>
                   <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 grid-item">
                     <div class="arrival-items mb-55">
                       <div class="arrival-img">
-                        <img src="<%= product.image %>" alt="<%= product.name %>">
+                        <img src="<%= product.images[0] %>" alt="<%= product.name %>">
                       </div>
                       <div class="arrival-details position-relative pt-25">
                         <h5><a href="/shopdetails/<%= encodeURIComponent(product._id) %>"><%= product.name %></a></h5>

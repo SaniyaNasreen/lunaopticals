@@ -10,21 +10,21 @@
         >
           <div class="nk-sidebar-element nk-sidebar-head">
             <div class="nk-sidebar-brand">
-              <a href="/" class="logo-link nk-sidebar-logo"
-                ><img
-                  class="logo1"
-                  src="/images (1).jpg"
-                  srcset="/demo2/images/logo2x.png 2x"
-                  alt="logo" /><img
-                  class="logo1 " 
-                  src="/images (1).jpg"
-                  srcset="/demo2/images/logo-dark2x.png 2x"
-                  alt="logo-dark" /><img
-                  class="logo-small logo-img logo-img-small"
-                  src="../images/logo-small.png"
-                  srcset="/demo2/images/logo-small2x.png 2x"
-                  alt="logo-small"
-              /></a>
+              <a href="/admin/indexhome" class="logo-link nk-sidebar-logo"
+              ><img
+                class="logo-light logo-img"
+                src="/public/images (1).jpg"
+                srcset=""
+                alt="logo" /><img
+                class="logo-dark logo-img"
+                src="/public/images (1).jpg"
+                srcset="/demo2/images/logo-dark2x.png 2x"
+                alt="logo-dark" /><img
+                class="logo-small logo-img logo-img-small"
+                src="/public/images (1).jpg"
+                srcset="/demo2/images/logo-small2x.png 2x"
+                alt="logo-small"
+            /></a>
             </div>
             <div class="nk-menu-trigger me-n2">
               <a
@@ -52,7 +52,7 @@
                     >
                   </li>
                   <li class="nk-menu-item">
-                    <a href="orders.html" class="nk-menu-link"
+                    <a href="/admin/orders.html" class="nk-menu-link"
                       ><span class="nk-menu-icon"
                         ><em class="icon ni ni-bag-fill"></em></span
                       ><span class="nk-menu-text">Orders</span></a
@@ -65,54 +65,70 @@
                       ><span class="nk-menu-text">Products</span></a
                     >
                   </li>
+                </li>
+                <li class="nk-menu-item">
+                  <a href="categories" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-package-fill"></em></span
+                    ><span class="nk-menu-text">Categories</span></a
+                  >
+                </li>
                   <li class="nk-menu-item">
                     <a href="customers" class="nk-menu-link"
                       ><span class="nk-menu-icon"
-                        ><em class="icon ni ni-users-fill"></em></span
-                      ><span class="nk-menu-text">Customers</span></a
+                        >
+                        <em class="icon ni ni-users-fill"></em></span
+                      >
+                      <span class="nk-menu-text">Customers</span></a
                     >
                   </li>
                   <li class="nk-menu-item">
-                    <a href="supports.html" class="nk-menu-link"
+                    <a href="/admim/supports.html" class="nk-menu-link"
                       ><span class="nk-menu-icon"
                         ><em class="icon ni ni-chat-fill"></em></span
                       ><span class="nk-menu-text">Supports</span></a
                     >
                   </li>
                   <li class="nk-menu-item">
-                    <a href="settings.html" class="nk-menu-link"
+                    <a href="/admin/settings.html" class="nk-menu-link"
                       ><span class="nk-menu-icon"
                         ><em class="icon ni ni-opt-alt-fill"></em></span
                       ><span class="nk-menu-text">Settings</span></a
                     >
                   </li>
                   <li class="nk-menu-item">
-                    <a href="/users/registration" class="nk-menu-link"
+                    <a href="registration" class="nk-menu-link"
                       ><span class="nk-menu-icon"
-                        ><em class="icon ni ni-users-fill"></em></span
+                        ><em class="icon ni ni-opt-alt-fill"></em></span
                       ><span class="nk-menu-text">Register</span></a
                     >
                   </li>
-                  
                   <!-- <li class="nk-menu-item">
-                    <a href="integration.html" class="nk-menu-link"
+                    <a href="users/login" class="nk-menu-link"
+                      ><span class="nk-menu-icon"
+                        ><em class="icon ni ni-opt-alt-fill"></em></span
+                      ><span class="nk-menu-text">Login</span></a
+                    >
+                  </li> -->
+                  <li class="nk-menu-item">
+                    <!-- <a href="integration.html" class="nk-menu-link"
                       ><span class="nk-menu-icon"
                         ><em class="icon ni ni-server-fill"></em></span
                       ><span class="nk-menu-text">Integration</span></a
-                    >
-                  </li> -->
-                  <!-- <li class="nk-menu-heading">
+                    > -->
+                  </li>
+                  <li class="nk-menu-heading">
                     <h6 class="overline-title text-primary-alt">Return to</h6>
-                  </li> -->
-                  <!-- <li class="nk-menu-item">
-                    <a href="../index.html" class="nk-menu-link"
+                  </li>
+                  <li class="nk-menu-item">
+                    <a href="/admin/indexhome" class="nk-menu-link"
                       ><span class="nk-menu-icon"
                         ><em class="icon ni ni-dashlite-alt"></em></span
                       ><span class="nk-menu-text">Main Dashboard</span></a
                     >
                   </li>
-                  <li class="nk-menu-item">
-                    <a href="../components.html" class="nk-menu-link"
+                  <!-- <li class="nk-menu-item">
+                     <a href="../components.html" class="nk-menu-link"
                       ><span class="nk-menu-icon"
                         ><em class="icon ni ni-layers-fill"></em></span
                       ><span class="nk-menu-text">All Components</span></a
@@ -634,13 +650,52 @@
                                   data-target="addProduct"
                                   class="toggle btn btn-icon btn-primary d-md-none"
                                   ><em class="icon ni ni-plus"></em></a
-                                ><a
-                                  href="/admin/addproduct"
-                                  data-target="addProduct"
-                                  class="toggle btn btn-primary d-none d-md-inline-flex"
-                                  ><em class="icon ni ni-plus"></em
-                                  ><span>Add Product</span></a
-                                >
+                                ><a href="#" data-bs-toggle="modal" data-bs-target="#addProductModal" class="toggle btn btn-primary d-none d-md-inline-flex">
+                                  <em class="icon ni ni-plus"></em>
+                                  <span>Add Product</span>
+                              </a>
+
+
+                              <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="/admin/products/addProduct/:id" id="addProductForm" class="form1-addp" method="post" enctype="multipart/form-data">
+                                                <!-- Your form inputs -->
+                                                <div id="image-preview-container">
+                                                   
+                                              </div>
+                                                <input type="file" id="file-upload" accept="image/*" class="form-control2-addp" name="images" multiple>
+                                                <br><br>
+                                                <input type="text" class="form-control1-addp" name="name" placeholder="Enter name of the product" required>
+                                                <br><br>
+                                                <input type="text"  class="form-control1-addp" name="description" placeholder="Enter Description of the product" required>
+                                                <br><br>
+                                                <input type="text"  class="form-control1-addp" name="richDescription" placeholder="Enter RichDescription of the product" required>
+                                                <br><br>
+                                                <input type="text"  class="form-control1-addp" name="brand" placeholder="Enter Brand of the product" required>
+                                                <br><br>
+                                                <input type="number"  class="form-control1-addp" name="price" placeholder="Enter Price of the product" required>
+                                                <br><br>
+                                                <select name="category" class="form-control1-addp" required>
+                                                    <option value="" disabled selected>Select a category</option>
+                                                    <% categories.forEach(category => { %>
+                                                        <option value="<%= category.name %>"><%= category.name %></option>
+                                                    <% }); %>
+                                                </select>
+                                                <br><br>
+                                                <input type="number"  class="form-control1-addp" name="countInStock" placeholder="Enter stock of the product" required>
+                                                <br><br>
+                                                <input type="submit" class="form-control4-addp" value="Add product">
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                               </li>
                             </ul>
                           </div>
@@ -749,10 +804,58 @@
                           </div>
 
                           <div class="nk-tb-col tb-col-md">
-                            <a href="/admin/products/editProduct/<%= product._id %>" class="btn btn-danger">
-                              Edit
-                            </a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#editProductModal" class="toggle btn btn-danger d-none d-md-inline-flex">
+                              
+                              <span>Edit Product</span>
+                          </a>
                             </div>
+                            <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-lg">
+                                  <div class="modal-content">
+                                      <div class="modal-header">
+                                          <h5 class="modal-title" id="addProductModalLabel">edit Product</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <form action="/admin/products/editProduct/<%= product._id %>" id="addProductForm" class="form1-editp" method="post" enctype="multipart/form-data">
+                                              <!-- Your form inputs -->
+                                              <div class="image-container">
+                                                <% product.images.forEach((image, index) => { %>
+                                                  <div class="existing-image">
+                                                    <img src="<%= image %>" alt="Product Image">
+                                                    <label for="deleteImage<%= index %>">Delete Image</label>
+                                                    <input type="checkbox" id="deleteImage<%= index %>" name="deleteImages" value="<%= index %>">
+                                                  </div>
+                                                <% }); %>
+                                              </div>
+                                                  <input type="file" accept="image/*" class="form-control2-editp" name="images" multiple>
+                                                  
+                                                  <input type="text" class="form-control1-editp" name="name"  placeholder="Enter name" value="<%= product.name %>" required>
+                                                  <br><br>
+                                                  <input type="text" class="form-control1-editp" name="description"  placeholder="Enter description" value="<%= product.description %>" required>
+                                                  <br><br>
+                                                  <input type="text" class="form-control1-editp" name="brand"  placeholder="Enter Brand" value="<%= product.brand %>" required>
+                                                  <br><br>
+                                                  <input type="text" class="form-control1-editp" name="price"  placeholder="Enter price" value="<%= product.price %>" required>
+                                                  <br><br>
+                                                  <select class="form-control1-editp" name="category" required>
+                                                    <option value="">Select a Category</option>
+                                                    <% categories.forEach(category => { %>
+                                                      <option value="<%= category._id %>"><%= category.name %></option>
+                                                    <% }); %>
+                                                  </select>
+                                                  <br><br>
+                                               
+                                                  <input type="hidden" name="id" value="<%= product._id %>" >
+                                                  <input type="hidden" name="_method" value="PUT"> <!-- Use PUT method for update -->
+                                                  <input type="hidden" name="_delete" value="true"> <!-- Add a hidden field to indicate image deletion -->
+                                                
+                                                  <input type="submit" class="form-control4-editp" value="Update product" >
+                                          </form>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
 
                           
                           

@@ -24,7 +24,9 @@
     <div class="row">
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1">
         <div class="logo text-md-center text-lg-left">
-          <a href="indexhome"><img src="img/logo/logo.png" alt="aruk-logo"></a>
+          <a href="/">
+            <div class="logo1" style="background-image: url('/public/images\ \(1\).jpg');"></div>
+          </a> 
         </div>
       </div>
 
@@ -33,48 +35,16 @@
           <div id="mobile-menu" class="main-menu">
             <ul>
               <li>
-                <a href="indexhome">Home</a>
+                <a href="/">Home</a>
                 <ul class="sub-menu pb-10 pt-10 pl-15 pr-15">
                   <!-- <li><a href="index.html">Home Style</a></li>
                   <li><a href="index_2.html">Home Style 2</a></li> -->
                 </ul>
               </li>
               <li>
-                <a href="shoplist">Shop</a>
-                <ul class="sub-menu menu-level pb-10 pt-20 pl-15 pr-15">
-                  <!-- <li> -->
-                    <!-- <div>
-                      <h4>Shop Grid</h4>
-                      <ul class="sub-menu">
-
-                        <li><a href="shop_grid.html">Shop Grid</a></li>
-                        <li><a href="shop_grid_left_sidebar.html">Shop Grid LS</a></li>
-                        <li><a href="shop_grid_right_sidebar.html"> Shop Grid RS</a></li>
-                      </ul>
-                    </div> -->
-                  <!-- </li>
-                  <li> -->
-                    <!-- <div>
-                      <h4>Shop List</h4>
-                      <ul class="sub-menu pb-10 pl-15 pr-15">
-                        <li><a href="shop_list.html">Shop List</a></li>
-                        <li><a href="shop_list_left_sidebar.html">Shop List LS</a></li>
-                        <li><a href="shop_list_right_sidebar.html">Shop List RS</a></li>
-
-                      </ul>
-                    </div> -->
-                  <!-- </li>
-                  <li> -->
-                    <!-- <div>
-                      <h4>Shop Details</h4>
-                      <ul class="sub-menu pb-10 pl-15 pr-15">
-                        <li><a href="shop_detalis.html">Shop Details</a></li>
-                        <li><a href="shop_detalis_left_sidebar.html">Shop Details LS</a></li>
-                        <li><a href="shop_detalis_right_sidebar.html">Shop Details RS</a></li>
-                      </ul>
-                    </div> -->
-                  <!-- </li> -->
-                </ul>
+                <a href="shoplist">Shop</a class="sub-menu menu-level pb-10 pt-20 pl-15 pr-15">
+                
+                  
               </li>
               <li><a href="shopgrid">Collection</a></li>
               <li><a href="#">Pages</a>
@@ -86,16 +56,13 @@
                   <!-- <li>News Details</a></li> -->
                 </ul>
               </li>
-              <!-- <li><a href="blog.html">Blog</a>
-                <ul class="sub-menu pb-10 pt-10 pl-15 pr-15">
-                  <li><a href="blog.html">Blog</a></li>
-                  <li><a href="blog-left_sidebar.html">Blog LS</a></li>
-                  <li><a href="blog_right_sidebar.html">Blog RS</a></li>
-                </ul>
-              </li> -->
+              
               <li><a href="">Contact</a></li>
-              <li ><a href="/login">Login</a></li>
-                  <li ><a href="/register">Register</a></li>
+              <% if(!isUserLoggedIn===true){%>
+                <li ><a href="/login">Login</a></li>
+                <li ><a href="/register">Register</a></li>
+                <% }; %>
+                  
             </ul>
           </div>
         </nav>
@@ -119,7 +86,7 @@
               </div>
             </li>
             <li><a href=""><i class="fas fa-shopping-cart"></i>
-                <span class="badge badge-pink ">1</span>
+               
               </a></li>
             <li class="position-relative"><span class="product-cart"><i class="fas fa-user"></i></span>
 
@@ -186,12 +153,12 @@
     <div class="col-xl-12">
       <div class="page-titel-detalis  ">
         <div class="section-title">
-          <h2>Shop Sidebar</h2>
+          <h2>Men's</h2>
         </div>
         <div class="page-bc">
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="indexhome">Home</a></li>
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
               <!-- <li class="breadcrumb-item position-relative active" aria-current="page"><a
                   href="shoplist"></a></li> -->
             </ol>
@@ -391,32 +358,32 @@
         </div>
       </div>
     </div>
-    <div class="col-xl-9 col-lg-8 col-md-12">
-        <div class="new-arrival shop-grid pt-80 pt-lg-0">
-          <div class="container pl-0 pr-0">
-            <div class="arrival-product new-arrival-2">
-              <div class="row">
-                <% products.filter(product => product.category === 'Men').forEach(product => { %>
-                  <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 grid-item">
-                    <div class="arrival-items mb-55">
-                      <div class="arrival-img">
-                        <img src="<%= product.image %>" alt="<%= product.name %>">
-                      </div>
-                      <div class="arrival-details position-relative pt-25">
-                        <h5><a href="/shopdetails/<%= encodeURIComponent(product._id) %>"><%= product.name %></a></h5>
-                        <div class="price">
-                          <span>$<%= product.price %></span>
+      <div class="col-xl-9 col-lg-8 col-md-12">
+          <div class="new-arrival shop-grid pt-80 pt-lg-0">
+            <div class="container pl-0 pr-0">
+              <div class="arrival-product new-arrival-2">
+                <div class="row">
+                  <% products.forEach(product => { %>
+                    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 grid-item">
+                      <div class="arrival-items mb-55">
+                        <div class="arrival-img">
+                          <img src="<%= product.images[0] %>" alt="<%= product.name %>">
                         </div>
-                        <!-- Other product details... -->
+                        <div class="arrival-details position-relative pt-25">
+                          <h5><a href="/shopdetails/<%= encodeURIComponent(product._id) %>"><%= product.name %></a></h5>
+                          <div class="price">
+                            <span>$<%= product.price %></span>
+                          </div>
+                          <!-- Other product details... -->
+                        </div>
                       </div>
                     </div>
-                  </div>
-                <% }); %>
+                  <% }); %>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 <div class="product-popupList">
 <div class="product-popup shop-details position-relative ">
   <div class="close-popup">

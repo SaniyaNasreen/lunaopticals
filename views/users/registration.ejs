@@ -1,47 +1,65 @@
-<%- include('../layouts/header.ejs') %>
-<div class="container-fluid">
+  <%- include('../layouts/header.ejs') %>
+
+  
     <header>
-        <div class="header-1 pt-35">
-          <div class="container">
-            <div class="row align-items-center"> <!-- Added align-items-center for vertical alignment -->
-              <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1">
-                <div class="logo1 text-md-center text-lg-left">
-                  <a href="/indexhome">
-                    <div class="logo1" style="background-image: url('/images\ \(1\).jpg');"></div>
-                  </a> 
-                </div>
+      <div class="header-1 pt-35">
+        <div class="container">
+          <div class="row align-items-center"> <!-- Added align-items-center for vertical alignment -->
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1">
+              <div class="logo2 text-md-center text-lg-left">
+                <a href="/">
+                  <div class="logo2" style="background-image: url('/public/images\ \(1\).jpg');"></div>
+                </a> 
               </div>
-    
-              <div class="col-xl-7 col-lg-7 col-md-3 order-md-1 offset-sm-2 offset-md-0 order-lg-2 col-sm-auto">
-                <nav>
-                   
-              </div>
+            </div>
+            <div class="col-xl-7 col-lg-7 col-md-3 order-md-1 offset-sm-2 offset-md-0 order-lg-2 col-sm-auto">
+              <nav>
+                
             </div>
           </div>
         </div>
-      </header>
-      <!-- header area ends -->
-<h1 class="head1-register">Sign-Up</h1>
-<h4 class="sub1-register">please fill in this form to create a new account</h4>
-<form action="/register" class="form-register" method="post">
-    <input type="text" class="form-control1-register" name="name" placeholder="Name" required>
-    <br><br>
-    <input type="email" class="form-control1-register"name="email" placeholder="Email" required>
-    <br><br>
-    <input type="number"  class="form-control1-register" name="mobile" placeholder="Mobile" required>
-    <br><br>
-    <input type="password"  class="form-control1-register" name="password" placeholder="Password" required>
-    <br><br>
-    <input type="password"  class="form-control1-register" name="confirm_password" placeholder="Confirm Password" required>
-    <br><br>
-    <input type="text"  class="form-control1-register" name="country" placeholder="Country" required>
-    <br><br>
-    <h4 class="sub2-register">Already user?<a href="/login">Login</a></h4>
-    <input type="submit" class="form-control2-register" value="Sign-up">
-</form>
-</div>
-</div>
-<%- include('../layouts/footer.ejs') %>
+      </div>
+    </header>
+    <!-- header area ends --> 
+  
 
+  <div class="container-fluid1">
+    <% if (typeof errorMessage !== 'undefined') { %>
+      <div class="alert alert-danger" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+        </svg>
+        <%= errorMessage %>
+      </div>
+    <% } %>
+    <div class="box-register"> 
+      <h1 class="head1-register">Sign-Up</h1>
+      <h4 class="sub1-register">Please fill in this form to create a new account</h4>
+      <form action="/register" class="form-register" method="post" >
+        <input type="name" class="form-control1-register" name="name" id="name" placeholder="Name" required>
+        <span id="nameError" class="error-message"></span>
+        <br><br>
+        <input type="email" class="form-control1-register" name="email" id="email" placeholder="Email" required>
+        <span id="emailError" class="error-message"></span>
+        <br><br>
+        <input type="tel" class="form-control1-register" name="mobile" id="mobile" placeholder="Mobile" pattern="[0-9]{10}" required>
+        <span id="mobileError" class="error-message"></span>
+        <br><br>
+        <input type="password" class="form-control1-register" name="password" id="password" placeholder="Password" required>
+        <span id="passError" class="error-message"></span>
+        <br><br>
+        <input type="password" class="form-control1-register" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
+        <span id="cpassError" class="error-message"></span>
+        <br><br>
+        <input type="text" class="form-control1-register" name="country" id="country" placeholder="Country" required>
+        <span id="countryError" class="error-message"></span>
+        <br><br>
+        <h4 class="sub2-register">Already a user? <a href="/login">Login</a></h4>
+        <input type="submit" class="form-control2-register" value="Sign-up">
+      </form>
+    </div>
+  </div>
 
+  <%- include('../layouts/footer.ejs') %>
 
+   

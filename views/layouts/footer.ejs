@@ -167,6 +167,66 @@ function unblockUser(userId) {
     window.onload = fetchAndRenderCategories;
   </script>
 
+
+<script>
+  // JavaScript to display selected images on input change
+  document.getElementById('file-upload').addEventListener('change', function () {
+      const files = this.files;
+      const imagePreviewContainer = document.getElementById('image-preview-container');
+      imagePreviewContainer.innerHTML = ''; // Clear previous previews
+
+      for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                  const imgElement = document.createElement('img');
+                  imgElement.setAttribute('src', e.target.result);
+                  imgElement.setAttribute('class', 'preview-image');
+                  imgElement.setAttribute('alt', 'Image Preview');
+                  imagePreviewContainer.appendChild(imgElement);
+              }
+              reader.readAsDataURL(file);
+          }
+      }
+  });
+</script>
+
+
+<script>
+  document.querySelectorAll('.remove-item-btn').forEach(button => {
+    button.addEventListener('click', async (event) => {
+     
+      const productId = event.target.dataset.productId;
+console.log(productId);
+      try {
+        const response = await fetch('http://localhost:4000/remove-from-cart', {
+          method: 'POST',
+          headers: {
+
+             
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+          body: JSON.stringify({ productId: productId })
+        });
+
+        if (response.ok) {
+          // Item removed successfully, you might want to update the UI without a page reload
+          // For example, remove the item from the UI directly
+          event.target.parentElement.parentElement.remove(); // Remove the row from the table
+        } else {
+          const errorData = await response.json();
+          console.error('Error:', errorData.message);
+          // Handle error scenario - Show error message to the user or perform other actions
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle network errors or other exceptions
+      }
+    });
+  });
+</script>
 <!-- <script src="js/vendor/jquery.min.js"></script>
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/vendor/bootstrap.min.js"></script>

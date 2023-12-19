@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const { name } = require("ejs");
 const crypto = require("crypto");
+const { use } = require("../routes/userroute");
 
 // otp=======================
 
@@ -94,17 +95,23 @@ const sendresetpasswordmail = async (name, email, token) => {
 
 //...............load home........................//
 
-const loadindex = async (req, res) => {
+const loadindex = async (req, res,next) => {
   try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+     
     // Fetch only two categories from the database (assuming you have a condition or some logic to limit the categories)
     const categories = await Category.find({ listed: true }).limit(2); // Adjust the condition or logic to limit the categories
 
     // Fetch other necessary data like products (assuming you need them)
     const products = await Product.find({ listed: true }); // Fetch products data as needed
-    let isUserLoggedIn = false;
-    if (req?.session?.user_id) {
-      isUserLoggedIn = true;
-    }
+    
+    
+
+
+    
     // Render the 'indexhome' view and pass 'categories' and 'products' to it
     res.render("users/indexhome", {
       categories,
@@ -117,7 +124,7 @@ const loadindex = async (req, res) => {
   }
 };
 
-const getCategories = async (req, res) => {
+const getCategories = async (req, res,next) => {
   try {
     const categories = await Category.find({ listed: true });
     res.status(200).json(categories); // Assuming you're sending JSON response
@@ -128,11 +135,15 @@ const getCategories = async (req, res) => {
 
 //.....................load sales.......................//
 
-const loadsales = async (req, res) => {
+const loadsales = async (req, res,next) => {
   try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
     const products = await Product.find({ listed: true }); // Fetch products data as needed
-
-    res.render("users/shoplist", { products }); // Pass 'products' to the view
+    
+    res.render("users/shoplist", { products,  isUserLoggedIn,is_blocked: false, }); // Pass 'products' to the view
   } catch (error) {
     next(error);
   }
@@ -140,11 +151,22 @@ const loadsales = async (req, res) => {
 
 //....................load unisex....................//
 
-const loadunisex = async (req, res) => {
+const loadunisex = async (req, res,next) => {
   try {
-    const products = await Product.find(); // Fetch products data as needed
+    const isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+    const unisexCategory = await Category.findOne({ name: 'Unisex' });
 
-    res.render("users/unisex", { products }); // Pass 'products' to the view
+    if (unisexCategory) {
+      // Find products that belong to the 'Men' category
+      const unisexProducts = await Product.find({ category: unisexCategory._id });
+     
+      res.render('users/unisex', { products: unisexProducts ,  isUserLoggedIn,});
+    } else {
+      res.render('users/unisex', { products: [] }); // No category found, render empty array
+    }
   } catch (error) {
     next(error);
   }
@@ -152,11 +174,21 @@ const loadunisex = async (req, res) => {
 
 //....................load Men....................//
 
-const loadmen = async (req, res) => {
+const loadmen = async (req, res,next) => {
   try {
-    const products = await Product.find(); // Fetch products data as needed
+    const menCategory = await Category.findOne({ name: 'Men' });
 
-    res.render("users/men", { products }); // Pass 'products' to the view
+    if (menCategory) {
+      // Find products that belong to the 'Men' category
+      const menProducts = await Product.find({ category: menCategory._id });
+      const isUserLoggedIn = false;
+      if (req?.session?.user_id) {
+        isUserLoggedIn = true;
+      }
+      res.render('users/men', { products: menProducts ,  isUserLoggedIn,});
+    } else {
+      res.render('users/men', { products: [] }); // No category found, render empty array
+    }
   } catch (error) {
     next(error);
   }
@@ -164,11 +196,22 @@ const loadmen = async (req, res) => {
 
 //....................load unisex....................//
 
-const loadwomen = async (req, res) => {
-  try {
-    const products = await Product.find(); // Fetch products data as needed
+const loadwomen = async (req, res,next) => {
+ 
+   try {
+    const womenCategory = await Category.findOne({ name: 'Women' });
 
-    res.render("users/women", { products }); // Pass 'products' to the view
+    if (womenCategory) {
+      // Find products that belong to the 'Men' category
+      const womenProducts = await Product.find({ category: womenCategory._id });
+      const isUserLoggedIn = false;
+      if (req?.session?.user_id) {
+        isUserLoggedIn = true;
+      }
+      res.render('users/women', { products: womenProducts,  isUserLoggedIn, });
+    } else {
+      res.render('users/women', { products: [] }); // No category found, render empty array
+    }
   } catch (error) {
     next(error);
   }
@@ -184,7 +227,7 @@ const loadRegister = async (req, res) => {
   }
 };
 
-const insertUser = async (req, res) => {
+const insertUser = async (req, res,next) => {
   try {
     console.log(req.body);
     if (req.body.password !== req.body.confirm_password) {
@@ -193,7 +236,26 @@ const insertUser = async (req, res) => {
       });
       return;
     }
+    const { email,mobile } = req.body;
+     
+    
 
+     // Check if the category with the same name already exists
+  const existingemail = await User.findOne({ email });
+  if (existingemail) {
+    res.render('users/registration', { errorMessage: "Email already exists" });
+  }
+
+
+  const existingmobile = await User.findOne({ mobile });
+  if (existingmobile) {
+    res.render('users/registration', { errorMessage: "Mobile already exists" });
+  }
+  const existingUser = await User.findOne({ $and: [{ email: email }, { mobile: mobile }] });
+
+if (existingUser) {
+  res.render('users/registration', { errorMessage: "Email and Mobile already exist together" });
+}
     const spassword = await securepassword(req.body.password);
     const user = new User({
       name: req.body.name,
@@ -226,15 +288,18 @@ const insertUser = async (req, res) => {
 
 //......................... user login......................... //
 
-const loginLoad = async (req, res) => {
+const loginLoad = async (req, res,next) => {
   try {
+    if(!req.session.user_id){
     res.render("users/login");
+    } 
+    
   } catch (error) {
     next(error);
   }
 };
 
-const verifylogin = async (req, res) => {
+const verifylogin = async (req, res,next) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
@@ -268,8 +333,13 @@ const verifylogin = async (req, res) => {
   }
 };
 
-const loaddetails = async (req, res) => {
+const loaddetails = async (req, res,next) => {
   try {
+    
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
     const productId = req.params.id;
 
     const product = await Product.findById(productId);
@@ -283,7 +353,7 @@ const loaddetails = async (req, res) => {
     }
 
     // Render the 'users/shopdetails' view and pass the product data to it
-    return res.render("users/shopdetails", { product });
+    return res.render("users/shopdetails", { product,isUserLoggedIn });
   } catch (error) {
     next(error);
   }
@@ -299,7 +369,7 @@ const checkAuth = (req, res, next) => {
   }
 };
 
-const userLogout = async (req, res) => {
+const userLogout = async (req, res,next) => {
   try {
      req.session.user_id=null;
      console.log("Hi");
@@ -321,7 +391,7 @@ const userLogout = async (req, res) => {
 
 // ================sending otp========================
 
-const sendEmailOtp = async (req, res) => {
+const sendEmailOtp = async (req, res,next) => {
   try {
     res.render("users/emailOTP", { message: "" });
   } catch (error) {
@@ -330,7 +400,7 @@ const sendEmailOtp = async (req, res) => {
   }
 };
 
-const enterOtpForm = async (req, res) => {
+const enterOtpForm = async (req, res,next) => {
   try {
     res.render("users/enterotp", { message: "" });
   } catch (error) {
@@ -375,7 +445,7 @@ const emailOtp = (email, OTP) => {
 };
 
 // Controller for sending OTP and rendering the form to enter OTP
-const loginotp = async (req, res) => {
+const loginotp = async (req, res,next) => {
   try {
     const { email } = req.body;
     const userData = await User.findOne({ email });
@@ -406,7 +476,7 @@ const loginotp = async (req, res) => {
   }
 };
 
-const verifyotp = async (req, res) => {
+const verifyotp = async (req, res,next) => {
   try {
     const { email, otp } = req.body; // Destructure email and OTP from request body
 
@@ -449,7 +519,7 @@ const forgetload = async (req, res) => {
 
 // verify forget password on mail //
 
-const forgetverify = async (req, res) => {
+const forgetverify = async (req, res,next) => {
   try {
     email = req.body.email;
     const userData = await User.findOne({ email: email });
@@ -475,7 +545,7 @@ const forgetverify = async (req, res) => {
   }
 };
 
-const verifymail = async (req, res) => {
+const verifymail = async (req, res,next) => {
   try {
     const updateinfo = await User.updateOne(
       { _id: req.query.id },
@@ -490,7 +560,7 @@ const verifymail = async (req, res) => {
   }
 };
 
-const forgetpasswordload = async (req, res) => {
+const forgetpasswordload = async (req, res,next) => {
   try {
     const token = req.query.token;
     const tokenData = await User.findOne({ token: token });
@@ -505,7 +575,7 @@ const forgetpasswordload = async (req, res) => {
     next(error);
   }
 };
-const resetpassword = async (req, res) => {
+const resetpassword = async (req, res,next) => {
   try {
     const password = req.body.password;
     const user_id = req.body.user_id;
@@ -523,7 +593,7 @@ const resetpassword = async (req, res) => {
   }
 };
 
-const searchproduct = async (req, res) => {
+const searchproduct = async (req, res,next) => {
   try {
     const searchquery = req.query.search || ""; // Set a default value when searchquery is not provided
 
@@ -541,6 +611,80 @@ const searchproduct = async (req, res) => {
     next(error);
   }
 };
+const addcart = async (req, res, next) => {
+  const productId = req.params.id;
+console.log(productId)
+  try {
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      console.error('Product not found');
+      return res.status(404).send('Product not found');
+    }
+
+    const userId = req.session.user_id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.error('User not found');
+      return res.status(404).send('User not found');
+    }
+
+    const productToAdd = {
+      product: productId,
+      quantity: 1
+    }
+    console.log(productToAdd);
+    const updatedUser = await User.updateOne({_id: userId},{
+      $addToSet: {cart: productToAdd}
+      
+    },{upsert: true})
+    const existingCartItem = user.cart.find((item) => item.product.toString() === productId);
+
+     
+    
+
+   // await user.save();
+    console.log('Product added to cart successfully',updatedUser);
+    return res.status(200).send('Product added to cart successfully');
+  } catch (error) {
+  next(error);
+  }
+};
+
+const logincart = async (req, res, next) => {
+  try {
+    const userId = req.session.user_id;
+
+    if (!userId) {
+      console.error('User not logged in');
+      return res.redirect('/login'); // Redirect to login page or handle accordingly
+    }
+
+    const user = await User.findById(userId).populate('cart.product');
+
+    if (!user) {
+      console.error('User not found');
+      return res.status(404).send('User not found');
+    }
+
+    if (user.cart && user.cart.length > 0) {
+      console.log('User Cart:', user.cart);
+      return res.render('users/shopcart', { user, isUserLoggedIn: true });
+    } else {
+      return res.render('users/shopcart', {
+        user,
+        isUserLoggedIn: true,
+        emptyCart: true
+      });
+    }
+  } catch (error) {
+    console.error('Error fetching user cart:', error);
+    return res.status(500).send('Internal Server Error');
+  }
+};
+
 
 module.exports = {
   loadindex,
@@ -561,10 +705,13 @@ module.exports = {
   sendEmailOtp,
   emailOtp,
   userLogout,
+  checkAuth,
   forgetload,
   forgetverify,
   forgetpasswordload,
   resetpassword,
   getCategories,
   searchproduct,
+  logincart,
+  addcart
 };

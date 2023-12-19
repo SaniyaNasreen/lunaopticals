@@ -53,5 +53,83 @@ user_route.get('/api/users', async (req, res) => {
 
  
 user_route.get("/search-product",  usercontroller.searchproduct);
+// Logging in the addcart route to debug
+user_route.get('/add=to-cart/:id', async (req, res, next) => {
+    console.log('Received request to add product to cart:', req.params.id);
+    try {
+      await usercontroller.addcart(req, res, next);
+    } catch (error) {
+      console.error('Error handling addcart request:', error);
+      next(error);
+    }
+  });
+user_route.get('/shopcart',usercontroller.logincart)
+
+user_route.get("/remove-from-cart/:id", async (req, res) => {
+  try {
+    console.log(req.session);
+    if (!req.session.user_id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const email = req.session.user_id;
+    const  productId  = req.params.id;
+
+    const user = await User.findOne({ _id: email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const indexToRemove = user.cart.findIndex(item => item.product.toString() === productId);
+
+    if (indexToRemove === -1) {
+      return res.status(404).json({ message: "Item not found in the cart" });
+    }
+
+    user.cart.splice(indexToRemove, 1);
+    await user.save();
+
+    //  res.status(200).json({ message: "Item removed successfully" });
+    res.redirect("/shopcart")
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+user_route.post('/update-cart', async (req, res) => {
+  const { product_id, updateQuantity } = req.body;
+
+  try {
+    const userId = req.session.user_id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    const foundProductIndex = user.cart.findIndex(item => item.product.toString() === product_id);
+
+    if (foundProductIndex === -1) {
+      return res.status(404).send('Product not found in user cart');
+    }
+
+    let newQuantity = user.cart[foundProductIndex].quantity;
+
+    if (updateQuantity === 'increase') {
+      newQuantity++;
+    } else if (updateQuantity === 'decrease' && newQuantity > 1) {
+      newQuantity--;
+    }
+
+    user.cart[foundProductIndex].quantity = newQuantity;
+    await user.save();
+
+    return res.redirect('/shopcart'); // Redirect to cart or wherever needed
+  } catch (error) {
+    console.error('Error updating quantity:', error);
+    return res.status(500).send('Internal Server Error');
+  }
+});
 
 module.exports=user_route

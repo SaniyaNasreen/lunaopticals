@@ -18,8 +18,10 @@ const multer = require("multer");
 
 const loadproducts = async (req, res) => {
     try {
+     
+      const categories = await Category.find();
         const products = await Product.find().populate('category'); // Populate the 'category' field
-        return res.render('admin/products', { products }); // Pass products with populated category to the view
+        return res.render('admin/products', { products,categories }); // Pass products with populated category to the view
     } catch (error) {
         console.error(error.message);
         return res.status(500).send('Error loading products'); // Handle error response
@@ -34,16 +36,16 @@ const loadproducts = async (req, res) => {
 
 
 
-const newproductLoad = async (req, res, next) => {
-    try {
-        const categories = await Category.find();
-        const products = await Product.find().populate('category'); // Populate the 'category' field    
-        res.render('admin/addproduct',{categories});
-    } catch (error) {
-        console.log(error.message);
-        next(error); // Pass the error to Express error handling middleware
-    }
-};
+// const newproductLoad = async (req, res, next) => {
+//     try {
+//         const categories = await Category.find();
+//         const products = await Product.find().populate('category'); // Populate the 'category' field    
+//         res.render('admin/addproduct',{categories});
+//     } catch (error) {
+//         console.log(error.message);
+//         next(error); // Pass the error to Express error handling middleware
+//     }
+// };
 
 
 const addproduct=async(req,res,next)=>{
@@ -125,30 +127,37 @@ const fileUrls = req.files.map(file => `http://localhost:4000/${file.path}`);
 
 
 
-const editproductLoad = async (req, res,next) => {
-    try {
-        const id = req.params.id;// Retrieve the 'id' query parameter
-        const productData = await Product.findById(id); // Use the 'id' directly
-        if (productData) {
-            res.render('admin/edit-product', { product: productData });
-        } else {
-            res.redirect('/admin/products');
-        }
-    } catch (error) {
-      next(error);
-    }
-};
+// const editproductLoad = async (req, res,next) => {
+//     try {
+//         const id = req.params.id;// Retrieve the 'id' query parameter
+//         const productData = await Product.findById(id); // Use the 'id' directly
+//         if (productData) {
+//             res.render('admin/edit-product', { product: productData });
+//         } else {
+//             res.redirect('/admin/products');
+//         }
+//     } catch (error) {
+//       next(error);
+//     }
+// };
 const updateproduct=async(req,res,next)=>{
     try {
-         
-     const productId = req.params.id;
+       
+      const productId = req.params.id;
      const product = await Product.findById(productId);
 
      if (!product) {
         return res.status(404).send('Product not found.');
       }
-
-      console.log(req.body.deleteImages);
+      const categoryId = req.body.category; // Retrieve category from req.body
+      console.log('Category ID from request:', categoryId);
+      const foundCategory = await Category.findById(categoryId);
+      
+      if (!foundCategory) {
+          console.log('Category not found or undefined');
+          return res.status(404).send('Category not found or undefined');
+      }
+       
       if(typeof req.body.deleteImages!=="object"){
         req.body.deleteImages=[req.body.deleteImages]
       }
@@ -162,7 +171,7 @@ const updateproduct=async(req,res,next)=>{
       product.description = req.body.description;
       product.brand=req.body.brand;
       product.price=req.body.price;
-      product.category=req.body.category;
+      product.category = foundCategory._id;
       // ... (update other fields accordingly)
   
       if (req.files && req.files.length > 0) {
@@ -222,10 +231,10 @@ const unlist = async (req, res,next) => {
                 
                 $or: [
                 
-                    { name: { $regex: searchquery, $options: 'i' } },
-                    { brand: { $regex: searchquery, $options: 'i' } },
-                    { description: { $regex: searchquery, $options: 'i' } },
-                    { category: { $regex: searchquery, $options: 'i' } },
+                    { name: { $regex: searchquery, } },
+                    { brand: { $regex: searchquery,  } },
+                    { description: { $regex: searchquery, } },
+                    { category: { $regex: searchquery, } },
                     
                 ],
             });
@@ -240,10 +249,7 @@ const unlist = async (req, res,next) => {
 
 module.exports={
     loadproducts,
-    addproduct,
-    newproductLoad,
-    editproductLoad,
-     
+    addproduct, 
     updateproduct,
     searchproduct,
     unlist

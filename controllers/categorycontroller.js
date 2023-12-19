@@ -41,14 +41,14 @@ const fetchCategories = async (req, res,next) => {
   
 
 
-  const newcategoryLoad = async (req, res,next) => {
-    try {
+  // const newcategoryLoad = async (req, res,next) => {
+  //   try {
       
-      res.render("admin/addcategory");
-    } catch (error) {
-     next(error);
-    }
-  };
+  //     res.render("admin/addcategory");
+  //   } catch (error) {
+  //    next(error);
+  //   }
+  // };
   
   const addcategory = async (req, res,next) => {
     try {
@@ -203,7 +203,7 @@ const unlistCategory = async (req, res) => {
     loadcategory,
     fetchCategories,
     addcategory,
-    newcategoryLoad,
+     
     editcategoryLoad,
   updatecategory,
   unlistCategory,
