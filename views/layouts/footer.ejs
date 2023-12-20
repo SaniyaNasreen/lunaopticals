@@ -192,6 +192,27 @@ function unblockUser(userId) {
   });
 </script>
 
+<script>
+ document.getElementById('category-file-upload').addEventListener('change', function () {
+    const file = this.files[0];
+    const categoryImagePreviewContainer = document.getElementById('category-image-preview-container');
+    categoryImagePreviewContainer.innerHTML = ''; // Clear previous previews
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const imgElement = document.createElement('img');
+            imgElement.setAttribute('src', e.target.result);
+            imgElement.setAttribute('class', 'preview-category-image');
+            imgElement.setAttribute('alt', 'Category Image Preview');
+            categoryImagePreviewContainer.appendChild(imgElement);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+</script>
+
 
 <script>
   document.querySelectorAll('.remove-item-btn').forEach(button => {
@@ -227,6 +248,8 @@ console.log(productId);
     });
   });
 </script>
+
+
 <!-- <script src="js/vendor/jquery.min.js"></script>
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/vendor/bootstrap.min.js"></script>

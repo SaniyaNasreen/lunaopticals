@@ -68,7 +68,7 @@ const addproduct=async(req,res,next)=>{
             numReviews
               // Assuming req.body.category  is the ID of the selected category
         } = req.body;
-   
+        
         if (req.fileValidationError) {
             return res.status(400).send(req.fileValidationError); // Return validation error
           }    
@@ -126,6 +126,8 @@ const fileUrls = req.files.map(file => `http://localhost:4000/${file.path}`);
 
 
 
+
+  
 
 // const editproductLoad = async (req, res,next) => {
 //     try {

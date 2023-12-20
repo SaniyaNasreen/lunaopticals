@@ -668,7 +668,8 @@
                                         <div class="modal-body">
                                           
                                           <form action="/admin/categories/addcategory" method="post" enctype="multipart/form-data">
-                                            <input type="file" class="form-control1-addc" name="image" required>
+                                            <div id="category-image-preview-container" class="cat-preview"></div>
+                                            <input type="file" id="category-file-upload" class="form-control1-addc" name="image" required>
                                             <input type="text" class="form-control2-addc" name="name" placeholder="Enter the new Category" required>
                                             <br><br> 
                                             <input type="submit" class="form-control4-addc" value="Add Category">
@@ -813,21 +814,29 @@
                                                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                   </div>
                                                   <div class="modal-body">
-                                                      <form id="editCategoryForm" class="form1-editc" method="post" enctype="multipart/form-data">
-                                                          <!-- Your form inputs -->
-                                                          <!-- ... -->
-                                                          <input type="file" class="form-control2-editc" name="image" value="<%= category.image %>" required>
-                                                          <br><br>
-                                                          <select name="category" class="form-control2-editc" required>
-                                                              <option value="" disabled selected>Select a category</option>
-                                                              <% categories.forEach(category => { %>
-                                                                  <option value="<%= category.name %>"><%= category.name %></option>
-                                                              <% }); %>
-                                                          </select>
-                                                          <br><br>
-                                                          <input type="hidden" name="id" value="<%= category._id %>" >
-                                                          <input type="submit" class="form-control4-editc" value="Update Category">
-                                                      </form>
+                                                    <form action="/admin/categories/editcategory/<%= category._id %>" id="editCategoryForm" class="form1-editc" method="post" enctype="multipart/form-data">
+                                                      <!-- Your form inputs -->
+                                                      <% if (category.image) { %>
+                                                        <img src="<%= category.image %>" alt="Existing Image" class="existing-image">
+                                                      <% } %>
+                                                      <input type="text" class="form-control2-editc" value="<%= category.image %>" disabled>
+                                                      <br><br>
+                                                      <!-- File input field -->
+                                                      <label for="imageUpload" class="custom-file-upload">
+                                                        <span id="fileLabelText">Choose new file</span>
+                                                        <input type="file" class="form-control2-editc" name="image" id="imageUpload">
+                                                      </label>
+                                                      <br><br>
+                                                      <select name="name" class="form-control2-editc" required>
+                                                        <option value="<%= category.name %>" selected><%= category.name %></option>
+                                                        <% categories.filter(cat => cat.name !== category.name).forEach(cat => { %>
+                                                          <option value="<%= cat.name %>"><%= cat.name %></option>
+                                                        <% }); %>
+                                                      </select>
+                                                      <br><br>
+                                                      <input type="hidden" name="id" value="<%= category._id %>" >
+                                                      <input type="submit" class="form-control4-editc" value="Update Category">
+                                                    </form>
                                                   </div>
                                               </div>
                                           </div>
@@ -1915,4 +1924,7 @@
                 alert(successMessage);
             }
         </script>
+
+
+
       <%- include('../layouts/footer.ejs') %>

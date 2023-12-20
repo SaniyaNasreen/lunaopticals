@@ -4,7 +4,7 @@
         const admincontroller = require("../controllers/admincontroller");
         const productcontroller=require("../controllers/productcontroller")
         const categorycontroller=require("../controllers/categorycontroller")
-        const session = require("express-session");
+         
         const multer = require("multer");
         const app = express();
         const Category = require("../models/categorymodel");
@@ -68,13 +68,13 @@ const upload = multer({
         admin_route.get("/logout", admincontroller.logout);
         admin_route.get("/logged", auth.isLogin, admincontroller.loadlogged);
         // admin_route.get("/addproduct", productcontroller.newproductLoad);
-        admin_route.post("/products/addProduct/:id", upload.array('images'), productcontroller.addproduct);
+        admin_route.post("/products/addProduct", upload.array('images'), productcontroller.addproduct);
         // admin_route.get("/addcategory", categorycontroller.newcategoryLoad);
         admin_route.post("/categories/addcategory/:id",upload.single('image'), categorycontroller.addcategory);
       
         admin_route.post("/products/editProduct/:id",upload.array('images'),productcontroller.updateproduct);
-        admin_route.get("/edit-category",  categorycontroller.editcategoryLoad);
-        admin_route.post("/edit-category",upload.single('image'), categorycontroller.updatecategory);
+    
+        admin_route.post("/categories/editcategory/:id",upload.single('image'), categorycontroller.updatecategory);
        
         admin_route.post("/customers/delete-user/:id", admincontroller.deleteUser);
         admin_route.post("/categories/unlistCategory/:id", categorycontroller.unlistCategory);

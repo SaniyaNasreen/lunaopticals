@@ -664,13 +664,12 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <form action="/admin/products/addProduct/:id" id="addProductForm" class="form1-addp" method="post" enctype="multipart/form-data">
-                                                <!-- Your form inputs -->
-                                                <div id="image-preview-container">
-                                                   
-                                              </div>
-                                                <input type="file" id="file-upload" accept="image/*" class="form-control2-addp" name="images" multiple>
-                                                <br><br>
+                                          <form action="/admin/products/addProduct" id="addProductForm" class="form1-editp" method="post" enctype="multipart/form-data">
+                                            <div id="image-preview-container"></div>
+                                            <input type="file" id="file-upload" accept="image/*" class="form-control2-addp" name="images" multiple>
+                                            <button type="button" id="clear-image" onclick="clearImage()">Clear Image</button>
+                                            <br><br>
+                                             
                                                 <input type="text" class="form-control1-addp" name="name" placeholder="Enter name of the product" required>
                                                 <br><br>
                                                 <input type="text"  class="form-control1-addp" name="description" placeholder="Enter Description of the product" required>
@@ -679,7 +678,8 @@
                                                 <br><br>
                                                 <input type="text"  class="form-control1-addp" name="brand" placeholder="Enter Brand of the product" required>
                                                 <br><br>
-                                                <input type="number"  class="form-control1-addp" name="price" placeholder="Enter Price of the product" required>
+                                                <input type="number" id="priceInput" class="form-control1-addp" name="price" placeholder="Enter Price of the product" required>
+                                                <span class="price-error-message" style="display: none; color: red; font-size: small;"></span>
                                                 <br><br>
                                                 <select name="category" class="form-control1-addp" required>
                                                     <option value="" disabled selected>Select a category</option>
@@ -817,7 +817,7 @@
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                       </div>
                                       <div class="modal-body">
-                                        <form action="/admin/products/editProduct/<%= product._id %>" id="addProductForm" class="form1-editp" method="post" enctype="multipart/form-data">
+                                        <form action="/admin/products/editProduct/<%= product._id %>" id="editProductForm" class="form1-editp" method="post" enctype="multipart/form-data">
                                               <!-- Your form inputs -->
                                               <div class="image-container">
                                                 <% product.images.forEach((image, index) => { %>
@@ -837,15 +837,19 @@
                                                   <input type="text" class="form-control1-editp" name="brand"  placeholder="Enter Brand" value="<%= product.brand %>" required>
                                                   <br><br>
                                                   <input type="text" class="form-control1-editp" name="price"  placeholder="Enter price" value="<%= product.price %>" required>
+                                                  <span class="price-error-message" style="display: none; color: red; font-size: small;"></span>
+                                                  <!-- Rest of your form fields -->
                                                   <br><br>
                                                   <select class="form-control1-editp" name="category" required>
-                                                    <option value="">Select a Category</option>
                                                     <% categories.forEach(category => { %>
-                                                      <option value="<%= category._id %>"><%= category.name %></option>
+                                                      <option value="<%= category._id %>">
+                                                        <%= category.name %> <!-- Display category name -->
+                                                      </option>
                                                     <% }); %>
                                                   </select>
                                                   <br><br>
-                                               
+                                                  <input type="number"  class="form-control1-editp" name="countInStock" placeholder="Enter stock " value="<%= product.countInStock %>" required>
+                                                  <br><br>
                                                   <input type="hidden" name="id" value="<%= product._id %>" >
                                                   <input type="hidden" name="_method" value="PUT"> <!-- Use PUT method for update -->
                                                   <input type="hidden" name="_delete" value="true"> <!-- Add a hidden field to indicate image deletion -->
@@ -1949,4 +1953,85 @@
           alert(successMessage);
       }
   </script>
+
+
+<script>
+  function validatePrice(event) {
+    const priceInput = event.target.querySelector('[name="price"]');
+    const price = parseFloat(priceInput.value);
+
+    if (price <= 0 || isNaN(price)) {
+      event.preventDefault(); // Prevent form submission
+      const priceErrorMessage = event.target.querySelector('.price-error-message');
+      priceErrorMessage.innerText = 'Price must be a valid number greater than zero.';
+      priceErrorMessage.style.display = 'block'; // Display the error message
+    }
+  }
+
+  document.getElementById('addProductForm').addEventListener('submit', validatePrice);
+  document.getElementById('editProductForm').addEventListener('submit', validatePrice);
+</script>
+
+<!-- <script>
+// function clearImage(event) {
+//   console.log("hello");
+//     var imageContainer = event.target.parentNode;
+    
+//     // Remove the image container
+//     imageContainer.parentNode.removeChild(imageContainer);
+
+//     // Reset the file input field to clear the selected file
+//     var fileInput = document.getElementById('file-upload');
+
+//     console.log(fileInput);
+//     fileInput.value = ''; // Reset the input value to clear the selected file(s)
+// }
+
+// Function to add close buttons to existing images
+function addCloseButtonsToImages() {
+    var images = document.getElementById('image-preview-container').querySelectorAll('img');
+    
+    images.forEach(function(image) {
+        // Create a container for the image with a close button
+        var imgContainer = document.createElement('div');
+        imgContainer.classList.add('image-container');
+
+        // Create a close button
+        var closeButton = document.createElement('button');
+        closeButton.innerHTML = 'X';
+        closeButton.classList.add('close-button');
+
+        // Add event listener to the close button to remove the image
+        closeButton.addEventListener('click', clearImage);
+
+        // Append the image and close button to the container
+        imgContainer.appendChild(image.cloneNode(true)); // Clone the image element
+        imgContainer.appendChild(closeButton);
+
+        // Replace the image with the container containing the image and close button
+        image.parentNode.replaceChild(imgContainer, image);
+    });
+}
+
+// Call the function to add close buttons to existing images when the page loads
+window.addEventListener('load', addCloseButtonsToImages);
+
+document.getElementById('file-upload').addEventListener('change', function() {
+    var imagePreviewContainer = document.getElementById('image-preview-container');
+
+    // Your existing code to preview newly selected images goes here
+
+    // Once new images are added, call the function to add close buttons to all images
+    addCloseButtonsToImages();
+});
+</script> -->
+
+<script>
+  function clearImage() {
+      var fileInput = document.getElementById('file-upload');
+      fileInput.value = ''; // Clear the selected file
+      var imagePreviewContainer = document.getElementById('image-preview-container');
+      imagePreviewContainer.innerHTML = ''; // Clear any image previews shown
+  }
+</script>
 <%- include('../layouts/footer.ejs') %>

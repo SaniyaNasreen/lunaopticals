@@ -12,9 +12,7 @@ user_route.get("/shopdetails", usercontroller.loaddetails);
 user_route.get('/shopdetails/:id', usercontroller.loaddetails);
 user_route.get('/categories', usercontroller.getCategories);
 user_route.get('/shoplist',usercontroller.loadsales)
-user_route.get('/unisex',usercontroller.loadunisex)
-user_route.get('/men',usercontroller.loadmen)
-user_route.get('/women',usercontroller.loadwomen)
+ 
 user_route.get('/register',usercontroller.loadRegister)
 user_route.post('/register',usercontroller.insertUser)
 user_route.get('/verify',usercontroller.verifymail)

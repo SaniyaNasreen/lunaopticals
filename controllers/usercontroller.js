@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const { name } = require("ejs");
 const crypto = require("crypto");
-const { use } = require("../routes/userroute");
+ 
 
 // otp=======================
 
@@ -92,26 +92,68 @@ const sendresetpasswordmail = async (name, email, token) => {
     next(error);
   }
 };
+//......................... user login......................... //
+
+const loginLoad = async (req, res,next) => {
+  try {
+    if(!req.session.user_id){
+    res.render("users/login");
+    } 
+    
+  } catch (error) {
+    next(error);
+  }
+};
+
+const verifylogin = async (req, res,next) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const categories = await Category.find().limit(2); // Adjust the condition or logic to limit the categories
+
+    // Fetch other necessary data like products (assuming you need them)
+    const products = await Product.find(); // Fetch products data as needed
+    const userData = await User.findOne({ email: email });
+    if (userData) {
+      if (!userData.is_blocked) {
+        req.session.user_id = userData._id;
+        const passwordmatch = await bcrypt.compare(password, userData.password);
+        if (passwordmatch) {
+          if (userData.is_admin === 0) {
+            res.redirect("/");
+          } else {
+            req.session.admin_id = userData._id;
+            res.redirect("admin/indexhome");
+          }
+        } else {
+          res.render("users/login", { message: "Email or password incorrect" });
+        }
+      } else {
+        res.render("users/login", {
+          message: "Your account has been blocked due to some reasons",
+        });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+};
 
 //...............load home........................//
 
 const loadindex = async (req, res,next) => {
   try {
-    let isUserLoggedIn = false;
-    if (req?.session?.user_id) {
-      isUserLoggedIn = true;
-    }
-     
+   
+    if(!req.session.user_id){
     // Fetch only two categories from the database (assuming you have a condition or some logic to limit the categories)
     const categories = await Category.find({ listed: true }).limit(2); // Adjust the condition or logic to limit the categories
 
     // Fetch other necessary data like products (assuming you need them)
     const products = await Product.find({ listed: true }); // Fetch products data as needed
-    
-    
-
-
-    
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
     // Render the 'indexhome' view and pass 'categories' and 'products' to it
     res.render("users/indexhome", {
       categories,
@@ -119,6 +161,32 @@ const loadindex = async (req, res,next) => {
       is_blocked: false,
       isUserLoggedIn,
     });
+  }else if(req.session.user_id){
+    const categories = await Category.find({ listed: true }).limit(2); // Adjust the condition or logic to limit the categories
+
+    // Fetch other necessary data like products (assuming you need them)
+    const products = await Product.find({ listed: true }); // Fetch products data as needed
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+    const email=req.session.user_id
+    const userData = await User.findOne({ _id: email });
+    if (userData) {
+      if (userData.is_blocked===false) {
+        res.render("users/indexhome", {
+          categories,
+          products,
+          is_blocked: false,
+          isUserLoggedIn,
+        });
+      }else{
+        res.render("users/login", {
+          message: "Your account has been blocked due to some reasons",
+        });
+      }
+    }
+  }
   } catch (error) {
     next(error);
   }
@@ -141,81 +209,44 @@ const loadsales = async (req, res,next) => {
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
-    const products = await Product.find({ listed: true }); // Fetch products data as needed
+    let sortOption = {};
+  const sortQuery = req.query.sort; // Get the sort query parameter
+console.log(req.query);
+  // Define sorting options based on the sort query parameter
+  if (sortQuery === 'price_asc') {
+    sortOption = { price: 1 };
+  } else if (sortQuery === 'price_desc') {
+    sortOption = { price: -1 };
+  } else {
+    sortOption = { createdAt: -1 }; // Default sorting option
+  }
+console.log(sortQuery);
+console.log(sortOption);
+    let filter = { listed: true }; // Default filter to fetch all listed products
     
-    res.render("users/shoplist", { products,  isUserLoggedIn,is_blocked: false, }); // Pass 'products' to the view
-  } catch (error) {
-    next(error);
-  }
-};
-
-//....................load unisex....................//
-
-const loadunisex = async (req, res,next) => {
-  try {
-    const isUserLoggedIn = false;
-    if (req?.session?.user_id) {
-      isUserLoggedIn = true;
-    }
-    const unisexCategory = await Category.findOne({ name: 'Unisex' });
-
-    if (unisexCategory) {
-      // Find products that belong to the 'Men' category
-      const unisexProducts = await Product.find({ category: unisexCategory._id });
-     
-      res.render('users/unisex', { products: unisexProducts ,  isUserLoggedIn,});
-    } else {
-      res.render('users/unisex', { products: [] }); // No category found, render empty array
-    }
-  } catch (error) {
-    next(error);
-  }
-};
-
-//....................load Men....................//
-
-const loadmen = async (req, res,next) => {
-  try {
-    const menCategory = await Category.findOne({ name: 'Men' });
-
-    if (menCategory) {
-      // Find products that belong to the 'Men' category
-      const menProducts = await Product.find({ category: menCategory._id });
-      const isUserLoggedIn = false;
-      if (req?.session?.user_id) {
-        isUserLoggedIn = true;
+    if (req.query.category) {
+      const category = await Category.findOne({ name: req.query.category }).sort(sortOption) // Fetch category document based on the query parameter
+      
+      if (category) {
+        filter.category = category._id; // Use the retrieved category ID to filter products
+      } else {
+        // Handle the case where the category is not found
+        // For example, you could choose to show all products or return an empty array
+        // In this case, showing all products:
+        // res.render("users/shoplist", { products: [], isUserLoggedIn, is_blocked: false });
+        const allProducts = await Product.find({ listed: true }).sort(sortOption)
+        return res.render("users/shoplist", { products: allProducts, isUserLoggedIn, is_blocked: false });
       }
-      res.render('users/men', { products: menProducts ,  isUserLoggedIn,});
-    } else {
-      res.render('users/men', { products: [] }); // No category found, render empty array
     }
+    const products = await Product.find(filter).populate('category').sort(sortOption) // Fetch products based on the filter and populate the category field
+    
+    res.render("users/shoplist", { products, isUserLoggedIn, is_blocked: false, selectedSort: sortQuery, });
   } catch (error) {
     next(error);
   }
 };
 
-//....................load unisex....................//
-
-const loadwomen = async (req, res,next) => {
  
-   try {
-    const womenCategory = await Category.findOne({ name: 'Women' });
-
-    if (womenCategory) {
-      // Find products that belong to the 'Men' category
-      const womenProducts = await Product.find({ category: womenCategory._id });
-      const isUserLoggedIn = false;
-      if (req?.session?.user_id) {
-        isUserLoggedIn = true;
-      }
-      res.render('users/women', { products: womenProducts,  isUserLoggedIn, });
-    } else {
-      res.render('users/women', { products: [] }); // No category found, render empty array
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 
 //...................load register page ................//
 
@@ -286,56 +317,10 @@ if (existingUser) {
   }
 };
 
-//......................... user login......................... //
-
-const loginLoad = async (req, res,next) => {
-  try {
-    if(!req.session.user_id){
-    res.render("users/login");
-    } 
-    
-  } catch (error) {
-    next(error);
-  }
-};
-
-const verifylogin = async (req, res,next) => {
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
-    const categories = await Category.find().limit(2); // Adjust the condition or logic to limit the categories
-
-    // Fetch other necessary data like products (assuming you need them)
-    const products = await Product.find(); // Fetch products data as needed
-    const userData = await User.findOne({ email: email });
-    if (userData) {
-      if (!userData.is_blocked) {
-        req.session.user_id = userData._id;
-        const passwordmatch = await bcrypt.compare(password, userData.password);
-        if (passwordmatch) {
-          if (userData.is_admin === 0) {
-            res.redirect("/");
-          } else {
-            req.session.admin_id = userData._id;
-            res.redirect("admin/indexhome");
-          }
-        } else {
-          res.render("users/login", { message: "Email or password incorrect" });
-        }
-      } else {
-        res.render("users/login", {
-          message: "Your account has been blocked due to some reasons",
-        });
-      }
-    }
-  } catch (error) {
-    next(error);
-  }
-};
 
 const loaddetails = async (req, res,next) => {
   try {
-    
+
     let isUserLoggedIn = false;
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
@@ -593,20 +578,63 @@ const resetpassword = async (req, res,next) => {
   }
 };
 
-const searchproduct = async (req, res,next) => {
+const searchproduct = async (req, res, next) => {
   try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
     const searchquery = req.query.search || ""; // Set a default value when searchquery is not provided
+    const filterByCategory = req.query.category || ""; // Filter by category, you can modify this as per your category filtering logic
 
-    const productData = await Product.find({
-      $or: [
-        { name: { $regex: searchquery, $options: "i" } },
-        { brand: { $regex: searchquery, $options: "i" } },
-        { description: { $regex: searchquery, $options: "i" } },
-        { category: { $regex: searchquery, $options: "i" } },
-      ],
+    let sortOption = {};
+    const sortQuery = req.query.sort; // Get the sort query parameter
+
+    // Define sorting options based on the sort query parameter
+    if (sortQuery === 'price-low-to-high') {
+      sortOption = { price: 1 }; // Sort by price in ascending order
+    } else if (sortQuery === 'price-high-to-low') {
+      sortOption = { price: -1 }; // Sort by price in descending order
+    } else {
+      // Default sorting option if no valid query parameter is provided
+      sortOption = { createdAt: -1 }; // Sort by createdAt field in descending order
+    }
+
+    let productData;
+
+    if (filterByCategory) {
+      // If filtering by category is required
+      productData = await Product.find({
+        $and: [
+          {
+            $or: [
+              { name: { $regex: searchquery, $options: "i" } },
+              { brand: { $regex: searchquery, $options: "i" } },
+              { description: { $regex: searchquery, $options: "i" } },
+            ],
+          },
+          { category: filterByCategory },
+        ],
+      }).sort(sortOption);
+    } else {
+      // If no category filtering is required
+      productData = await Product.find({
+        $or: [
+          { name: { $regex: searchquery, $options: "i" } },
+          { brand: { $regex: searchquery, $options: "i" } },
+          { description: { $regex: searchquery, $options: "i" } },
+      
+        ],
+      }).sort(sortOption);
+    }
+
+    res.render("users/shoplist", {
+      products: productData,
+      isUserLoggedIn,
+      searchquery,
+      category: filterByCategory,
+      sort: sortQuery,
     });
-
-    res.render("users/shoplist", { products: productData, searchquery }); // Pass searchquery to the template
   } catch (error) {
     next(error);
   }
@@ -684,14 +712,12 @@ const logincart = async (req, res, next) => {
     return res.status(500).send('Internal Server Error');
   }
 };
-
+ 
 
 module.exports = {
   loadindex,
   loadsales,
-  loadunisex,
-  loadmen,
-  loadwomen,
+ 
   loadRegister,
   insertUser,
   verifymail,

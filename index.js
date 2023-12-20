@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const express = require("express");
+const cors=require("cors")
 const app = express();
 const session = require("express-session");
 
@@ -11,7 +12,7 @@ require("dotenv").config()
 
 //Middleware //
 
-app.use(logger("dev")); // Morgan should come before the routes
+//app.use(logger("dev")); // Morgan should come before the routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -46,10 +47,7 @@ app.use(noCache);
 //   }
 // });
 
-// Error handling middleware
-app.use((error, req, res, next) => {
-  res.status(500).json({ error: error.message }); // Respond with an error message
-});
+
 
 
 // Error handling middleware function
@@ -86,7 +84,7 @@ app.use("/admin", adminroute);
 mongoose.connect(process.env.CONNECTION_STRING)
 .then(()=>{
 console.log('Database Connection is ready...');
-})
+})  
 .catch((err)=>{
     console.log(err);
 })

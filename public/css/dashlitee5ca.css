@@ -29335,6 +29335,7 @@ div.dataTables_wrapper div.dataTables_filter .nk-header-search input {
   position: relative;
   align-items: center;
   transition: color 0.3s, background-color 0.3s;
+  
 }
 .nk-menu-item {
   padding: 4px 12px;
@@ -29498,6 +29499,7 @@ div.dataTables_wrapper div.dataTables_filter .nk-header-search input {
 .nk-menu-item + .nk-menu-heading {
   padding-top: 2.5rem;
 }
+
 .nk-menu-heading .overline-title {
   color: inherit;
   white-space: nowrap;
@@ -43449,9 +43451,21 @@ padding-right: 100px;
         max-width: 100px;
         max-height: 100px;
         margin-right: 10px;
+    }
+    .delete-btn {
+        cursor: pointer;
+        background-color: red;
+        color: white;
+        font-size: 10px;
+        border: none;
+        
+
+        border-radius: 50%;
+        
+    }
+    .image-container {
         margin-bottom: 10px;
     }
-  
      
     .form1-addp{
       padding-left: 25px; 
@@ -43861,5 +43875,67 @@ font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   width: 40px; /* Adjust the width as needed */
    text-align: center;
 }
+ 
+
+ .sort-by {
+  
+  margin-left: 910px;
+  margin-top: -40px;
+   
+}
+
+.sort-by select {
+  padding: 10px 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Prevent scrolling when the popup is open */
+  z-index: 9999;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 9998; /* Behind the popup */
+}
+
+.popup-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 9999;
+}
+
+.popup-content p {
+  margin-bottom: 20px;
+}
+.highlighted {
+  background-color: yellow; /* Change this to any color you want for highlighting */
+  /* Add other styles to highlight as needed */
+}
+.cat-preview{
+  max-width: 100px;
+    max-height: 100px;
+    bottom: 10px;
+    position: relative;
+}
+
  
 /*! END @iO */

@@ -16,6 +16,7 @@ const loadcategory = async (req, res,next) => {
     try {
       // Fetch categories from the database
       const categories = await Category.find();
+      
       res.render("admin/categories", { categories }); // Pass categories data to the view
     } catch (error) {
     next(error);
@@ -91,61 +92,38 @@ const fetchCategories = async (req, res,next) => {
   };
 
 
-
-
-
-  const editcategoryLoad = async (req, res) => {
+  const updatecategory = async (req, res, next) => {
     try {
-      const categories = await Category.find();
-      const id = req.query.id;
+      const categoryId = req.params.id;
+      const category = await Category.findById(categoryId);
   
-      // Ensure the 'id' parameter is provided and it's a valid ObjectId
-      if (!id || !mongoose.Types.ObjectId.isValid(id)) {
-        const error=new Error("Invalid Category ID");
-        error.statusCode=400;
-        throw error;
-      }
-  
-      const categoryData = await Category.findById(id);
-      if (categoryData) {
-        res.render("admin/edit-category", { category: categoryData ,categories});
-      } else {
-        res.redirect("/admin/categories");
-      }
-    } catch (error) {
-     next(error); 
-    }
-  };
-  const updatecategory = async (req, res) => {
-    try {
-      const categoryId = req.body.id; // Assuming the ID is sent in the request body
-  
-      // Ensure categoryId is provided and is a valid ObjectId
       if (!categoryId || !mongoose.Types.ObjectId.isValid(categoryId)) {
-        const error=new Error("Invalid Category ID");
-        error.statusCode=400;
+        const error = new Error("Invalid Category ID");
+        error.statusCode = 400;
         throw error;
       }
   
-      // Retrieve category data by ID and update the fields
+      let imagePath = category.image; // Retain the existing image by default
+  
+      if (req.file && req.file.path) {
+        imagePath = `http://localhost:4000/${req.file.path}`;
+      }
+  
       const updatedCategory = await Category.findByIdAndUpdate(
         categoryId,
-        { name: req.body.name, image: `http://localhost:4000/${req.file.path}` },
-        { new: true } // To get the updated document after the update
+        { name: req.body.name, image: imagePath },
+        { new: true }
       );
   
       if (updatedCategory) {
-        // If the category was updated successfully, redirect to the categories page
         res.redirect("/admin/categories");
       } else {
-        // If the category was not found, redirect back to the edit page or handle appropriately
         res.redirect("/admin/edit-category?id=" + categoryId);
       }
     } catch (error) {
-next(error);
+      next(error);
     }
   };
-
 
 
 
@@ -204,7 +182,7 @@ const unlistCategory = async (req, res) => {
     fetchCategories,
     addcategory,
      
-    editcategoryLoad,
+    
   updatecategory,
   unlistCategory,
   searchcategory,
