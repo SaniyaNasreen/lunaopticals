@@ -3,17 +3,12 @@ const bcrypt = require("bcrypt");
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const config = require("../config/config");
-// const client = require('twilio')(config.accountSID, config.authToken);
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const { name } = require("ejs");
 const crypto = require("crypto");
- 
-
-// otp=======================
 
 //..................bcrypt.......................   //
-
 const securepassword = async (password) => {
   try {
     const saltRounds = 10;
@@ -24,19 +19,17 @@ const securepassword = async (password) => {
   }
 };
 
-// for send mail  //
-
+//............................for send mail............................//
 const sendverifymail = async (name, email, user_id) => {
   try {
     const token = crypto.randomBytes(20).toString("hex");
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "saniyanasreen262@gmail.com", // Use environment variables
-        pass: "bbksxhldfudkmbkd", // Use environment variables
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
       },
     });
-
     const mailOption = {
       from: "saniyanasreen262@gmail.com",
       to: email,
@@ -58,8 +51,7 @@ const sendverifymail = async (name, email, user_id) => {
   }
 };
 
-// for reset password mail //
-
+//...................Sending Mail for Reset Password....................//
 const sendresetpasswordmail = async (name, email, token) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -69,7 +61,6 @@ const sendresetpasswordmail = async (name, email, token) => {
         pass: "bbksxhldfudkmbkd", // Use environment variables
       },
     });
-
     const mailOption = {
       from: "saniyanasreen262@gmail.com",
       to: email,
@@ -92,46 +83,92 @@ const sendresetpasswordmail = async (name, email, token) => {
     next(error);
   }
 };
-//......................... user login......................... //
 
-const loginLoad = async (req, res,next) => {
+//.........................Load Login Page.......................... //
+const loginLoad = async (req, res, next) => {
   try {
-    if(!req.session.user_id){
-    res.render("users/login");
-    } 
-    
+    if (!req.session.user_id) {
+      res.render("users/login");
+    }else{
+      res.redirect('/')
+    }
   } catch (error) {
     next(error);
   }
 };
 
-const verifylogin = async (req, res,next) => {
+//............................Veryfying Login.......................//
+const verifylogin = async (req, res, next) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
-    const categories = await Category.find().limit(2); // Adjust the condition or logic to limit the categories
-
-    // Fetch other necessary data like products (assuming you need them)
-    const products = await Product.find(); // Fetch products data as needed
     const userData = await User.findOne({ email: email });
-    if (userData) {
-      if (!userData.is_blocked) {
-        req.session.user_id = userData._id;
-        const passwordmatch = await bcrypt.compare(password, userData.password);
-        if (passwordmatch) {
-          if (userData.is_admin === 0) {
-            res.redirect("/");
-          } else {
-            req.session.admin_id = userData._id;
-            res.redirect("admin/indexhome");
-          }
+    if (!userData) {
+      res.render("users/login", { message: "No User Found" });
+      return;
+    }
+    if (userData.is_blocked) {
+      res.render("users/login", {
+        message: "Your account has been blocked due to some reasons",
+      });
+      return;
+    }
+    if (userData.is_admin === 1) {
+      res.render("users/login", { message: "This is not user account" });
+      // res.render("admin/indexhome");
+      return;
+    }
+    const passwordmatch = await bcrypt.compare(password, userData.password);
+    if (!passwordmatch) {
+      res.render("users/login", { message: "Password incorrect" });
+      return;
+    }
+    req.session.user_id = userData._id;
+    res.redirect("/");
+  } catch (error) {
+    next(error);
+  }
+};
+
+//......................Load Home Page..............................//
+const loadindex = async (req, res, next) => {
+  try {
+    if (!req.session.user_id) {
+      const categories = await Category.find({ listed: true }).limit(2);
+      const products = await Product.find({ listed: true });
+      let isUserLoggedIn = false;
+      if (req?.session?.user_id) {
+        isUserLoggedIn = true;
+      }
+
+      res.render("users/indexhome", {
+        categories,
+        products,
+        is_blocked: false,
+        isUserLoggedIn,
+      });
+    } else if (req.session.user_id) {
+      const categories = await Category.find({ listed: true }).limit(2);
+      const products = await Product.find({ listed: true });
+      let isUserLoggedIn = false;
+      if (req?.session?.user_id) {
+        isUserLoggedIn = true;
+      }
+      const email = req.session.user_id;
+      const userData = await User.findOne({ _id: email });
+      if (userData) {
+        if (userData.is_blocked === false) {
+          res.render("users/indexhome", {
+            categories,
+            products,
+            is_blocked: false,
+            isUserLoggedIn,
+          });
         } else {
-          res.render("users/login", { message: "Email or password incorrect" });
+          res.render("users/login", {
+            message: "Your account has been blocked due to some reasons",
+          });
         }
-      } else {
-        res.render("users/login", {
-          message: "Your account has been blocked due to some reasons",
-        });
       }
     }
   } catch (error) {
@@ -139,117 +176,59 @@ const verifylogin = async (req, res,next) => {
   }
 };
 
-//...............load home........................//
-
-const loadindex = async (req, res,next) => {
-  try {
-   
-    if(!req.session.user_id){
-    // Fetch only two categories from the database (assuming you have a condition or some logic to limit the categories)
-    const categories = await Category.find({ listed: true }).limit(2); // Adjust the condition or logic to limit the categories
-
-    // Fetch other necessary data like products (assuming you need them)
-    const products = await Product.find({ listed: true }); // Fetch products data as needed
-    let isUserLoggedIn = false;
-    if (req?.session?.user_id) {
-      isUserLoggedIn = true;
-    }
-    // Render the 'indexhome' view and pass 'categories' and 'products' to it
-    res.render("users/indexhome", {
-      categories,
-      products,
-      is_blocked: false,
-      isUserLoggedIn,
-    });
-  }else if(req.session.user_id){
-    const categories = await Category.find({ listed: true }).limit(2); // Adjust the condition or logic to limit the categories
-
-    // Fetch other necessary data like products (assuming you need them)
-    const products = await Product.find({ listed: true }); // Fetch products data as needed
-    let isUserLoggedIn = false;
-    if (req?.session?.user_id) {
-      isUserLoggedIn = true;
-    }
-    const email=req.session.user_id
-    const userData = await User.findOne({ _id: email });
-    if (userData) {
-      if (userData.is_blocked===false) {
-        res.render("users/indexhome", {
-          categories,
-          products,
-          is_blocked: false,
-          isUserLoggedIn,
-        });
-      }else{
-        res.render("users/login", {
-          message: "Your account has been blocked due to some reasons",
-        });
-      }
-    }
-  }
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getCategories = async (req, res,next) => {
-  try {
-    const categories = await Category.find({ listed: true });
-    res.status(200).json(categories); // Assuming you're sending JSON response
-  } catch (error) {
-    next(error);
-  }
-};
-
-//.....................load sales.......................//
-
-const loadsales = async (req, res,next) => {
+//.....................load shoplist................................//
+const loadsales = async (req, res, next) => {
   try {
     let isUserLoggedIn = false;
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
+
     let sortOption = {};
-  const sortQuery = req.query.sort; // Get the sort query parameter
-console.log(req.query);
-  // Define sorting options based on the sort query parameter
-  if (sortQuery === 'price_asc') {
-    sortOption = { price: 1 };
-  } else if (sortQuery === 'price_desc') {
-    sortOption = { price: -1 };
-  } else {
-    sortOption = { createdAt: -1 }; // Default sorting option
-  }
-console.log(sortQuery);
-console.log(sortOption);
-    let filter = { listed: true }; // Default filter to fetch all listed products
-    
+    const sortQuery = req.query.sort;
+    if (sortQuery === "price_asc") {
+      sortOption = { price: 1 };
+    } else if (sortQuery === "price_desc") {
+      sortOption = { price: -1 };
+    } else {
+      sortOption = { createdAt: -1 };
+    }
+
+    let filter = { listed: true };
     if (req.query.category) {
-      const category = await Category.findOne({ name: req.query.category }).sort(sortOption) // Fetch category document based on the query parameter
-      
+      const category = await Category.findOne({
+        name: req.query.category,
+      }).sort(sortOption);
+
       if (category) {
-        filter.category = category._id; // Use the retrieved category ID to filter products
+        filter.category = category._id;
       } else {
-        // Handle the case where the category is not found
-        // For example, you could choose to show all products or return an empty array
-        // In this case, showing all products:
-        // res.render("users/shoplist", { products: [], isUserLoggedIn, is_blocked: false });
-        const allProducts = await Product.find({ listed: true }).sort(sortOption)
-        return res.render("users/shoplist", { products: allProducts, isUserLoggedIn, is_blocked: false });
+        const allProducts = await Product.find({ listed: true }).sort(
+          sortOption
+        );
+        return res.render("users/shoplist", {
+          products: allProducts,
+          isUserLoggedIn,
+          is_blocked: false,
+        });
       }
     }
-    const products = await Product.find(filter).populate('category').sort(sortOption) // Fetch products based on the filter and populate the category field
-    
-    res.render("users/shoplist", { products, isUserLoggedIn, is_blocked: false, selectedSort: sortQuery, });
+
+    const products = await Product.find(filter)
+      .populate("category")
+      .sort(sortOption);
+    res.render("users/shoplist", {
+      products,
+      isUserLoggedIn,
+      is_blocked: false,
+      selectedSort: sortQuery,
+    });
   } catch (error) {
     next(error);
   }
 };
 
- 
-
-//...................load register page ................//
-
+//.......................load register page ...........................//
 const loadRegister = async (req, res) => {
   try {
     return res.render("users/registration");
@@ -258,35 +237,40 @@ const loadRegister = async (req, res) => {
   }
 };
 
-const insertUser = async (req, res,next) => {
+//..........................Registering User............................//
+const insertUser = async (req, res, next) => {
   try {
-    console.log(req.body);
     if (req.body.password !== req.body.confirm_password) {
       res.render("/registration", {
         message: "Password and Confirm Password do not match",
       });
       return;
     }
-    const { email,mobile } = req.body;
-     
-    
 
-     // Check if the category with the same name already exists
-  const existingemail = await User.findOne({ email });
-  if (existingemail) {
-    res.render('users/registration', { errorMessage: "Email already exists" });
-  }
+    const { email, mobile } = req.body;
+    const existingemail = await User.findOne({ email });
+    if (existingemail) {
+      res.render("users/registration", {
+        errorMessage: "Email already exists",
+      });
+    }
 
+    const existingmobile = await User.findOne({ mobile });
+    if (existingmobile) {
+      res.render("users/registration", {
+        errorMessage: "Mobile already exists",
+      });
+    }
 
-  const existingmobile = await User.findOne({ mobile });
-  if (existingmobile) {
-    res.render('users/registration', { errorMessage: "Mobile already exists" });
-  }
-  const existingUser = await User.findOne({ $and: [{ email: email }, { mobile: mobile }] });
+    const existingUser = await User.findOne({
+      $and: [{ email: email }, { mobile: mobile }],
+    });
+    if (existingUser) {
+      res.render("users/registration", {
+        errorMessage: "Email and Mobile already exist together",
+      });
+    }
 
-if (existingUser) {
-  res.render('users/registration', { errorMessage: "Email and Mobile already exist together" });
-}
     const spassword = await securepassword(req.body.password);
     const user = new User({
       name: req.body.name,
@@ -294,70 +278,54 @@ if (existingUser) {
       mobile: req.body.mobile,
       password: spassword,
       cpassword: spassword,
-
       country: req.body.country,
       is_admin: 0,
     });
-    const userData = await user.save();
 
-    if (userData) {
-      sendverifymail(req.body.name, req.body.email, userData._id);
-      // res.redirect('/home')
-      res.render("users/login", {
-        message:
-          "Your regestration has been susseccfull,please verify your mail.",
-      });
-    } else {
+    const userData = await user.save();
+    if (!userData) {
       res.render("/registration", {
         message: "Your registration has been failed",
       });
     }
+
+    sendverifymail(req.body.name, req.body.email, userData._id);
+    res.render("users/login", {
+      message:
+        "Your regestration has been susseccfull,please verify your mail.",
+    });
   } catch (error) {
     next(error);
   }
 };
 
-
-const loaddetails = async (req, res,next) => {
+//....................Loading Single Product Page........................//
+const loaddetails = async (req, res, next) => {
   try {
-
     let isUserLoggedIn = false;
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
+
     const productId = req.params.id;
-
     const product = await Product.findById(productId);
-    console.log(product);
-
     if (!product) {
-      // Handle case where product with the given ID is not found
       const error = "Product not found";
       error.statusCode = 404;
       throw error;
     }
 
-    // Render the 'users/shopdetails' view and pass the product data to it
-    return res.render("users/shopdetails", { product,isUserLoggedIn });
+    return res.render("users/shopdetails", { product, isUserLoggedIn });
   } catch (error) {
     next(error);
   }
 };
 
-const checkAuth = (req, res, next) => {
-  if (req.session && req.session.user) {
-    // If user session exists, proceed to next middleware/route handler
-    next();
-  } else {
-    // If user session doesn't exist, redirect to login
-    res.redirect("/login");
-  }
-};
-
-const userLogout = async (req, res,next) => {
+//.................................User Logout............................//
+const userLogout = async (req, res, next) => {
   try {
-     req.session.user_id=null;
-     console.log("Hi");
+    req.session.user_id = null;
+    console.log("Hi");
     res.clearCookie("session_id");
     res.redirect("/");
   } catch (error) {
@@ -365,18 +333,8 @@ const userLogout = async (req, res,next) => {
   }
 };
 
-// Route for rendering the index home or login based on user session
-// const renderIndexOrLogin = (req, res) => {
-//   if (req.session && req.session.user) {
-//     res.render('indexhome'); // Render indexhome if user is logged in
-//   } else {
-//     res.render('login'); // Render login if user is not logged in
-//   }
-// };
-
-// ================sending otp========================
-
-const sendEmailOtp = async (req, res,next) => {
+//...................Loading Page to Sent OTP..............................//
+const sendEmailOtp = async (req, res, next) => {
   try {
     res.render("users/emailOTP", { message: "" });
   } catch (error) {
@@ -385,7 +343,8 @@ const sendEmailOtp = async (req, res,next) => {
   }
 };
 
-const enterOtpForm = async (req, res,next) => {
+//.....................Loading Page for Entering OTP.......................//
+const enterOtpForm = async (req, res, next) => {
   try {
     res.render("users/enterotp", { message: "" });
   } catch (error) {
@@ -393,12 +352,11 @@ const enterOtpForm = async (req, res,next) => {
     next(error);
   }
 };
-//   // =====================email logic=============================
 
+//..........................Sending OTP to Email.............................//
 const generateOTP = function () {
   return Math.floor(100000 + Math.random() * 900000);
 };
-
 const emailOtp = (email, OTP) => {
   return new Promise((resolve, reject) => {
     const transporter = nodemailer.createTransport({
@@ -408,14 +366,12 @@ const emailOtp = (email, OTP) => {
         pass: config.emailPass,
       },
     });
-
     const mailOptions = {
       from: "jafferkuwait0916@gmail.com",
       to: email,
       subject: "OTP Verification",
       text: `DO NOT SHARE: Your OTP is ${OTP}`,
     };
-
     transporter
       .sendMail(mailOptions)
       .then((info) => {
@@ -429,70 +385,55 @@ const emailOtp = (email, OTP) => {
   });
 };
 
-// Controller for sending OTP and rendering the form to enter OTP
-const loginotp = async (req, res,next) => {
+//..............Sending OTP and rendering the form to enter OTP...............//
+const loginotp = async (req, res, next) => {
   try {
     const { email } = req.body;
     const userData = await User.findOne({ email });
-
-    // sendOTP(mobile, OTP);
-
-    if (userData) {
-      req.session.user_id = userData._id;
-
-      if (userData.is_varified === 0) {
-        res.render("users/emailOTP", { message: "Please verify your mail" });
-      } else {
-        const OTP = generateOTP();
-        await User.updateOne({ email }, { $set: { token: OTP } });
-        emailOtp(email, OTP);
-        res.render("users/enterotp", {
-          message: "Please check your mail for OTP",
-          email,
-        });
-      }
-    } else {
+    if (!userData) {
       res.render("users/emailOTP", { message: "User email is incorrect" });
+      return;
     }
+
+    if (userData.is_varified !== 0) {
+      res.render("users/emailOTP", { message: "Please verify your mail" });
+    }
+
+    const OTP = generateOTP();
+    await User.updateOne({ email }, { $set: { token: OTP } });
+    emailOtp(email, OTP);
+    res.render("users/enterotp", {
+      message: "Please check your mail for OTP",
+      email,
+    });
   } catch (error) {
     console.error(error.message);
-    // Pass the caught error to the next middleware (error handling middleware)
     next(error);
   }
 };
 
-const verifyotp = async (req, res,next) => {
+//...............................Checking OTP..................................//
+const verifyotp = async (req, res, next) => {
   try {
-    const { email, otp } = req.body; // Destructure email and OTP from request body
-
-    console.log("Email received:", email); // Add this line for debugging
+    const { email, otp } = req.body;
     const user = await User.findOne({ email });
-
     if (!user) {
-      console.log("No user found for email:", email); // Log the email to identify any mismatch
-      return res.render("users/login", { message: "User not found" });
+      res.render("users/login", { message: "User not found" });
+      return;
     }
-
-    const generatedOTP = user.token; // Fetch the OTP associated with the user from the database
-
-    if (otp === generatedOTP) {
-      req.session.user_id = user._id; // Set user_id in session upon successful OTP verification
-      req.session.user = true; // Set other necessary session data
-      console.log("OTP Matched. Redirecting to home page.");
-      return res.redirect("users/"); // Redirect to the home page or appropriate route
-    } else {
-      console.log("Rendering enterotp with error message");
-      return res.render("users/enterotp", { message: "The OTP is incorrect" });
+    const generatedOTP = user.token;
+    if (otp !== generatedOTP) {
+      res.render("users/enterotp", { message: "The OTP is incorrect" });
+      return;
     }
+    return res.redirect("/");
   } catch (error) {
     console.error("Error:", error.message);
-    // Pass the caught error to the next middleware (error handling middleware)
     next(error);
-    // Handle other errors gracefully
   }
 };
-// forget password code //
 
+//................Loading Page for Sending Mail To Reset Password................//
 const forgetload = async (req, res) => {
   try {
     res.render("users/forget");
@@ -502,42 +443,43 @@ const forgetload = async (req, res) => {
   }
 };
 
-// verify forget password on mail //
-
-const forgetverify = async (req, res,next) => {
+//......................Sending Email for resetpassword..........................//
+const forgetverify = async (req, res, next) => {
   try {
     email = req.body.email;
     const userData = await User.findOne({ email: email });
-    if (userData) {
-      if (userData.is_varified === 0) {
-        res.render("users/forget", { message: "Please verify your mail" });
-      } else {
-        const randomString = randomstring.generate();
-        const updateData = await User.updateOne(
-          { email: email },
-          { $set: { token: randomString } }
-        );
-        sendresetpasswordmail(userData.name, userData.email, randomString);
-        res.render("users/forget", {
-          message: "please check your mail to reset your password.",
-        });
-      }
-    } else {
+
+    if (!userData) {
       res.render("users/forget", { message: "User email is incorrect" });
+      return;
     }
+
+    if (userData.is_varified === 0) {
+      res.render("users/forget", { message: "Please verify your mail" });
+      return;
+    }
+
+    const randomString = randomstring.generate();
+    const updateData = await User.updateOne(
+      { email: email },
+      { $set: { token: randomString } }
+    );
+    sendresetpasswordmail(userData.name, userData.email, randomString);
+    res.render("users/forget", {
+      message: "please check your mail to reset your password.",
+    });
   } catch (error) {
     next(error);
   }
 };
 
-const verifymail = async (req, res,next) => {
+//......................... Verifying Mail after register.........................//
+const verifymail = async (req, res, next) => {
   try {
     const updateinfo = await User.updateOne(
       { _id: req.query.id },
       { $set: { is_varified: 1 } }
     );
-
-    console.log(updateinfo);
     res.render("users/emailvarified");
   } catch (error) {
     console.log(error);
@@ -545,28 +487,29 @@ const verifymail = async (req, res,next) => {
   }
 };
 
-const forgetpasswordload = async (req, res,next) => {
+//......................Loading page for Reset Password.............................//
+const forgetpasswordload = async (req, res, next) => {
   try {
     const token = req.query.token;
     const tokenData = await User.findOne({ token: token });
 
-    if (tokenData) {
-      res.render("users/forgetPassword", { user_id: tokenData._id });
-    } else {
+    if (!tokenData) {
       res.render("404", { message: "Token is invalid." });
+      return;
     }
+    res.render("users/forgetPassword", { user_id: tokenData._id });
   } catch (error) {
     console.log(error.message);
     next(error);
   }
 };
-const resetpassword = async (req, res,next) => {
+
+//................................Reseting Password...................................//
+const resetpassword = async (req, res, next) => {
   try {
     const password = req.body.password;
     const user_id = req.body.user_id;
-
     const secure_password = await securepassword(password);
-
     const updateData = await User.findByIdAndUpdate(
       { _id: user_id },
       { $set: { password: secure_password, token: "" } }
@@ -578,32 +521,28 @@ const resetpassword = async (req, res,next) => {
   }
 };
 
+//................................Search Product.........................................//
 const searchproduct = async (req, res, next) => {
   try {
     let isUserLoggedIn = false;
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
-    const searchquery = req.query.search || ""; // Set a default value when searchquery is not provided
-    const filterByCategory = req.query.category || ""; // Filter by category, you can modify this as per your category filtering logic
-
+    const searchquery = req.query.search || "";
+    const filterByCategory = req.query.category || "";
     let sortOption = {};
-    const sortQuery = req.query.sort; // Get the sort query parameter
+    const sortQuery = req.query.sort;
 
-    // Define sorting options based on the sort query parameter
-    if (sortQuery === 'price-low-to-high') {
-      sortOption = { price: 1 }; // Sort by price in ascending order
-    } else if (sortQuery === 'price-high-to-low') {
-      sortOption = { price: -1 }; // Sort by price in descending order
+    if (sortQuery === "price-low-to-high") {
+      sortOption = { price: 1 };
+    } else if (sortQuery === "price-high-to-low") {
+      sortOption = { price: -1 };
     } else {
-      // Default sorting option if no valid query parameter is provided
-      sortOption = { createdAt: -1 }; // Sort by createdAt field in descending order
+      sortOption = { createdAt: -1 };
     }
 
     let productData;
-
     if (filterByCategory) {
-      // If filtering by category is required
       productData = await Product.find({
         $and: [
           {
@@ -617,13 +556,11 @@ const searchproduct = async (req, res, next) => {
         ],
       }).sort(sortOption);
     } else {
-      // If no category filtering is required
       productData = await Product.find({
         $or: [
           { name: { $regex: searchquery, $options: "i" } },
           { brand: { $regex: searchquery, $options: "i" } },
           { description: { $regex: searchquery, $options: "i" } },
-      
         ],
       }).sort(sortOption);
     }
@@ -639,85 +576,126 @@ const searchproduct = async (req, res, next) => {
     next(error);
   }
 };
-const addcart = async (req, res, next) => {
+
+//.............................Adding cart from Home......................................//
+const Addcart = async (req, res, next) => {
   const productId = req.params.id;
-console.log(productId)
   try {
     const product = await Product.findById(productId);
-
     if (!product) {
-      console.error('Product not found');
-      return res.status(404).send('Product not found');
+      console.error("Product not found");
+      return res.status(404).send("Product not found");
     }
 
     const userId = req.session.user_id;
-
     const user = await User.findById(userId);
-
     if (!user) {
-      console.error('User not found');
-      return res.status(404).send('User not found');
+      console.error("User not found");
+      return res.status(404).send("User not found");
     }
 
     const productToAdd = {
       product: productId,
-      quantity: 1
-    }
-    console.log(productToAdd);
-    const updatedUser = await User.updateOne({_id: userId},{
-      $addToSet: {cart: productToAdd}
-      
-    },{upsert: true})
-    const existingCartItem = user.cart.find((item) => item.product.toString() === productId);
+      quantity: 1,
+    };
+    const updatedUser = await User.updateOne(
+      { _id: userId },
+      {
+        $addToSet: { cart: productToAdd },
+      },
+      { upsert: true }
+    );
+    const existingCartItem = user.cart.find(
+      (item) => item.product.toString() === productId
+    );
 
-     
-    
-
-   // await user.save();
-    console.log('Product added to cart successfully',updatedUser);
-    return res.status(200).send('Product added to cart successfully');
+    await user.save();
+    console.log("Product added to cart successfully", updatedUser);
+    return res.status(200).send("Product added to cart successfully");
   } catch (error) {
-  next(error);
+    next(error);
   }
 };
 
+//.................................Loading Cart Page.....................................//
 const logincart = async (req, res, next) => {
   try {
-    const userId = req.session.user_id;
-
-    if (!userId) {
-      console.error('User not logged in');
-      return res.redirect('/login'); // Redirect to login page or handle accordingly
-    }
-
-    const user = await User.findById(userId).populate('cart.product');
-
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate("cart.product");
     if (!user) {
-      console.error('User not found');
-      return res.status(404).send('User not found');
+      console.error("User not found");
+      return res.status(404).send("User not found");
     }
 
-    if (user.cart && user.cart.length > 0) {
-      console.log('User Cart:', user.cart);
-      return res.render('users/shopcart', { user, isUserLoggedIn: true });
-    } else {
-      return res.render('users/shopcart', {
+    if (user?.cart?.length <= 0) {
+      res.render("users/shopcart", {
         user,
         isUserLoggedIn: true,
-        emptyCart: true
+        emptyCart: true,
       });
+      return;
     }
+    res.render("users/shopcart", { user, isUserLoggedIn: true });
   } catch (error) {
-    console.error('Error fetching user cart:', error);
-    return res.status(500).send('Internal Server Error');
+    console.error("Error fetching user cart:", error);
+    return res.status(500).send("Internal Server Error");
   }
 };
- 
 
+//..................................Removing Item from Cart................................//
+const Removecart = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const userId = req.user._id;
+    const user = await User.findOneAndUpdate(
+      { _id: userId },
+      { $pull: { cart: { product: productId } } },
+      { new: true }
+    );
+    res.redirect("/shopcart");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+//...........................Updating Cart Quantity......................................//
+const Updatecart = async (req, res, next) => {
+  const { product_id, updateQuantity } = req.body;
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const productInCart = user.cart.find(
+      (item) => item.product.toString() === product_id
+    );
+    if (!productInCart) {
+      return res.status(404).send("Product not found in user cart");
+    }
+
+    let newQuantity = productInCart.quantity;
+    if (updateQuantity === "increase") {
+      newQuantity++;
+    } else if (updateQuantity === "decrease" && newQuantity > 1) {
+      newQuantity--;
+    }
+    productInCart.quantity = newQuantity;
+    await user.save();
+
+    return res.redirect("/shopcart"); 
+  } catch (error) {
+    console.error("Error updating quantity:", error);
+    next(error);
+  }
+};
+
+//.......................................Exports...........................................//
 module.exports = {
   loadindex,
   loadsales,
- 
   loadRegister,
   insertUser,
   verifymail,
@@ -731,13 +709,13 @@ module.exports = {
   sendEmailOtp,
   emailOtp,
   userLogout,
-  checkAuth,
   forgetload,
   forgetverify,
   forgetpasswordload,
   resetpassword,
-  getCategories,
   searchproduct,
   logincart,
-  addcart
+  Addcart,
+  Removecart,
+  Updatecart,
 };
