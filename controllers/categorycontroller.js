@@ -1,15 +1,7 @@
-const User = require("../models/usermodel");
-const Product = require("../models/productmodel");
-const Admin = require("../models/adminmodel");
-const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
-const randomstring = require("randomstring");
-const { name } = require("ejs");
 const mongoose = require("mongoose");
 const Category = require("../models/categorymodel");
 
-//...................................Load Category page.................................//
-const loadcategory = async (req, res, next) => {
+const loadCategory = async (req, res, next) => {
   try {
     const categories = await Category.find();
     res.render("admin/categories", { categories });
@@ -18,8 +10,7 @@ const loadcategory = async (req, res, next) => {
   }
 };
 
-//.............................Fetch Category from Database..............................//
-const fetchCategories = async (req, res, next) => {
+const getCategories = async (req, res, next) => {
   try {
     const categories = await Category.find({});
     res.status(200).json(categories);
@@ -28,8 +19,7 @@ const fetchCategories = async (req, res, next) => {
   }
 };
 
-//.....................................Add Category.......................................//
-const addcategory = async (req, res, next) => {
+const addCategory = async (req, res, next) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -64,8 +54,7 @@ const addcategory = async (req, res, next) => {
   }
 };
 
-//........................... ...Updating  Category.........................................//
-const updatecategory = async (req, res, next) => {
+const updateCategory = async (req, res, next) => {
   try {
     const categoryId = req.params.id;
     const category = await Category.findById(categoryId);
@@ -94,7 +83,6 @@ const updatecategory = async (req, res, next) => {
   }
 };
 
-//.....................................Unlist Category.....................................//
 const unlistCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
@@ -112,8 +100,7 @@ const unlistCategory = async (req, res) => {
   }
 };
 
-//....................................Search Category........................................//
-const searchcategory = async (req, res) => {
+const searchCategory = async (req, res) => {
   try {
     const searchquery = req.query.search || "";
     const categoryData = await Category.find({
@@ -125,12 +112,11 @@ const searchcategory = async (req, res) => {
   }
 };
 
-//........................................Exports..............................................//
 module.exports = {
-  loadcategory,
-  fetchCategories,
-  addcategory,
-  updatecategory,
+  loadCategory,
+  getCategories,
+  addCategory,
+  updateCategory,
   unlistCategory,
-  searchcategory,
+  searchCategory,
 };

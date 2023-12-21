@@ -1,14 +1,7 @@
-const User = require("../models/usermodel");
 const Product = require("../models/productmodel");
-const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
-const randomstring = require("randomstring");
-const { name } = require("ejs");
-const mongoose = require("mongoose");
 const Category = require("../models/categorymodel");
 
-//........................................Load Product Page...............................//
-const loadproducts = async (req, res) => {
+const loadProducts = async (req, res) => {
   try {
     const categories = await Category.find();
     const products = await Product.find().populate("category");
@@ -19,8 +12,7 @@ const loadproducts = async (req, res) => {
   }
 };
 
-//.....................................Add product.........................................//
-const addproduct = async (req, res, next) => {
+const addProduct = async (req, res, next) => {
   try {
     const {
       name,
@@ -74,8 +66,7 @@ const addproduct = async (req, res, next) => {
   }
 };
 
-//......................................Updating Product....................................//
-const updateproduct = async (req, res, next) => {
+const updateProduct = async (req, res, next) => {
   try {
     const productId = req.params.id;
     const product = await Product.findById(productId);
@@ -123,8 +114,7 @@ const updateproduct = async (req, res, next) => {
   }
 };
 
-//.....................................Unlist Product..........................................//
-const unlist = async (req, res, next) => {
+const unlistProduct = async (req, res, next) => {
   try {
     const productId = req.params.id;
     const product = await Product.findById(productId);
@@ -141,10 +131,9 @@ const unlist = async (req, res, next) => {
   }
 };
 
-//.......................................Search Product..........................................//
-const searchproduct = async (req, res, next) => {
+const searchProduct = async (req, res, next) => {
   try {
-    const searchquery = req.query.search || "";  
+    const searchquery = req.query.search || "";
     const productData = await Product.find({
       $or: [
         { name: { $regex: searchquery } },
@@ -153,17 +142,16 @@ const searchproduct = async (req, res, next) => {
         { category: { $regex: searchquery } },
       ],
     });
-    res.render("admin/products", { products: productData, searchquery }); 
+    res.render("admin/products", { products: productData, searchquery });
   } catch (error) {
     next(error);
   }
 };
 
-//...........................................Exports..............................................//
 module.exports = {
-  loadproducts,
-  addproduct,
-  updateproduct,
-  searchproduct,
-  unlist,
+  loadProducts,
+  addProduct,
+  updateProduct,
+  searchProduct,
+  unlistProduct,
 };

@@ -15,29 +15,11 @@
     </div>
   </div>
 
-  <!-- auto-popup starts-->
-  <!-- <div id="autopopup-option" class="auto_popup position-fixed pt-100 pb-115">
-    <div id="close-button" class="position-absolute">
-      <button class="bg-transparent">X</button>
-    </div>
-    <h3 class=" pb-15">Get Discount 30% Off</h3>
-    <p>Get 20% discount with notified about the latest news and updates. No spam, we promise!
-    </p>
-    <form action="#" class="subscribe-area text-center pt-20">
-      <input type="email" placeholder="YOUR EMAIL">
-      <button>Subscribe</button>
-    </form>
-    <div class="checkbox text-center pt-35  position-relative">
-      <label for="checkbox"><input type="checkbox" id="checkbox">Don’st show this popup again</label>
-    </div>
-  </div> -->
-  <!-- auto_popup ends  -->
-
   <!-- header area starts -->
   <header>
     <div class="header-1 pt-35">
       <div class="container">
-        <div class="row align-items-center"> <!-- Added align-items-center for vertical alignment -->
+        <div class="row align-items-center"> 
           <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1">
             <div class="logo text-md-center text-lg-left">
               <a href="/">
@@ -54,9 +36,8 @@
                             <a href="/">Home</a>
                         </li>
                         <li>
-                            <a href="/shoplist">Sale</a>
+                            <a href="/shop-list">Sale</a>
                         </li>
-                        <!-- <li><a href="shoplist">Collection</a></li> -->
                         <li><a href="#">Pages</a>
                             <ul class="sub-menu pb-10 pt-10 pl-15 pr-15">
                                 <li>About US</li>
@@ -87,7 +68,7 @@
             />
             </form>
           </div>
-          <!-- Wishlist Div -->
+     
           <% if(isUserLoggedIn===true){%>
           <div class="userinfo">
             <a href="">
@@ -100,17 +81,16 @@
               <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>
               <span class="badge badge-danger small-badge">1</span>
             </a>
-              <!-- Add other wishlist-related content here -->
+              
           </div>
          
           <div class="add-to-cart">
-            <a href="/shopcart">
-              <!-- Add to Cart content -->
+            <a href="/shop-cart">
+           
               <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 576 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
           </div>
           <div class="logout-div">
             <a href="/logout">
-              <!-- Logout content -->
               <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
             
             </a>
@@ -133,14 +113,14 @@
           <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-8 offset-xl-1 offset-lg-1 offset-xl-0">
               <div class="slider-description mt-200">
-                <h1><a href="/shopdetails/<%= encodeURIComponent(product._id) %>"><%= product.name %></a></h1>
+                <h1><a href="/shop-details/<%= encodeURIComponent(product._id) %>"><%= product.name %></a></h1>
                 <p class="pb-30 pr-120"><%= product.description %></p>
-                <a href="/shopdetails/<%= encodeURIComponent(product._id) %>" class="slider-btn position-relative">SHOP NOW</a>
+                <a href="/shop-details/<%= encodeURIComponent(product._id) %>" class="slider-btn position-relative">SHOP NOW</a>
               </div>
             </div>
             <div class="slider-images">
               <div class="slider-image-bg">
-                <a href="/shopdetails/<%= encodeURIComponent(product._id) %>">
+                <a href="/shop-details/<%= encodeURIComponent(product._id) %>">
                   <img src="<%= product.images[0] %>" alt="<%= product.name %>">
                   <span class="slider-price-badge">
                     <span>$<%= product.price %></span>
@@ -170,7 +150,7 @@
               </div>
               <div class="category-texts">
                 <span>Popular</span>
-                <h3><a href="/shoplist"><%= category.name %></a></h3>
+                <h3><a href="/shop-list"><%= category.name %></a></h3>
               </div>
             </div>
           </div>
@@ -201,7 +181,7 @@
                 <img src="<%= product.images[0] %>" alt="<%= product.name %>">
               </div>
               <div class="arrival-details position-relative pt-25">
-                <h5><a href="/shopdetails/<%= encodeURIComponent(product._id) %>"><%= product.name %></a></h5>
+                <h5><a href="/shop-details/<%= encodeURIComponent(product._id) %>"><%= product.name %></a></h5>
                 <ul class="rating">
                   <% for (let i = 0; i < 5; i++) { %>
                     <li><i class="las la-star"></i></li>
@@ -216,7 +196,7 @@
                   <% } %>
                 </div>
                 <div class="buy-info">
-                  <a class="slider-btn add-btn float-left position-relative" href="/add=to-cart/<%= encodeURIComponent(product._id) %>">Add To Cart</a>
+                  <a class="slider-btn add-btn float-left position-relative" href="/add-to-cart/<%= encodeURIComponent(product._id) %>">Add To Cart</a>
                   <ul class="wishlist text-right">
                     <li><a href="my_wishlist.html"><i class="lar la-heart"></i></a></li>
                     <li><button class="popbtn"><i class="fas fa-search-plus"></i></button></li>
@@ -229,7 +209,7 @@
       </div>
       <div class="row">
         <div class="view-items ml-auto mr-auto mt-50">
-          <a class="p-btn position-relative" href="/shoplist">
+          <a class="p-btn position-relative" href="/shop-list">
             <span>Load more</span>
           </a>
         </div>
@@ -299,67 +279,7 @@
     </div>
   </div>
   <!-- new arrival area ends -->
-  <!-- Today Deal Area Start -->
-  <div class="today-deal pt-115">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-5 col-lg-6 col-md-6 col-sm-12">
-          <div class="deal-details pt-90">
-            <span>Today's Deal</span>
-            <h2>Wooden Candle Holder</h2>
-            <div class="price">
-              <del class="mr-5">$142.00</del>
-              <span>$132.00</span>
-            </div>
-            <p class="pr-90">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-              ut labore et dolore magna aliqua.</p>
-            <div id="countdown" class="d-flex pb-40">
-              <div class="cd-box d-flex">
-                <div class="d-inline-block">
-                  <span class="numbers days">00</span>
-                  <span class="strings timeRefDays">Days</span>
-                </div>
-                <span class="colon ml-20 mr-20 mt-15">:</span>
-              </div>
-              <div class="cd-box d-flex">
-                <div>
-                  <span class="numbers hours">00</span>
-                  <span class="strings timeRefHours">Hours</span>
-                </div>
-                <span class="colon ml-20 mr-20 mt-15">:</span>
-              </div>
-              <div class="cd-box d-flex">
-                <div>
-                  <span class="numbers minutes">00</span>
-                  <span class="strings timeRefMinutes">Mins</span>
-                </div>
-                <span class="colon ml-20 mr-20 mt-15">:</span>
-              </div>
-              <div class="cd-box">
-                <div>
-                  <span class="numbers seconds">00</span>
-                  <span class="strings timeRefSeconds">Secs</span>
-                </div>
-              </div>
-
-            </div>
-            <a class="p-btn position-relative" href="">
-              <span>Load more</span>
-            </a>
-          </div>
-        </div>
-        <!-- <div class="col-xl-7 col-lg-6 col-md-6 col-sm-12">
-          <div class="today-deal-img deal-img-position  text-center position-relative">
-            <img src="img/deals/01.png" alt="product">
-            <span class="deal-badge slider-price-badge">
-              <span>20%
-                Discount</span>
-            </span>
-          </div>
-        </div> -->
-      </div>
-    </div>
-  </div>
+   
 
  
 
@@ -516,10 +436,5 @@
   </footer>
 
   <!-- Footer Area Ends -->
-
-  
-
-
-
 
 <%- include('../layouts/footer.ejs') %>

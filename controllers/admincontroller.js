@@ -1,11 +1,8 @@
 const User = require("../models/usermodel");
-const Product = require("../models/productmodel");
 const Admin = require("../models/adminmodel");
 const bcrypt = require("bcrypt");
-const { name } = require("ejs");
-const Category = require("../models/categorymodel");
 
-const securepassword = async (password) => {
+const securePassword = async (password) => {
   try {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -42,10 +39,10 @@ const adminLogin = async (req, res) => {
     }
     if (adminData.is_admin === 0) {
       res.redirect("/admin/login");
-      return 
+      return;
     }
-    req.session.admin_id=adminData._id
-     res.redirect("/admin/indexhome");
+    req.session.admin_id = adminData._id;
+    res.redirect("/admin/indexhome");
   } catch (error) {
     next(error);
   }
@@ -53,7 +50,7 @@ const adminLogin = async (req, res) => {
 
 const adminLogout = async (req, res) => {
   try {
-    req.session.admin_id=null;
+    req.session.admin_id = null;
     res.setHeader("Cache-Control", "no-cache, no-store");
     res.redirect("/admin");
   } catch (error) {
@@ -62,7 +59,7 @@ const adminLogout = async (req, res) => {
 };
 
 //.....Loading Dashboard.....//
-const loadindex = async (req, res) => {
+const loadIndex = async (req, res) => {
   try {
     if (req?.session?.admin_id) {
       return res.render("admin/indexhome");
@@ -72,41 +69,7 @@ const loadindex = async (req, res) => {
   }
 };
 
-const insertAdmin = async (req, res) => {
-  try {
-    if (req.body.password !== req.body.confirm_password) {
-      res.render("registration", {
-        message: "Password and Confirm Password do not match",
-      });
-      return;
-    }
-
-    const spassword = await securepassword(req.body.password);
-    const admin = new Admin({
-      name: req.body.name,
-      email: req.body.email,
-      mobile: req.body.mobile,
-      password: spassword,
-      is_admin: 1,
-    });
-    const adminData = await admin.save();
-    if (adminData) {
-      req.session.admin_id = adminData._id;
-
-      sendverifymail(req.body.name, req.body.email, adminData._id);
-      res.render("admin/login", {
-        message:
-          "Your regestration has been susseccfull,please verify your mail.",
-      });
-    } else {
-      throw new Error("Your registration has failed");
-    }
-  } catch (error) {
-    next(error);
-  }
-}; 
-
-const loadcustomer = async (req, res) => {
+const loadCustomer = async (req, res) => {
   try {
     const users = await User.find({ is_admin: 0 });
     if (!users) {
@@ -120,7 +83,6 @@ const loadcustomer = async (req, res) => {
   }
 };
 
-//.....................................delete user......................................//
 const deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -138,7 +100,6 @@ const deleteUser = async (req, res) => {
   }
 };
 
-//....................................Search User.......................................//
 const searchUser = async (req, res) => {
   try {
     const searchquery = req.query.search || "";
@@ -155,11 +116,9 @@ const searchUser = async (req, res) => {
   }
 };
 
-//............................................Exports...................................//
 module.exports = {
-  loadindex,
-  loadcustomer,
-  insertAdmin,
+  loadIndex,
+  loadCustomer,
   loadLogin,
   adminLogin,
   adminLogout,
