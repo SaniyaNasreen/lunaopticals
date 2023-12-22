@@ -363,12 +363,12 @@
                           </div>
 
                           <div class="nk-tb-col tb-col-md">
-                            <a href="#" data-bs-toggle="modal" data-bs-target="#editProductModal" class="toggle btn btn-danger d-none d-md-inline-flex">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#editProductModal<%=product._id%>" class="toggle btn btn-danger d-none d-md-inline-flex">
                               
                               <span>Edit Product</span>
                           </a>
                             </div>
-                            <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="editProductModal<%=product._id%>" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
                               <div class="modal-dialog modal-lg">
                                   <div class="modal-content">
                                       <div class="modal-header">

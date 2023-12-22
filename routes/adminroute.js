@@ -4,9 +4,8 @@ const auth = require("../miidleware/auth");
 const admincontroller = require("../controllers/admincontroller");
 const productcontroller = require("../controllers/productcontroller");
 const categorycontroller = require("../controllers/categorycontroller");
-const app = express();
-const Category = require("../models/categorymodel");
-const upload = require("../utils/multer");
+const multer = require("multer");
+const upload = multer({ dest: "public/uploads/" });
 
 // loading pages and admin verify
 admin_route.get("/indexhome", auth.isAdmin, admincontroller.loadIndex);
@@ -27,10 +26,7 @@ admin_route.post(
   upload.array("images"),
   productcontroller.updateProduct
 );
-admin_route.post(
-  "/products/unlist-product/:id",
-  productcontroller.unlistProduct
-);
+admin_route.post("/products/unlist/:id", productcontroller.unlistProduct);
 admin_route.get("/search-product", productcontroller.searchProduct);
 
 // Category Management

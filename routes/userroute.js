@@ -32,6 +32,7 @@ user_route.post("/reset-password", usercontroller.resetPassword);
 
 //Product Related
 user_route.get("/search-product", usercontroller.searchProduct);
+// user_route.get("/product-pagination", usercontroller.productPagination);
 
 // Cart Related
 user_route.get("/add-to-cart/:id", usercontroller.addCart);

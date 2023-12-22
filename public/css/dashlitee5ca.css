@@ -43874,4 +43874,25 @@ div.dataTables_wrapper
   position: relative;
 }
 
+.pagination-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 5px;
+  position: relative;
+
+  top: 140px;
+}
+
+.pagination-link {
+  text-align: center;
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-decoration: none;
+  color: #333;
+}
+
+.pagination-link.active {
+  background-color: #007bff;
+  color: #fff;
+}
 /*! END @iO */

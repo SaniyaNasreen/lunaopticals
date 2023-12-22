@@ -1,4 +1,6 @@
 const multer = require("multer");
+const { createCanvas, loadImage } = require("canvas");
+const fs = require("fs");
 
 // File type map for validating uploaded images
 const FILE_TYPE_MAP = {
@@ -43,4 +45,23 @@ const upload = multer({
   },
 });
 
-module.exports=upload;
+const cropImage = (inputPath, outputPath, x, y, width, height) => {
+  loadImage(inputPath)
+    .then((image) => {
+      const canvas = createCanvas(width, height);
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+
+      const out = fs.createWriteStream(outputPath);
+      const stream = canvas.createPNGStream(); // Change to createJPEGStream if needed
+
+      stream.pipe(out);
+      out.on("finish", () => console.log("The image was cropped and saved!"));
+    })
+    .catch((err) => {
+      console.error("Error occurred while cropping the image:", err);
+      console.error("Input Image Path:", inputPath);
+    });
+};
+
+module.exports = { upload, cropImage };

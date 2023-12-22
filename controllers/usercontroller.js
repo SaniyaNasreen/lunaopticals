@@ -389,6 +389,7 @@ const loadIndex = async (req, res, next) => {
     if (!req.session.user_id) {
       const categories = await Category.find({ listed: true }).limit(2);
       const products = await Product.find({ listed: true });
+
       let isUserLoggedIn = false;
       if (req?.session?.user_id) {
         isUserLoggedIn = true;
@@ -447,33 +448,45 @@ const loadProductList = async (req, res, next) => {
     }
 
     let filter = { listed: true };
+    let categoryFilter = {};
     if (req.query.category) {
       const category = await Category.findOne({
         name: req.query.category,
-      }).sort(sortOption);
+      });
 
       if (category) {
         filter.category = category._id;
+        categoryFilter = { category: category._id };
       } else {
-        const allProducts = await Product.find({ listed: true }).sort(
-          sortOption
-        );
-        return res.render("users/shop-list", {
-          products: allProducts,
-          isUserLoggedIn,
-          is_blocked: false,
-        });
+        filter = { listed: true };
       }
     }
 
-    const products = await Product.find(filter)
+    const totalProducts = await Product.countDocuments(filter);
+    const sortedProducts = await Product.find(filter)
       .populate("category")
-      .sort(sortOption);
+      .sort(sortOption)
+      .lean()
+      .exec();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 3;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalProducts / limit);
+    const currentPage = page;
     res.render("users/shop-list", {
-      products,
       isUserLoggedIn,
       is_blocked: false,
       selectedSort: sortQuery,
+      currentPage,
+      totalPages,
+      totalItems: totalProducts,
+      products: paginatedProducts,
+      limit,
+      category: req.query.category || "",
+      categoryFilter,
     });
   } catch (error) {
     next(error);

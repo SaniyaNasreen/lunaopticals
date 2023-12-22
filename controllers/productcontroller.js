@@ -1,5 +1,12 @@
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
+const { cropImage } = require("../utils/multer");
+const FILE_TYPE_MAP = {
+  "image/png": "png",
+  "image/jpeg": "jpeg",
+  "image/jpg": "jpg",
+  "image/webp": "webp",
+};
 
 const loadProducts = async (req, res) => {
   try {
@@ -105,7 +112,26 @@ const updateProduct = async (req, res, next) => {
       const fileUrls = req.files.map(
         (file) => `http://localhost:4000/${file.path}`
       );
-      product.images = [...product.images, ...fileUrls];
+
+      const firstUploadedFile = req.files[0];
+      const uploadedImagePath = firstUploadedFile.path; // Path of the uploaded image
+      console.log(firstUploadedFile.path);
+      const croppedImagePath = `${uploadedImagePath.split(".")[0]}_cropped.${
+        FILE_TYPE_MAP[firstUploadedFile.mimetype]
+      }`;
+
+      cropImage(
+        uploadedImagePath,
+        croppedImagePath,
+        0, // x-coordinate for cropping
+        0, // y-coordinate for cropping
+        200, // width for cropping
+        200 // height for cropping
+      );
+      product.images = [
+        ...product.images,
+        `http://localhost:4000/${croppedImagePath}`,
+      ];
     }
     await product.save();
     res.redirect("/admin/products");
