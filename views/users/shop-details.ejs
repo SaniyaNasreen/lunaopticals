@@ -128,34 +128,44 @@
       <div class="row">
         <div class="col-xl-1 col-lg-2 col-md-2 col-sm-12 ">
           <div class="nav nav-tabs " id="approach-tabs" role="tablist">
-            <% if(product.images[1]){%>
-            <a class="product-thumb mb-15 active" id="nav-thumb1" data-toggle="tab" href="#nav-product1" role="tab"
-              aria-controls="nav-product1" aria-selected="true"><img src="<%= product.images[1] %>" alt="img"></a>
+            <% if(product.images[0]) { %>
+              <a class="product-thumb mb-15 active" data-index="0" data-toggle="tab" href="#nav-product0" role="tab"
+                aria-controls="nav-product0" aria-selected="true">
+                <img src="<%= product.images[0] %>" alt="img">
+              </a>
               <% }; %>
-              <% if(product.images[2]){%>
-            <a class="product-thumb mb-15" id="nav-thum2" data-toggle="tab" href="#nav-product2" role="tab"
-              aria-controls="nav-product2" aria-selected="false"><img src="<%= product.images[2] %>" alt="img"></a>
-            
+            <% if(product.images[1]) { %>
+              <a class="product-thumb mb-15 active" data-index="1" data-toggle="tab" href="#nav-product1" role="tab"
+                aria-controls="nav-product1" aria-selected="true">
+                <img src="<%= product.images[1] %>" alt="img">
+              </a>
+              <% }; %>
+              <% if(product.images[2]) { %>
+                <a class="product-thumb mb-15" data-index="2" data-toggle="tab" href="#nav-product2" role="tab"
+                  aria-controls="nav-product2" aria-selected="false">
+                  <img src="<%= product.images[2] %>" alt="img">
+                </a>
                 <% }; %>
-                <% if(product.images[3]){%>
-              <a class="product-thumb" id="nav-thumb3" data-toggle="tab" href="#nav-product3" role="tab"
-              aria-controls="nav-product3" aria-selected="false"><img src="<%= product.images[3] %>" alt="img"></a>
-              <% }; %>
+                <% if(product.images[3]) { %>
+                  <a class="product-thumb" data-index="3" data-toggle="tab" href="#nav-product3" role="tab"
+                    aria-controls="nav-product3" aria-selected="false">
+                    <img src="<%= product.images[3] %>" alt="img">
+                  </a>
+                  <% }; %>
             </div>
         </div>
         <div class="col-xl-11 col-lg-10 col-md-10 col-sm-12 ">
           <div class="product-wrapper d-flex">
-            <div class="product-imges tab-content" id="nav-tabContents">
-              <div class="tab-pane product-img  active " id="nav-product1" role="tabpanel" aria-labelledby="nav-thumb1">
-                <img src="<%= product.images[0] %>" alt="img">
+            <div class="product-imges  tab-content"  id="nav-tabContents">
+              <% for (let i = 0; i < product.images.length; i++) { %>
+                <div class="tab-pane product-img <%= i === 0 ? 'active' : '' %>" id="nav-product<%= i  %>" role="tabpanel"
+                  aria-labelledby="nav-thumb<%= i + 1 %>">
+                  <img src="<%= product.images[i] %>" alt="img">
+                </div>
+                <% } %>
+                <div class="zoom-overlay" id="zoom-overlay"></div>
               </div>
-              <div class="tab-pane product-img " id="nav-product2" role="tabpanel" aria-labelledby="nav-thum2">
-                <img src="<%= product.images[0] %>" alt="img">
-              </div>
-              <div class="tab-pane product-img" id="nav-product3" role="tabpanel" aria-labelledby="nav-thumb3">
-                <img src="<%= product.images[0] %>" alt="img">
-              </div>
-            </div>
+         
         
         <div class="col-md-8 ">
           <div class="product-details">
@@ -397,8 +407,30 @@
   </footer>
 
   <!-- Footer Area Ends -->
-
-
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const images = document.querySelectorAll('.product-imges img'); // Select the product images
+  
+      // Initialize medium-zoom on each product image
+      images.forEach((image) => {
+        mediumZoom(image, {
+          margin: 2, // Adjust the margin as needed for the zoomed image
+        });
+      });
+    });
+  </script>
+  
+ <script>
+  $(document).ready(function () {
+    $('.product-thumb').on('click', function (e) {
+      e.preventDefault();
+      var imgSrc = $(this).find('img').attr('src');
+      $('.product-img.active img').attr('src', imgSrc);
+      $('.product-thumb').removeClass('active');
+      $(this).addClass('active');
+    });
+  });
+</script>
   <%- include('../layouts/footer.ejs') %>
 
   

@@ -1,13 +1,7 @@
+const path = require("path");
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
-const { cropImage } = require("../utils/multer");
-const FILE_TYPE_MAP = {
-  "image/png": "png",
-  "image/jpeg": "jpeg",
-  "image/jpg": "jpg",
-  "image/webp": "webp",
-};
-
+const { upload, cropToSquare } = require("../utils/multer");
 const loadProducts = async (req, res) => {
   try {
     const categories = await Category.find();
@@ -108,31 +102,29 @@ const updateProduct = async (req, res, next) => {
     product.brand = req.body.brand;
     product.price = req.body.price;
     product.category = foundCategory._id;
+    const filePromises = [];
     if (req.files && req.files.length > 0) {
-      const fileUrls = req.files.map(
-        (file) => `http://localhost:4000/${file.path}`
-      );
+      for (const file of req.files) {
+        const filePath = path.join("public/uploads", file.filename);
+        const outputCroppedPath = path.join(
+          "public/uploads",
+          `cropped_${file.filename}`
+        );
 
-      const firstUploadedFile = req.files[0];
-      const uploadedImagePath = firstUploadedFile.path; // Path of the uploaded image
-      console.log(firstUploadedFile.path);
-      const croppedImagePath = `${uploadedImagePath.split(".")[0]}_cropped.${
-        FILE_TYPE_MAP[firstUploadedFile.mimetype]
-      }`;
+        const cropPromise = new Promise((resolve, reject) => {
+          cropToSquare(filePath, outputCroppedPath, 600, 600);
+          resolve();
+        });
 
-      cropImage(
-        uploadedImagePath,
-        croppedImagePath,
-        0, // x-coordinate for cropping
-        0, // y-coordinate for cropping
-        200, // width for cropping
-        200 // height for cropping
-      );
-      product.images = [
-        ...product.images,
-        `http://localhost:4000/${croppedImagePath}`,
-      ];
+        filePromises.push(cropPromise);
+
+        const fileUrl = `http://localhost:4000/public/uploads/cropped_${file.filename}`;
+        product.images.push(fileUrl);
+      }
+
+      await Promise.all(filePromises); // Wait for all image cropping operations to finish
     }
+
     await product.save();
     res.redirect("/admin/products");
   } catch (error) {

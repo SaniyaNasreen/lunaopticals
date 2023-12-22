@@ -1,5 +1,6 @@
+const path = require("path");
 const multer = require("multer");
-const { createCanvas, loadImage } = require("canvas");
+const sharp = require("sharp");
 const fs = require("fs");
 
 // File type map for validating uploaded images
@@ -45,23 +46,27 @@ const upload = multer({
   },
 });
 
-const cropImage = (inputPath, outputPath, x, y, width, height) => {
-  loadImage(inputPath)
-    .then((image) => {
-      const canvas = createCanvas(width, height);
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
-
-      const out = fs.createWriteStream(outputPath);
-      const stream = canvas.createPNGStream(); // Change to createJPEGStream if needed
-
-      stream.pipe(out);
-      out.on("finish", () => console.log("The image was cropped and saved!"));
+function cropToSquare(filePath, outputPath, width, height) {
+  sharp(filePath)
+    .resize({
+      width: width,
+      height: height,
+      fit: "cover",
+      position: "center",
     })
-    .catch((err) => {
-      console.error("Error occurred while cropping the image:", err);
-      console.error("Input Image Path:", inputPath);
+    .toFormat("webp")
+    .toBuffer((err, buffer) => {
+      if (err) {
+        console.error("Error occurred while cropping the image:", err);
+      } else {
+        fs.writeFile(outputPath, buffer, (writeErr) => {
+          if (writeErr) {
+            console.error("Error writing cropped image:", writeErr);
+          } else {
+            console.log("Image cropped successfully and saved as:", outputPath);
+          }
+        });
+      }
     });
-};
-
-module.exports = { upload, cropImage };
+}
+module.exports = { upload, cropToSquare };

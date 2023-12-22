@@ -5,7 +5,7 @@ const admincontroller = require("../controllers/admincontroller");
 const productcontroller = require("../controllers/productcontroller");
 const categorycontroller = require("../controllers/categorycontroller");
 const multer = require("multer");
-const upload = multer({ dest: "public/uploads/" });
+const upload = multer({ dest: "public/uploads" });
 
 // loading pages and admin verify
 admin_route.get("/indexhome", auth.isAdmin, admincontroller.loadIndex);

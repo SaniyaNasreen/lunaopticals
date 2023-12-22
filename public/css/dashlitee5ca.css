@@ -29451,6 +29451,11 @@ div.dataTables_wrapper div.dataTables_filter .nk-header-search input {
 .is-theme .nk-menu-link:hover .nk-menu-icon {
   color: #fff;
 }
+.nk-menu-item.active > .nk-menu-link,
+.nk-menu-link:hover {
+  color: #9769ff;
+  background: #000;
+}
 .nk-menu-link.is-disable:hover .nk-menu-icon {
   color: #8094ae;
 }
@@ -43895,4 +43900,5 @@ div.dataTables_wrapper
   background-color: #007bff;
   color: #fff;
 }
+
 /*! END @iO */
