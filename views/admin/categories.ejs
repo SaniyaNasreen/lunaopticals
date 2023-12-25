@@ -225,14 +225,29 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                          
-                                          <form action="/admin/categories/add-category" method="post" enctype="multipart/form-data">
+                                           
+                                          <form action="/admin/categories/add-category" method="post" enctype="multipart/form-data" class="form1-addc needs-validation" novalidate>
                                             <div id="category-image-preview-container" class="cat-preview"></div>
-                                            <input type="file" id="category-file-upload" class="form-control1-addc" name="image" required>
-                                            <input type="text" class="form-control2-addc" name="name" placeholder="Enter the new Category" required>
-                                            <br><br> 
-                                            <input type="submit" class="form-control4-addc" value="Add Category">
-                                          </form>
+                                        
+                                            <div class="mb-3">
+                                                <input type="file" id="category-file-upload" class="form-control1-addc form-control" name="image" required>
+                                                <div class="invalid-feedback">
+                                                    Please upload an image.
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control2-addc form-control" name="name" placeholder="Enter the new Category" required>
+                                                <div class="invalid-feedback">
+                                                    Category name is required.
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="mb-3">
+                                                <input type="submit" class="form-control4-addc" value="Add Category" style="width: 480px; position: relative; margin-top: 15px; border-radius: 10px; color: white; height: 40px; font-weight: 500; background-color: rgb(22, 127, 197); border-style: hidden;">
+                                            </div>
+                                        </form>
+                                       
                                         </div>
                                     </div>
                                 </div>
@@ -279,11 +294,11 @@
                                         </form>
                                         </div>
                                         <div class="nk-tb-col tb-col-sm">
-                                          <a href="#" data-bs-toggle="modal" data-bs-target="#editCategoryModal" class="toggle btn btn-danger d-none d-md-inline-flex">
+                                          <a href="#" data-bs-toggle="modal" data-bs-target="#editCategoryModal<%=category._id%>" class="toggle btn btn-danger d-none d-md-inline-flex">
                                             <span>Edit Category</span>
                                         </a>
                                         </div>
-                                        <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="editCategoryModal<%=category._id%>" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
                                           <div class="modal-dialog">
                                               <div class="modal-content">
                                                   <div class="modal-header">
@@ -291,27 +306,40 @@
                                                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                   </div>
                                                   <div class="modal-body">
-                                                    <form action="/admin/categories/edit-category/<%= category._id %>" id="editCategoryForm" class="form1-editc" method="post" enctype="multipart/form-data">
+                                                    <form action="/admin/categories/edit-category/<%= category._id %>" id="editCategoryForm" class="form1-editc needs-validation" method="post" enctype="multipart/form-data" novalidate>
                                                       <% if (category.image) { %>
-                                                        <img src="<%= category.image %>" alt="Existing Image" class="existing-image">
+                                                      <img src="<%= category.image %>" alt="Existing Image" class="existing-image" style="width: 100px; height: 100px; position: relative; bottom: 10px;">
                                                       <% } %>
-                                                      <input type="text" class="form-control2-editc" value="<%= category.image %>" disabled>
-                                                      <br><br>
-                                                      <label for="imageUpload" class="custom-file-upload">
-                                                        <span id="fileLabelText">Choose new file</span>
-                                                        <input type="file" class="form-control2-editc" name="image" id="imageUpload">
-                                                      </label>
-                                                      <br><br>
-                                                      <select name="name" class="form-control2-editc" required>
-                                                        <option value="<%= category.name %>" selected><%= category.name %></option>
-                                                        <% categories.filter(cat => cat.name !== category.name).forEach(cat => { %>
-                                                          <option value="<%= cat.name %>"><%= cat.name %></option>
-                                                        <% }); %>
-                                                      </select>
-                                                      <br><br>
-                                                      <input type="hidden" name="id" value="<%= category._id %>" >
-                                                      <input type="submit" class="form-control4-editc" value="Update Category">
-                                                    </form>
+                                                  
+                                                      <div class="mb-3">
+                                                          <input type="text" class="form-control2-editc form-control" value="<%= category.image %>" disabled>
+                                                      </div>
+                                                  
+                                                      <div class="mb-3">
+                                                          <input type="file" class="form-control2-editc form-control" name="image" id="imageUpload" >
+                                                          <div class="invalid-feedback">
+                                                              Please upload an image.
+                                                          </div>
+                                                      </div>
+                                                  
+                                                      <div class="mb-3">
+                                                          <select name="name" class="form-control2-editc form-control" required>
+                                                              <option value="<%= category.name %>" selected><%= category.name %></option>
+                                                              <% categories.filter(cat => cat.name !== category.name).forEach(cat => { %>
+                                                              <option value="<%= cat.name %>"><%= cat.name %></option>
+                                                              <% }); %>
+                                                          </select>
+                                                          <div class="invalid-feedback">
+                                                              Please select a category name.
+                                                          </div>
+                                                      </div>
+                                                  
+                                                      <input type="hidden" name="id" value="<%= category._id %>">
+                                                  
+                                                      <div class="mb-3">
+                                                          <input type="submit" class="form-control4-editc" value="Update Category" style="width: 400px; position: relative; right: 75px; margin-top: 15px; border-radius: 10px; color: white; height: 40px; font-weight: 500; background-color: rgb(22, 118, 197); border-style: hidden;">
+                                                      </div>
+                                                  </form>
                                                   </div>
                                               </div>
                                           </div>

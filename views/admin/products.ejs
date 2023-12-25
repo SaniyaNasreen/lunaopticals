@@ -229,34 +229,108 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                          <form action="/admin/products/add-Product" id="addProductForm" class="form1-editp" method="post" enctype="multipart/form-data">
-                                            <div id="image-preview-container"></div>
-                                            <input type="file" id="file-upload" accept="image/*" class="form-control2-addp" name="images" multiple>
-                                            <button type="button" id="clear-image" onclick="clearImage()">Clear Image</button>
-                                            <br><br>
-                                             
-                                                <input type="text" class="form-control1-addp" name="name" placeholder="Enter name of the product" required>
-                                                <br><br>
-                                                <input type="text"  class="form-control1-addp" name="description" placeholder="Enter Description of the product" required>
-                                                <br><br>
-                                                <input type="text"  class="form-control1-addp" name="richDescription" placeholder="Enter RichDescription of the product" required>
-                                                <br><br>
-                                                <input type="text"  class="form-control1-addp" name="brand" placeholder="Enter Brand of the product" required>
-                                                <br><br>
-                                                <input type="number" id="priceInput" class="form-control1-addp" name="price" placeholder="Enter Price of the product" required>
-                                                <span class="price-error-message" style="display: none; color: red; font-size: small;"></span>
-                                                <br><br>
-                                                <select name="category" class="form-control1-addp" required>
-                                                    <option value="" disabled selected>Select a category</option>
-                                                    <% categories.forEach(category => { %>
-                                                        <option value="<%= category.name %>"><%= category.name %></option>
-                                                    <% }); %>
-                                                </select>
-                                                <br><br>
-                                                <input type="number"  class="form-control1-addp" name="countInStock" placeholder="Enter stock of the product" required>
-                                                <br><br>
-                                                <input type="submit" class="form-control4-addp" value="Add product">
-                                            </form>
+                                          <form action="/admin/products/add-Product" id="addProductForm" class="form1-editp needs-validation" method="post"
+        enctype="multipart/form-data" novalidate>
+        <div class="mb-3">
+          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
+          >Upload Image</label
+        >
+            <label for="file-upload" class="custom-file-upload" style="padding-top: 8px;">
+                choose file
+            </label>
+            <div id="image-preview-container"></div>
+            <input type="file" id="file-upload" accept="image/*" class="form-control2-addp" name="images" multiple
+                style="display: none;">
+            <button type="button" style="background-color: rgb(212, 46, 5); border-style:none; color: white; border-radius: 6px; height: 30px;" id="clear-image" onclick="clearImage()">Deselect all images</button>
+        </div>
+        <div class="mb-3">
+          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
+          >Name</label
+        >
+            <input type="text" class="form-control1-addp form-control" name="name"
+                
+                
+                required>
+            <div class="invalid-feedback">
+                Name is required.
+            </div>
+        </div>
+        <div class="mb-3">
+          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
+          >Description</label
+        >
+            <input type="text" class="form-control1-addp form-control" name="description"
+              
+               
+                required>
+            <div class="invalid-feedback">
+                Description is required.
+            </div>
+        </div>
+        <div class="mb-3">
+          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
+          >RichDescription</label
+        >
+            <input type="text" class="form-control1-addp form-control" name="richDescription"
+                
+                
+                required>
+            <div class="invalid-feedback">
+                Rich Description is required.
+            </div>
+        </div>
+        <div class="mb-3">
+          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
+          >Brand</label
+        >
+            <input type="text" class="form-control1-addp form-control" name="brand"
+                
+                
+                required>
+            <div class="invalid-feedback">
+                Brand is required.
+            </div>
+        </div>
+        <div class="mb-3">
+          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
+          >Price</label
+        >
+            <input type="number" id="priceInput" class="form-control1-addp form-control" name="price"
+                
+                
+                required>
+            <span class="price-error-message" style="display: none; color: red; font-size: small;"></span>
+            <div class="invalid-feedback">
+                Price is required.
+            </div>
+        </div>
+        <div class="mb-3">
+          <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Category</label>
+          <select class="form-control1-editp form-control" name="category" required>
+            <option value="" disabled selected>Select a Category</option>
+            <% categories.forEach(category => { %>
+                <option value="<%= category._id %>"><%= category.name %></option>
+            <% }); %>
+        </select>
+            <div class="invalid-feedback">
+                Category is required.
+            </div>
+        </div>
+        <div class="mb-3">
+          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
+          >Stock</label
+        >
+            <input type="number" class="form-control1-addp form-control" name="countInStock"
+                 required>
+            <div class="invalid-feedback">
+                Stock count is required.
+            </div>
+        </div>
+        <div class="mb-3">
+            <input type="submit" class="form-control4-addp" value="Add product"
+                style="width: 430px; position: relative; right: 80px; margin-top: 15px; border-radius: 10px; color: white; height: 40px; font-weight: 500; background-color: rgb(33, 78, 225); border-style: hidden;">
+        </div>
+    </form>
                                         </div>
                                     </div>
                                 </div>
@@ -376,45 +450,80 @@
                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                       </div>
                                       <div class="modal-body">
-                                        <form action="/admin/products/edit-product/<%= product._id %>" id="editProductForm" class="form1-editp" method="post" enctype="multipart/form-data">
-                                               
-                                              <div class="image-container">
-                                                <% product.images.forEach((image, index) => { %>
-                                                  <div class="existing-image">
-                                                    <img src="<%= image %>" alt="Product Image">
-                                                    <label for="deleteImage<%= index %>">Delete Image</label>
-                                                    <input type="checkbox" id="deleteImage<%= index %>" name="deleteImages" value="<%= index %>">
-                                                  </div>
-                                                <% }); %>
+                                        <form action="/admin/products/edit-product/<%= product._id %>" id="editProductForm" class="form1-editp needs-validation" method="post" enctype="multipart/form-data" novalidate>
+                                          <div class="image-container">
+                                            <% product.images.forEach((image, index) => { %>
+                                              <div class="existing-image">
+                                                <img src="<%= image %>" alt="Product Image">
+                                                <label for="deleteImage<%= index %>" style="background-color: #e85347; color: white; border-style: none; border-radius: 5px; width: 90px; height: 25px; padding-left: 5px; position: relative; top: 8px;">Delete Image</label>
+                                                <input type="checkbox" id="deleteImage<%= index %>" name="deleteImages" value="<%= index %>" style="position: relative; top: 12px;">
+                                                <div class="preview-images"></div>
                                               </div>
-                                                  <input type="file" accept="image/*" class="form-control2-editp" name="images" multiple>
-                                                  
-                                                  <input type="text" class="form-control1-editp" name="name"  placeholder="Enter name" value="<%= product.name %>" required>
-                                                  <br><br>
-                                                  <input type="text" class="form-control1-editp" name="description"  placeholder="Enter description" value="<%= product.description %>" required>
-                                                  <br><br>
-                                                  <input type="text" class="form-control1-editp" name="brand"  placeholder="Enter Brand" value="<%= product.brand %>" required>
-                                                  <br><br>
-                                                  <input type="text" class="form-control1-editp" name="price"  placeholder="Enter price" value="<%= product.price %>" required>
-                                                  <span class="price-error-message" style="display: none; color: red; font-size: small;"></span>
-                                                
-                                                  <br><br>
-                                                  <select class="form-control1-editp" name="category" required>
-                                                    <% categories.forEach(category => { %>
-                                                      <option value="<%= category._id %>">
-                                                        <%= category.name %>  
-                                                      </option>
-                                                    <% }); %>
-                                                  </select>
-                                                  <br><br>
-                                                  <input type="number"  class="form-control1-editp" name="countInStock" placeholder="Enter stock " value="<%= product.countInStock %>" required>
-                                                  <br><br>
-                                                  <input type="hidden" name="id" value="<%= product._id %>" >
-                                                  <input type="hidden" name="_method" value="PUT"> 
-                                                  <input type="hidden" name="_delete" value="true">  
-                                                
-                                                  <input type="submit" class="form-control4-editp" value="Update product" >
-                                          </form>
+                                            <% }); %>
+                                          </div>
+                                          
+                                          <!-- Adding file input for uploading new images -->
+                                          <input type="file" accept="image/*" class="form-control2-editp" name="images" id="imageInput" multiple onchange="previewImages(event)">
+                                          <div class="newly-added-images" ></div>
+                                          
+                                      
+                                          <div class="mb-3">
+                                            <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Name</label>
+                                              <input type="text" class="form-control1-editp form-control" name="name" placeholder="Enter name" value="<%= product.name %>" required>
+                                              <div class="invalid-feedback">
+                                                  Name is required.
+                                              </div>
+                                          </div>
+                                          <div class="mb-3">
+                                            <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Description</label>
+                                              <input type="text" class="form-control1-editp form-control" name="description" placeholder="Enter description" value="<%= product.description %>" required>
+                                              <div class="invalid-feedback">
+                                                  Description is required.
+                                              </div>
+                                          </div>
+                                          <div class="mb-3">
+                                            <label for="name" class="form-label" style="color: rgb(109, 103, 103);">RichDescription</label>
+                                              <input type="text" class="form-control1-editp form-control" name="brand" placeholder="Enter Brand" value="<%= product.brand %>" required>
+                                              <div class="invalid-feedback">
+                                                  Brand is required.
+                                              </div>
+                                          </div>
+                                          <div class="mb-3">
+                                            <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Price</label>
+                                              <input type="text" class="form-control1-editp form-control" name="price" placeholder="Enter price" value="<%= product.price %>" required>
+                                              <span class="price-error-message" style="display: none; color: red; font-size: small;"></span>
+                                              <div class="invalid-feedback">
+                                                  Price is required.
+                                              </div>
+                                          </div>
+                                          <div class="mb-3">
+                                            <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Category</label>
+                                              <select class="form-control1-editp form-control" name="category" required>
+                                                  <% categories.forEach(category => { %>
+                                                  <option value="<%= category._id %>">
+                                                      <%= category.name %>
+                                                  </option>
+                                                  <% }); %>
+                                              </select>
+                                              <div class="invalid-feedback">
+                                                  Category is required.
+                                              </div>
+                                          </div>
+                                          <div class="mb-3">
+                                            <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Stock</label>
+                                              <input type="number" class="form-control1-editp form-control" name="countInStock" placeholder="Enter stock" value="<%= product.countInStock %>" required>
+                                              <div class="invalid-feedback">
+                                                  Stock count is required.
+                                              </div>
+                                          </div>
+                                          <input type="hidden" name="id" value="<%= product._id %>">
+                                          <input type="hidden" name="_method" value="PUT">
+                                          <input type="hidden" name="_delete" value="true">
+                                      
+                                          <div class="mb-3">
+                                              <input type="submit" class="form-control4-editp" value="Update product" style="width: 550px; position: relative;  margin-top: 15px; border-radius: 10px; color: white; height: 40px; font-weight: 500; background-color: rgb(22, 92, 197); border-style: hidden;">
+                                          </div>
+                                      </form>
                                       </div>
                                   </div>
                               </div>

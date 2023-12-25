@@ -22,44 +22,134 @@
     </header>
     <!-- header area ends --> 
   
-
-  <div class="container-fluid1">
-    <% if (typeof errorMessage !== 'undefined') { %>
-      <div class="alert alert-danger" role="alert">
-        <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
-          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-        </svg>
-        <%= errorMessage %>
+    <div class="container-fluid1">
+      <div class="box-register">
+        <h1 class="head1-register">Sign-Up</h1>
+        <h4 class="sub1-register" style="
+        margin-left: 80px;
+        width: 400px;
+        color: white;">Please fill in this form to create a new account</h4>
+        <form action="/register" class="form-register needs-validation" method="POST" novalidate>
+          <div class="mb-3">
+            <label for="name" class="form-label" style="color: white;">Name</label>
+            <input type="text" class="form-control1-register form-control" id="name" name="name" style="border-radius: 10px;
+            width: 400px;
+            height: 40px;
+            background-color: rgb(50, 50, 50);
+            border-style: hidden;
+            border-color: white;
+            border-style: hidden;" required>
+            <div class="invalid-feedback">
+              Name is required.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label" style="color: white;" >Email</label>
+            <input type="email" class="form-control1-register form-control  <%- (typeof errorWith != 'undefined' && errorWith ==='EMAIL') ? 'is-invalid' : '' %>" id="email" name="email" style="border-radius: 10px;
+            width: 400px;
+            height: 40px;
+            background-color: rgb(50, 50, 50);
+            border-style: hidden;
+            border-color: white;
+            border-style: hidden;"
+            required
+            >
+            <div class="invalid-feedback">
+              <%- (typeof errorWith != 'undefined') ? message : " Email is required." %>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="mobile" class="form-label" style="color: white;">Mobile</label>
+            <input type="tel" class="form-control1-register form-control <%- (typeof errorWith != 'undefined' && errorWith ==='MOBILE') ? 'is-invalid' : '' %>"" id="mobile" name="mobile" pattern="[0-9]{10}" style="border-radius: 10px;
+            width: 400px;
+            height: 40px;
+            background-color: rgb(50, 50, 50);
+            border-style: hidden;
+            border-color: white;
+            border-style: hidden;" required>
+            <div class="invalid-feedback">
+              <%- (typeof errorWith != 'undefined') ? message : "Please enter a valid 10-digit mobile number." %>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label" style="color: white;">Password</label>
+            <input type="password" class="form-control1-register form-control" id="password" name="password" style="border-radius: 10px;
+            width: 400px;
+            height: 40px;
+            background-color: rgb(50, 50, 50);
+            border-style: hidden;
+            border-color: white;
+            border-style: hidden;" required>
+            <div class="invalid-feedback">
+              Password should be at least 6 characters long.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="confirm_password" class="form-label" style="color: white;">Confirm Password</label>
+            <input type="password" class="form-control1-register form-control <%- (typeof errorWith != 'undefined' && errorWith ==='PASSWORD') ? 'is-invalid' : '' %>" id="confirm_password" name="confirm_password" style="border-radius: 10px;
+            width: 400px;
+            height: 40px;
+            background-color: rgb(50, 50, 50);
+            border-style: hidden;
+            border-color: white;
+            border-style: hidden;" required>
+            <div class="invalid-feedback">
+              <%- (typeof errorWith != 'undefined') ? message : "Confirm Password is required" %>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="country" class="form-label" style="color: white;">Country</label>
+            <input type="text" class="form-control1-register form-control" id="country" name="country" style="border-radius: 10px;
+            width: 400px;
+            height: 40px;
+            background-color: rgb(50, 50, 50);
+            border-style: hidden;
+            border-color: white;
+            border-style: hidden;" required>
+            <div class="invalid-feedback">
+              Country is required.
+            </div>
+          </div>
+          <div class="mb-3">
+            <h4 class="sub2-register" style="color: white; font-size: large;">Already a user? <a href="/login">Login</a></h4>
+           
+          </div>
+          <div class="col-12">
+            <button class="form-control1-register  <%- (typeof errorWith != 'undefined' && errorWith ==='USER') ? 'is-invalid' : '' %>" type="submit" style="width: 400px;
+              position: relative;
+              right: 15px;
+              margin-top: 15px;
+              border-radius: 10px;
+              color: white;
+              height: 40px;
+              font-weight: 500;
+              background-color: rgb(197, 95, 22);
+              border-style: hidden;">Submit form</button>
+          </div>
+        </form>
       </div>
-    <% } %>
-    <div class="box-register"> 
-      <h1 class="head1-register">Sign-Up</h1>
-      <h4 class="sub1-register">Please fill in this form to create a new account</h4>
-      <form action="/register" class="form-register" method="post" >
-        <input type="name" class="form-control1-register" name="name" id="name" placeholder="Name" required>
-        <span id="nameError" class="error-message"></span>
-        <br><br>
-        <input type="email" class="form-control1-register" name="email" id="email" placeholder="Email" required>
-        <span id="emailError" class="error-message"></span>
-        <br><br>
-        <input type="tel" class="form-control1-register" name="mobile" id="mobile" placeholder="Mobile" pattern="[0-9]{10}" required>
-        <span id="mobileError" class="error-message"></span>
-        <br><br>
-        <input type="password" class="form-control1-register" name="password" id="password" placeholder="Password" required>
-        <span id="passError" class="error-message"></span>
-        <br><br>
-        <input type="password" class="form-control1-register" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required>
-        <span id="cpassError" class="error-message"></span>
-        <br><br>
-        <input type="text" class="form-control1-register" name="country" id="country" placeholder="Country" required>
-        <span id="countryError" class="error-message"></span>
-        <br><br>
-        <h4 class="sub2-register">Already a user? <a href="/login">Login</a></h4>
-        <input type="submit" class="form-control2-register" value="Sign-up">
-      </form>
     </div>
-  </div>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        "use strict";
+var forms = document.querySelectorAll(".needs-validation")
+Array.prototype.slice.call(forms).forEach(function (form) {
+  form.addEventListener(
+    "submit",
+    function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
 
+      form.classList.add("was-validated");
+    },
+    false
+  );
+}); 
+      });
+    </script>
   <%- include('../layouts/footer.ejs') %>
 
    

@@ -44,7 +44,7 @@
                 <li><a href="">Contact</a></li>
                 <% if(!isUserLoggedIn===true){%>
                 <li ><a href="/login">Login</a></li>
-                <li ><a href="/register">Register</a></li>
+                
                 <% }; %>
                
               </ul>
@@ -57,6 +57,7 @@
           <form action="/search-product" method="get">
           <input
             type="text"
+            name="search"
             class="form-control border-transparent form-focus-none custom-search"
             placeholder="Search anything"
           />

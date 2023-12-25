@@ -22,25 +22,38 @@ const getCategories = async (req, res, next) => {
 const addCategory = async (req, res, next) => {
   try {
     const { name } = req.body;
+    const imagePath = req.file.path;
     if (!name) {
       const error = new Error("Name is required for creating a category");
       error.statusCode = 400;
       throw error;
     }
 
-    const existingCategory = await Category.findOne({ name });
-    if (existingCategory) {
-      res.render("admin/addcategory", {
+    console.log("Request Body:", req.body);
+    console.log("File Path:", req.file.path);
+
+    const existingCategoryByName = await Category.findOne({ name });
+    if (existingCategoryByName) {
+      return res.render("admin/addcategory", {
         errorMessage: "Category with this name already exists",
       });
-      return;
+    }
+
+    const existingCategoryByImage = await Category.findOne({
+      image: imagePath,
+    });
+    if (existingCategoryByImage) {
+      return res.render("admin/addcategory", {
+        errorMessage: "Category with this image already exists",
+      });
     }
 
     const category = new Category({
       name: name,
-      image: `http://localhost:4000/${req.file.path}`,
+      image: imagePath,
     });
     const categoryData = await category.save();
+
     if (!categoryData) {
       const error = new Error("Failed to add category");
       error.statusCode = 500;
@@ -79,7 +92,13 @@ const updateCategory = async (req, res, next) => {
     }
     res.redirect("/admin/categories");
   } catch (error) {
-    next(error);
+    if (error.code === 11000) {
+      res
+        .status(400)
+        .send("Category with the same name or image already exists.");
+    } else {
+      next(error);
+    }
   }
 };
 

@@ -30,7 +30,8 @@ const addProduct = async (req, res, next) => {
       return res.status(400).send(req.fileValidationError);
     }
 
-    const foundCategory = await Category.findOne({ name: category });
+    const categoryId = req.body.category;
+    const foundCategory = await Category.findById(categoryId);
     if (!foundCategory) {
       console.log("Category not found or undefined");
       return res.status(404).send("Category not found or undefined");
@@ -152,6 +153,7 @@ const unlistProduct = async (req, res, next) => {
 const searchProduct = async (req, res, next) => {
   try {
     const searchquery = req.query.search || "";
+
     const productData = await Product.find({
       $or: [
         { name: { $regex: searchquery } },

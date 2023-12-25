@@ -19,11 +19,22 @@
   </div>
 </header>
 <!-- header area ends --> 
-<div class="container-fluid1">
+<div class="container-fluid0">
    
-<div class="box-login">
+<div class="box-login" style=" background-color: rgb(13, 13, 12);
+height: 500px;
+margin-top: 20px;
+width: 500px;
+margin-left: 500px;
+border-color: chocolate;
+border-style: groove;">
  
-<h1 class="head2-login">AdimnLogin</h1>
+<h1 class="head2-login" style="font-size: 40px;
+width: 170px;
+padding-left: 140px;
+font-weight: 700;
+padding-top: 100px;
+color: white;">AdimnLogin</h1>
 
 <% 
 
@@ -34,27 +45,179 @@ if(typeof message !== 'undefined'&&message.trim()!==''){
 }
 %>
 
+<form
+action="/admin/login"
+method="post"
+class="form1-login needs-validation"
+novalidate
+>
+<div class="mb-3">
+  <label
+    for="validationCustomUsername"
+    class="form-label"
+    style="color: white"
+    >Email</label
+  >
+  <input
+    type="email"
+    class="form-control1-login form-control"
+    id="validationCustomUsername"
+    aria-describedby="inputGroupPrepend"
+    required
+    name="email"
+    style="
+      border-radius: 10px;
+      width: 400px;
+      height: 40px;
+      border-style: hidden;
+      color: white;
+      background-color: rgb(50, 50, 50);
+    "
+  />
+  <div class="invalid-feedback">Please enter a valid email address.</div>
+</div>
+<div class="mb-3">
+  <label for="validationCustom03" class="form-label" style="color: white"
+    >Password</label
+  >
+  <input
+    type="password"
+    class="form-control1-login form-control"
+    id="validationCustom03"
+    required
+    name="password"
+    style="
+      border-radius: 10px;
+      width: 400px;
+      height: 40px;
+      border-style: hidden;
+      color: white;
+      background-color: rgb(50, 50, 50);
+    "
+  />
+  <div class="invalid-feedback">Password is Invalid</div>
+</div>
+<h4 class="sub1-login">
+  Forgot your password?<a href="/forget-password">Click here</a>
+</h4>
+ 
+<div class="mb-3">
+  <input type="submit" class="form-control2-login" value="Login" /><br />
+</div>
+</form>
+ 
+</div>
+</div>
 
+<script>
+(function () {
+"use strict";
 
-<form action="/admin/login" class="form1-login" method="post">
-    <input type="email" class="form-control1-login"  name="email" required placeholder="Enter email">
-    <br><br>
-    <input type="password"  class="form-control1-login" name="password" required placeholder="Enter password">
-    <h4  class="sub1-login">Forgot your password?<a href="/forget">Click here</a></h4>
+// Fetch all the forms we want to apply custom Bootstrap validation styles to
+var forms = document.querySelectorAll(".needs-validation");
+
+// Loop over them and prevent submission
+Array.prototype.slice.call(forms).forEach(function (form) {
+form.addEventListener(
+  "submit",
+  function (event) {
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    form.classList.add("was-validated");
+  },
+  false
+);
+});
+})();
+</script>
+<%- include('../layouts/footer.ejs') %>
+<!-- 
+<form action="/admin/login" class="form1-loginneeds-validation"
+novalidate method="post">
+<div class="mb-3">
+  <label
+    for="validationCustomUsername"
+    class="form-label"
+    style="color: white"
+    >Email</label
+  >
+  <input
+    type="email"
+    class="form-control1-login form-control"
+    id="validationCustomUsername"
+    aria-describedby="inputGroupPrepend"
+    required
+    name="email"
+    style="
+      border-radius: 10px;
+      width: 400px;
+      height: 40px;
+      border-style: hidden;
+      color: white;
+      background-color: rgb(50, 50, 50);
+    "
+  />
+  <div class="invalid-feedback">Please enter a valid email address.</div>
+</div>
+<div class="mb-3">
+  <label for="validationCustom03" class="form-label" style="color: white"
+    >Password</label
+  >
+  <input
+    type="password"
+    class="form-control1-login form-control"
+    id="validationCustom03"
+    required
+    name="password"
+    style="
+      border-radius: 10px;
+      width: 400px;
+      height: 40px;
+      border-style: hidden;
+      color: white;
+      background-color: rgb(50, 50, 50);
+    "
+  />
+  <div class="invalid-feedback">Password is Invalid</div>
+</div>
+<h4 class="sub1-login">
+  Forgot your password?<a href="/forget-password">Click here</a>
+</h4>
     <input type="submit"  class="form-control2-login" value="Login"><br>
    
 </form>
-<form action="/forgotPassword" method="get">
-    <input type="submit" class="form-control3-login " value="login with otp" >
-</form>
-<form action="/admin/registration" class="form2-login" method="get">
-  <input type="submit" class="form-control4-login" value="Sign-Up">
-</form>
+ 
 </div>
 </div>
 </div>  
  
+<script>
+  (function () {
+    "use strict";
 
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.querySelectorAll(".needs-validation");
+
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener(
+        "submit",
+        function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
  
 <%- include('../layouts/footer.ejs') %>
- 
+  -->

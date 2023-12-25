@@ -9,10 +9,10 @@ const upload = multer({ dest: "public/uploads" });
 
 // loading pages and admin verify
 admin_route.get("/indexhome", auth.isAdmin, admincontroller.loadIndex);
-admin_route.get("/admin", auth.isAdmin, admincontroller.loadLogin);
+
 admin_route.get("/", admincontroller.loadLogin);
 admin_route.post("/login", admincontroller.adminLogin);
-admin_route.get("/logout", admincontroller.adminLogout);
+admin_route.get("/logout", auth.isAdmin, admincontroller.adminLogout);
 
 // Product Management
 admin_route.get("/products", productcontroller.loadProducts);
@@ -26,14 +26,17 @@ admin_route.post(
   upload.array("images"),
   productcontroller.updateProduct
 );
-admin_route.post("/products/unlist/:id", productcontroller.unlistProduct);
+admin_route.post(
+  "/products/unlist-product/:id",
+  productcontroller.unlistProduct
+);
 admin_route.get("/search-product", productcontroller.searchProduct);
 
 // Category Management
 admin_route.get("/categories", categorycontroller.loadCategory);
 admin_route.get("/categories", categorycontroller.getCategories);
 admin_route.post(
-  "/categories/add-category/:id",
+  "/categories/add-category",
   upload.single("image"),
   categorycontroller.addCategory
 );

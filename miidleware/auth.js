@@ -1,11 +1,24 @@
 const User = require("../models/usermodel");
-const checkUserLoggedIn = (req, res, next) => {
-  if (req.session && req.session.user_id) {
-    res.locals.isLoggedIn = true;
-  } else {
-    res.locals.isLoggedIn = false;
+const isUserBlocked = async (req, res, next) => {
+  try {
+    if (req?.session?.user_id) {
+      const userData = await User.findOne({ _id: req.session.user_id });
+
+      if (userData.is_blocked) {
+        res.render("users/login", {
+          errorWith: "USER",
+          message: "Your account has been blocked due to some reasons",
+        });
+        return;
+      }
+      req.user = userData;
+      next();
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
   }
-  next();
 };
 
 const isUser = async (req, res, next) => {
@@ -64,16 +77,8 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-const isLogout = async (req, res, next) => {
-  if (!res.locals.isLoggedIn) {
-    res.redirect("/login");
-  } else {
-    next();
-  }
-};
 module.exports = {
-  checkUserLoggedIn,
+  isUserBlocked,
   isUser,
-  isLogout,
   isAdmin,
 };

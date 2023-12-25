@@ -196,13 +196,29 @@
                   <% } %>
                 </div>
                 <div class="buy-info">
-                  <a class="slider-btn add-btn float-left position-relative" href="/add-to-cart/<%= encodeURIComponent(product._id) %>">Add To Cart</a>
+                  <a class="slider-btn add-btn float-left position-relative add-to-cart-btn" href="/add-to-cart/<%= encodeURIComponent(product._id) %>">Add To Cart</a>
                   <ul class="wishlist text-right">
                     <li><a href="my_wishlist.html"><i class="lar la-heart"></i></a></li>
                     <li><button class="popbtn"><i class="fas fa-search-plus"></i></button></li>
                   </ul>
                 </div>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                              <p>Product added to cart successfully.</p>
+                          </div>
+                      </div>
+                  </div>
               </div>
+          </div>
             </div>
           </div>
         <% }); %>

@@ -1,11 +1,12 @@
 const User = require("../models/usermodel");
-const bcrypt = require("bcrypt");
+
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const config = require("../config/config");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const crypto = require("crypto");
+const bcrypt = require("bcrypt");
 
 const securePassword = async (password) => {
   try {
@@ -59,7 +60,8 @@ const loadRegister = async (req, res) => {
 const insertUser = async (req, res, next) => {
   try {
     if (req.body.password !== req.body.confirm_password) {
-      res.render("/registration", {
+      res.render("users/registration", {
+        errorWith: "PASSWORD",
         message: "Password and Confirm Password do not match",
       });
       return;
@@ -69,14 +71,16 @@ const insertUser = async (req, res, next) => {
     const existingemail = await User.findOne({ email });
     if (existingemail) {
       res.render("users/registration", {
-        errorMessage: "Email already exists",
+        errorWith: "EMAIL",
+        message: "Email already exists",
       });
     }
 
     const existingmobile = await User.findOne({ mobile });
     if (existingmobile) {
       res.render("users/registration", {
-        errorMessage: "Mobile already exists",
+        errorWith: "MOBILE",
+        message: "Mobile already exists",
       });
     }
 
@@ -85,6 +89,7 @@ const insertUser = async (req, res, next) => {
     });
     if (existingUser) {
       res.render("users/registration", {
+        errorWith: "EMAIL",
         errorMessage: "Email and Mobile already exist together",
       });
     }
@@ -103,15 +108,15 @@ const insertUser = async (req, res, next) => {
     const userData = await user.save();
     if (!userData) {
       res.render("/registration", {
+        errorWith: "USER",
         message: "Your registration has been failed",
       });
     }
 
     sendVerifyMail(req.body.name, req.body.email, userData._id);
-    res.render("users/login", {
-      message:
-        "Your regestration has been susseccfull,please verify your mail.",
-    });
+    res.redirect(
+      "/login?message=Your%20registration%20has%20been%20successful.%20Please%20verify%20your%20email."
+    );
   } catch (error) {
     next(error);
   }
@@ -132,10 +137,10 @@ const verifyMail = async (req, res, next) => {
 
 const loginLoad = async (req, res, next) => {
   try {
-    if (!req.session.user_id) {
-      res.render("users/login");
-    } else {
+    if (req.session.user_id) {
       res.redirect("/");
+    } else {
+      res.render("users/login");
     }
   } catch (error) {
     next(error);
@@ -148,26 +153,49 @@ const verifyLogin = async (req, res, next) => {
     const password = req.body.password;
     const userData = await User.findOne({ email: email });
     if (!userData) {
-      res.render("users/login", { message: "No User Found" });
+      res.render("users/login", {
+        errorWith: "USER",
+        message: "No User Found",
+      });
       return;
     }
     if (userData.is_blocked) {
       res.render("users/login", {
+        errorWith: "USER",
         message: "Your account has been blocked due to some reasons",
       });
       return;
     }
     if (userData.is_admin === 1) {
-      res.render("users/login", { message: "This is not user account" });
+      res.render("users/login", {
+        errorWith: "USER",
+        message: "This is not user account",
+      });
       return;
     }
-    const passwordmatch = await bcrypt.compare(password, userData.password);
-    if (!passwordmatch) {
-      res.render("users/login", { message: "Password incorrect" });
-      return;
-    }
-    req.session.user_id = userData._id;
-    res.redirect("/");
+    const plainTextPassword = password;
+    const hashedPasswordFromDatabase = userData.password;
+
+    bcrypt.compare(
+      plainTextPassword,
+      hashedPasswordFromDatabase,
+      function (err, result) {
+        if (err) {
+          console.error(err);
+          return next(err);
+        }
+
+        if (result) {
+          req.session.user_id = userData._id;
+          res.redirect("/");
+        } else {
+          res.render("users/login", {
+            errorWith: "PASSWORD",
+            message: "Password incorrect",
+          });
+        }
+      }
+    );
   } catch (error) {
     next(error);
   }
@@ -267,7 +295,7 @@ const resetPassword = async (req, res, next) => {
   try {
     const password = req.body.password;
     const user_id = req.body.user_id;
-    const secure_password = await securepassword(password);
+    const secure_password = await securePassword(password);
     const updateData = await User.findByIdAndUpdate(
       { _id: user_id },
       { $set: { password: secure_password, token: "" } }
@@ -476,10 +504,11 @@ const loadProductList = async (req, res, next) => {
     const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
     const totalPages = Math.ceil(totalProducts / limit);
     const currentPage = page;
+    const selectedSort = sortQuery;
     res.render("users/shop-list", {
       isUserLoggedIn,
       is_blocked: false,
-      selectedSort: sortQuery,
+      selectedSort,
       currentPage,
       totalPages,
       totalItems: totalProducts,
@@ -515,12 +544,14 @@ const loadSingleProduct = async (req, res, next) => {
 };
 
 const searchProduct = async (req, res, next) => {
+  console.log("hey");
   try {
     let isUserLoggedIn = false;
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
     const searchquery = req.query.search || "";
+    console.log(searchquery);
     const filterByCategory = req.query.category || "";
     let sortOption = {};
     const sortQuery = req.query.sort;
@@ -533,34 +564,46 @@ const searchProduct = async (req, res, next) => {
       sortOption = { createdAt: -1 };
     }
 
-    let productData;
-    if (filterByCategory) {
-      productData = await Product.find({
-        $and: [
-          {
-            $or: [
-              { name: { $regex: searchquery, $options: "i" } },
-              { brand: { $regex: searchquery, $options: "i" } },
-              { description: { $regex: searchquery, $options: "i" } },
-            ],
-          },
-          { category: filterByCategory },
-        ],
-      }).sort(sortOption);
-    } else {
-      productData = await Product.find({
+    const filterConditions = [
+      {
         $or: [
           { name: { $regex: searchquery, $options: "i" } },
           { brand: { $regex: searchquery, $options: "i" } },
           { description: { $regex: searchquery, $options: "i" } },
         ],
-      }).sort(sortOption);
+      },
+    ];
+
+    if (filterByCategory) {
+      filterConditions.push({ category: filterByCategory });
     }
 
+    filterConditions.push({ listed: true });
+    const totalProducts = await Product.countDocuments({
+      $and: filterConditions,
+    });
+    const products = await Product.find({ $and: filterConditions })
+      .populate("category")
+      .sort(sortOption)
+      .lean()
+      .exec();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 3;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedProducts = products.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalProducts / limit);
+    const currentPage = page;
+    const selectedSort = sortQuery;
     res.render("users/shop-list", {
-      products: productData,
+      products,
       isUserLoggedIn,
       searchquery,
+      selectedSort,
+      currentPage,
+      totalPages,
+      limit,
       category: filterByCategory,
       sort: sortQuery,
     });
@@ -585,20 +628,21 @@ const addCart = async (req, res, next) => {
       return res.status(404).send("User not found");
     }
 
-    const productToAdd = {
-      product: productId,
-      quantity: 1,
-    };
-    const updatedUser = await User.updateOne(
-      { _id: userId },
-      {
-        $addToSet: { cart: productToAdd },
-      },
-      { upsert: true }
-    );
     const existingCartItem = user.cart.find(
       (item) => item.product.toString() === productId
     );
+
+    if (existingCartItem) {
+      // If the product already exists in the cart, increment its quantity
+      existingCartItem.quantity += 1;
+    } else {
+      // If the product doesn't exist, add it to the cart
+      const productToAdd = {
+        product: productId,
+        quantity: 1,
+      };
+      user.cart.push(productToAdd);
+    }
 
     await user.save();
     console.log("Product added to cart successfully");

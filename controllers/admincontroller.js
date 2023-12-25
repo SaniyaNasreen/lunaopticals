@@ -14,7 +14,9 @@ const securePassword = async (password) => {
 
 const loadLogin = async (req, res) => {
   try {
-    if (!req?.session?.admin_id) {
+    if (req?.session?.admin_id) {
+      res.redirect("/admin/indexhome");
+    } else {
       res.render("admin/login");
     }
   } catch (error) {
@@ -38,9 +40,11 @@ const adminLogin = async (req, res) => {
       return;
     }
     if (adminData.is_admin === 0) {
+      console.log("Not an admin");
       res.redirect("/admin/login");
       return;
     }
+    console.log("Setting admin_id session");
     req.session.admin_id = adminData._id;
     res.redirect("/admin/indexhome");
   } catch (error) {

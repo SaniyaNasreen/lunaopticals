@@ -2022,9 +2022,8 @@ progress {
   font-size: 0.875em;
   color: var(--bs-secondary-color);
 }
-.dual-listbox .dual-listbox__search,
-.form-control,
-div.dataTables_wrapper div.dataTables_filter input {
+ 
+.dashlitee-form-control {
   display: block;
   width: 100%;
   padding: 0.4375rem 1rem;
@@ -43374,7 +43373,7 @@ div.dataTables_wrapper
 }
 
 .form1-editp {
-  padding-left: 50px;
+  padding-left: 25px;
   position: relative;
   margin-top: 50px;
 }
@@ -43397,7 +43396,7 @@ div.dataTables_wrapper
   margin-bottom: 25px;
   background-color: white;
   padding-left: 10px;
-  padding-top: 10px;
+  
   border-color: #000;
   border-width: 2px;
   border-style: groove;
@@ -43460,7 +43459,20 @@ div.dataTables_wrapper
   padding-left: 25px;
   position: relative;
 }
+.custom-file-upload {
+  border-radius: 10px;
+  width: 430px;
+  height: 40px;
+  padding-left: 10px;
+  background-color: white;
+  border-style: groove;
+  cursor: pointer;
+}
 
+/* Optionally style the upload button */
+.custom-file-upload:hover {
+  background: #f0f0f0;
+}
 .form-control1-addp {
   border-radius: 10px;
   width: 430px;
@@ -43507,7 +43519,7 @@ div.dataTables_wrapper
 /* Add Category */
 
 .form1-addc {
-  padding-left: 170px;
+   
   position: relative;
   color: chocolate;
   margin-top: 30px;
@@ -43541,7 +43553,7 @@ div.dataTables_wrapper
   /* margin-top: 10px; */
 
   width: 240px;
-  margin-left: 100px;
+ 
   border-radius: 10px;
   height: 40px;
 
@@ -43899,6 +43911,23 @@ div.dataTables_wrapper
 .pagination-link.active {
   background-color: #007bff;
   color: #fff;
+}
+
+.image-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.newly-added-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Adjust the gap between images */
+}
+
+.newly-added-images img {
+  max-width: 100px; /* Adjust image width */
+  height: auto;
+  margin-bottom: 10px; /* Adjust margin as needed */
 }
 
 /*! END @iO */

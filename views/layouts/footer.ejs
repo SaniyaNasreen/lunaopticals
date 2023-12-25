@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+ 
 
 
 </script>
@@ -141,6 +141,41 @@ function unblockUser(userId) {
 </script>
 
 <script>
+
+  function previewImages(event) {
+    
+    const files = event.target.files;
+    const newlyAddedImagesContainer = document.querySelector('.newly-added-images');
+    newlyAddedImagesContainer.innerHTML = '';
+
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      const imageContainer = document.createElement('div');
+      const imageElement = document.createElement('img');
+      const deleteLabel = document.createElement('label');
+      const deleteCheckbox = document.createElement('input');
+
+      reader.onload = function (e) {
+        imageElement.src = e.target.result;
+      };
+
+      reader.readAsDataURL(files[i]);
+
+      deleteLabel.textContent = 'Delete Image';
+      deleteCheckbox.type = 'checkbox';
+      deleteCheckbox.name = 'deleteImages'; // You might want to assign a unique identifier here for the new images
+      deleteCheckbox.value = i; // Adjust the value as per your requirements
+
+      imageContainer.classList.add('existing-image');
+      imageContainer.appendChild(imageElement);
+      imageContainer.appendChild(deleteLabel);
+      imageContainer.appendChild(deleteCheckbox);
+
+      newlyAddedImagesContainer.appendChild(imageContainer);
+    }
+  }
+</script>
+<script>
  document.getElementById('category-file-upload').addEventListener('change', function () {
     const file = this.files[0];
     const categoryImagePreviewContainer = document.getElementById('category-image-preview-container');
@@ -162,6 +197,29 @@ function unblockUser(userId) {
 </script>
 
 
+<script>
+  // Function to handle file input change event
+  document.getElementById('imageUpload').addEventListener('change', function() {
+      const file = this.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+          const existingImage = document.querySelector('.existing-image');
+          if (existingImage) {
+              existingImage.src = e.target.result;
+          } else {
+              const newImage = document.createElement('img');
+              newImage.src = e.target.result;
+              newImage.alt = 'New Image';
+              newImage.className = 'existing-image';
+              newImage.style = 'width: 100px; height: 100px; position: relative; bottom: 10px;';
+              this.parentNode.insertBefore(newImage, this.nextSibling);
+          }
+      };
+
+      reader.readAsDataURL(file);
+  });
+</script>
 <script>
   document.querySelectorAll('.remove-item-btn').forEach(button => {
     button.addEventListener('click', async (event) => {
@@ -216,6 +274,51 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('.add-to-cart-btn').click(function(event) {
+      event.preventDefault(); // Prevent default link behavior
+  
+      const url = $(this).attr('href');
+  
+      // Perform the AJAX request to add the product to the cart
+      $.ajax({
+        type: 'GET',
+        url: url,
+        success: function(response) {
+          // If the request was successful, show the modal
+          $('#cartModal').modal('show');
+        },
+        error: function(error) {
+          // Handle errors if needed
+          console.error('Error:', error);
+        }
+      });
+    });
+  });
+  </script>
+
+<script>
+  (function () {
+    "use strict";
+    var forms = document.querySelectorAll(".needs-validation");
+    Array.prototype.slice.call(forms).forEach(function (form) {
+      form.addEventListener(
+        "submit",
+        function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
 </script>
 </body>
 </html>
