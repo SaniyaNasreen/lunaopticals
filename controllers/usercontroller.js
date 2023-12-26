@@ -327,7 +327,14 @@ const enterOtpForm = async (req, res, next) => {
 };
 
 const generateOTP = function () {
-  return Math.floor(100000 + Math.random() * 900000);
+  const OTP = Math.floor(100000 + Math.random() * 900000);
+  const timestamp = Date.now(); // Get current timestamp
+  const expirationTime = timestamp + 5 * 60 * 1000; // Set OTP expiration time (e.g., 5 minutes)
+
+  return {
+    otp: OTP,
+    timestamp: expirationTime,
+  };
 };
 const emailOtp = (email, OTP) => {
   return new Promise((resolve, reject) => {
@@ -361,16 +368,25 @@ const loginOtp = async (req, res, next) => {
     const { email } = req.body;
     const userData = await User.findOne({ email });
     if (!userData) {
-      res.render("users/emailOTP", { message: "User email is incorrect" });
+      res.render("users/emailOTP", {
+        errorWith: "EMAIL",
+        message: "User email is incorrect",
+      });
       return;
     }
 
-    if (userData.is_varified !== 0) {
+    if (userData.is_varified === 0) {
       res.render("users/emailOTP", { message: "Please verify your mail" });
     }
 
-    const OTP = generateOTP();
-    await User.updateOne({ email }, { $set: { token: OTP } });
+    const OTPData = generateOTP();
+    const OTP = OTPData.otp;
+    const expirationTime = OTPData.timestamp;
+
+    await User.updateOne(
+      { email },
+      { $set: { token: OTP, tokenExpiration: expirationTime } }
+    );
     emailOtp(email, OTP);
     res.render("users/enter-otp", {
       message: "Please check your mail for OTP",
@@ -390,11 +406,20 @@ const verifyOtp = async (req, res, next) => {
       res.render("users/login", { message: "User not found" });
       return;
     }
-    const generatedOTP = user.token;
-    if (otp !== generatedOTP) {
+    const storedOTP = user.token;
+    const expirationTime = user.tokenExpiration;
+
+    if (otp !== storedOTP) {
       res.render("users/enter-otp", { message: "The OTP is incorrect" });
       return;
     }
+
+    if (Date.now() > expirationTime) {
+      res.render("users/enter-otp", { message: "The OTP has expired" });
+      return;
+    }
+
+    // OTP is valid and not expired
     return res.redirect("/");
   } catch (error) {
     console.error("Error:", error.message);
@@ -578,29 +603,39 @@ const searchProduct = async (req, res, next) => {
       filterConditions.push({ category: filterByCategory });
     }
 
-    filterConditions.push({ listed: true });
-    const totalProducts = await Product.countDocuments({
-      $and: filterConditions,
-    });
-    const products = await Product.find({ $and: filterConditions })
+    // Removed the 'listed' condition from combinedConditions
+    const combinedConditions = { $or: filterConditions };
+
+    const products = await Product.find(combinedConditions)
       .populate("category")
-      .sort(sortOption)
       .lean()
       .exec();
+
+    // Sorting the searched products after fetching them
+    products.sort((a, b) => {
+      if (sortOption.price) {
+        return (a.price - b.price) * sortOption.price;
+      } else {
+        return b.createdAt - a.createdAt;
+      }
+    });
+
+    const totalProducts = products.length;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 3;
     const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    const endIndex = Math.min(startIndex + limit, totalProducts);
 
     const paginatedProducts = products.slice(startIndex, endIndex);
     const totalPages = Math.ceil(totalProducts / limit);
     const currentPage = page;
     const selectedSort = sortQuery;
     res.render("users/shop-list", {
-      products,
+      products: paginatedProducts, // Send paginated products instead of all products
       isUserLoggedIn,
       searchquery,
       selectedSort,
+      paginatedProducts,
       currentPage,
       totalPages,
       limit,

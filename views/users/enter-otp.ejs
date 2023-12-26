@@ -21,32 +21,135 @@
   </div>
 </header>
 <!-- header area ends -->
-<div class="container-fluid1">
+<div class="container-fluid0">
   <div class="logoimage">
     <img src="/images (1).jpg" alt="" />
-    <div class="box-checkotp">
-      <h1 class="headcheckotp">OTP Verification</h1>
+    <div class="box-checkotp" style="height: 400px;">
+      <h1
+        class="headcheckotp"
+        style="
+          position: relative;
+          bottom: 60px;
+          right: 10px;
+          width: 330px;
+          color: white;
+        "
+      >
+        OTPVerification
+      </h1>
+      <div id="timer"></div>
       <!-- Update the action attribute to point to the correct route for OTP verification -->
-      <form action="/verify-otp" class="form-checkotp" method="post">
-        <input
-          type="email"
-          class="checkotp1"
-          name="email"
-          required
-          placeholder="Enter your Email"
-        />
-        <input
-          type="number"
-          class="checkotp1"
-          name="otp"
-          required
-          placeholder="Enter your OTP"
-        />
-        <br /><br />
-        <input type="submit" class="checkotp2" value="Login" />
+      <form
+        action="/verify-otp"
+        class="form-checkotp needs-validation"
+        method="post"
+        style="position: relative; bottom: 120px; left: 30px"
+        novalidate
+      >
+        <div class="mb-3">
+          <label
+            for="validationCustomUsername"
+            class="form-label"
+            style="color: white; position: relative; top: 80px"
+            >Email</label
+          >
+          <input
+            type="email"
+            class="checkotp1 form-control"
+            name="email"
+            required
+            style="position: relative; top: 30px; width: 430px"
+          />
+          <div class="invalid-feedback" style="position: relative; top: 30px">
+            Please enter a valid email address.
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="mb-3">
+            <label
+              for="validationCustomUsername"
+              class="form-label"
+              style="color: white; position: relative; top: 30px"
+              >OTP</label
+            >
+          <input
+            type="number"
+            class="checkotp1 form-control"
+            name="otp"
+            required
+            style="width: 430px;position: relative; bottom: 20px"
+          />
+          <div class="invalid-feedback">Please enter the OTP.</div>
+        </div>
+        <div class="mb-3">
+          <input
+            type="submit"
+            class="checkotp2 form-control"
+            value="Login"
+            style="
+              width: 430px;
+              position: relative;
+
+             
+              border-radius: 10px;
+              color: white;
+              height: 40px;
+              font-weight: 500;
+              background-color: rgb(197, 95, 22);
+              border-style: hidden;
+            "
+          />
+        </div>
+        <button
+  id="resendOtpBtn"
+  class="resend-otp-btn"
+  style="color: white; background-color: blue;"
+  onclick="resendOTP()"
+>
+  Resend OTP
+</button>
       </form>
+     
     </div>
   </div>
-</div>
+</div>  
+<script>
+  const expirationTime =timestamp + 5 * 60 * 1000;; // Set the expiration time
 
+  function resendOTP() {
+    // Logic to generate a new OTP
+    const newOTP = generateOTP(); // Assuming you have a function to generate OTP
+
+    // Logic to send the new OTP to the user's email
+    emailOtp(email, newOTP)
+      .then(() => {
+        // Handle success - maybe update UI or show a message
+        console.log('OTP resent successfully');
+      })
+      .catch((error) => {
+        // Handle error - show an error message or log the error
+        console.error('Error resending OTP:', error.message);
+      });
+  }
+
+  // Calculate and display the countdown timer
+  const timerInterval = setInterval(() => {
+    const now = new Date().getTime();
+    const distance = expirationTime - now;
+
+    if (distance > 0) {
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('timer').innerHTML =
+        'Time remaining: ' + minutes + 'm ' + seconds + 's ';
+
+    } else {
+      clearInterval(timerInterval);
+      document.getElementById('timer').innerHTML = 'OTP Expired';
+      // Handle expired OTP here - maybe disable the form submission
+    }
+  }, 1000);
+</script>
+ 
 <%- include('../layouts/footer.ejs') %>

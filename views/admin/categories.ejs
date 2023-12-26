@@ -225,7 +225,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                           
+                                          
                                           <form action="/admin/categories/add-category" method="post" enctype="multipart/form-data" class="form1-addc needs-validation" novalidate>
                                             <div id="category-image-preview-container" class="cat-preview"></div>
                                         
@@ -237,17 +237,17 @@
                                             </div>
                                         
                                             <div class="mb-3">
-                                                <input type="text" class="form-control2-addc form-control" name="name" placeholder="Enter the new Category" required>
-                                                <div class="invalid-feedback">
-                                                    Category name is required.
-                                                </div>
-                                            </div>
-                                        
+                                              <input type="text" class="form-control2-addc form-control <%-
+                                                  (typeof errorWith != 'undefined' && errorWith === 'CATEGORY') ? 'is-invalid' : '' %>" 
+                                                  name="name" placeholder="Enter the new Category" required>
+                                              <div class="invalid-feedback">
+                                                  <%- (typeof errorWith != 'undefined') ? message : "Category name is required." %> 
+                                              </div>
+                                          </div>
                                             <div class="mb-3">
                                                 <input type="submit" class="form-control4-addc" value="Add Category" style="width: 480px; position: relative; margin-top: 15px; border-radius: 10px; color: white; height: 40px; font-weight: 500; background-color: rgb(22, 127, 197); border-style: hidden;">
                                             </div>
                                         </form>
-                                       
                                         </div>
                                     </div>
                                 </div>

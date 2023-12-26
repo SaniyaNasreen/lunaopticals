@@ -717,10 +717,7 @@ hr {
 /* SentOTP */
 
 .sentotp1 {
-  margin-left: 30px;
-  width: 300px;
   background-color: rgb(50, 50, 50);
-
   border-style: hidden;
   height: 40px;
   border-radius: 10px;
@@ -760,7 +757,7 @@ hr {
 
 .checkotp1 {
   margin-top: 50px;
-  margin-left: 100px;
+
   width: 300px;
   background-color: rgb(50, 50, 50);
   border-style: hidden;
@@ -768,7 +765,6 @@ hr {
   border-radius: 10px;
 }
 .checkotp2 {
-  margin-left: 140px;
   width: 200px;
   background-color: rgb(50, 50, 50);
 

@@ -21,10 +21,10 @@ user_route.get("/logout", auth.isUser, usercontroller.userLogout);
 
 // Route for sending OTP via email
 user_route.get("/forgotpassword", usercontroller.sendEmailOtp);
-user_route.post("/forgotPassword", auth.isUser, usercontroller.loginOtp);
+user_route.post("/forgotPassword", usercontroller.loginOtp);
 user_route.get("/send-email-otp", usercontroller.sendEmailOtp);
 user_route.get("/enter-otp", usercontroller.enterOtpForm);
-user_route.post("/verify-otp", auth.isUser, usercontroller.verifyOtp);
+user_route.post("/verify-otp", usercontroller.verifyOtp);
 
 //get forgetpassword page
 user_route.get("/forget-password", usercontroller.loadForget);

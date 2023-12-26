@@ -220,6 +220,19 @@ function unblockUser(userId) {
       reader.readAsDataURL(file);
   });
 </script>
+
+<script>
+  window.onload = function () {
+      // Check if the page is refreshed
+      if (window.performance.navigation.type === 1) {
+          // Clear the input field
+          document.querySelector('input[name="name"]').value = '';
+          
+          // Hide the error message
+          document.querySelector('.invalid-feedback').style.display = 'none';
+      }
+  };
+</script>
 <script>
   document.querySelectorAll('.remove-item-btn').forEach(button => {
     button.addEventListener('click', async (event) => {
@@ -300,6 +313,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   </script>
 
+
+<script>
+  $(document).ready(function() {
+    // When the "Add to cart" button is clicked
+    $('.addToCartBtn').on('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+        
+        var productId = $(this).data('product-id'); // Get the product ID from data attribute
+        
+        // Here, you might have AJAX or other logic to add the product to the cart
+        // Assuming success, show the modal
+        $('#cartModal').modal('show');
+    });
+});
+</script>
 <script>
   (function () {
     "use strict";

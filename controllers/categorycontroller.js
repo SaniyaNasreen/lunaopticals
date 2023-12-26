@@ -4,7 +4,7 @@ const Category = require("../models/categorymodel");
 const loadCategory = async (req, res, next) => {
   try {
     const categories = await Category.find();
-    res.render("admin/categories", { categories });
+    res.render("admin/categories", { categories: categories });
   } catch (error) {
     next(error);
   }
@@ -22,38 +22,29 @@ const getCategories = async (req, res, next) => {
 const addCategory = async (req, res, next) => {
   try {
     const { name } = req.body;
-    const imagePath = req.file.path;
     if (!name) {
       const error = new Error("Name is required for creating a category");
       error.statusCode = 400;
       throw error;
     }
 
-    console.log("Request Body:", req.body);
-    console.log("File Path:", req.file.path);
-
-    const existingCategoryByName = await Category.findOne({ name });
-    if (existingCategoryByName) {
-      return res.render("admin/addcategory", {
-        errorMessage: "Category with this name already exists",
+    const existingCategory = await Category.findOne({ name });
+    if (existingCategory) {
+      const categories = await Category.find({});
+      res.render("admin/categories", {
+        errorWith: "CATEGORY",
+        message: "Category with this name already exists",
+        categories,
       });
-    }
-
-    const existingCategoryByImage = await Category.findOne({
-      image: imagePath,
-    });
-    if (existingCategoryByImage) {
-      return res.render("admin/addcategory", {
-        errorMessage: "Category with this image already exists",
-      });
+      error.statusCode = 409; // Conflict status code
+      throw error;
     }
 
     const category = new Category({
       name: name,
-      image: imagePath,
+      image: `http://localhost:4000/${req.file.path}`,
     });
     const categoryData = await category.save();
-
     if (!categoryData) {
       const error = new Error("Failed to add category");
       error.statusCode = 500;

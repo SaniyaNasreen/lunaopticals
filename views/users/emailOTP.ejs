@@ -1,36 +1,85 @@
-<%-include('../layouts/header')%> 
+<%-include('../layouts/header')%>
 <header>
-  <div class="header-1  ">
+  <div class="header-1">
     <div class="container">
-      <div class="row align-items-center">  
-        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1">
+      <div class="row align-items-center">
+        <div
+          class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1"
+        >
           <div class="logo3 text-md-center text-lg-left">
             <a href="/">
-              <div class="logo3" style="background-image: url('/public/images\ \(1\).jpg');"></div>
-            </a> 
+              <div
+                class="logo3"
+                style="background-image: url('/public/images\ \(1\).jpg')"
+              ></div>
+            </a>
           </div>
         </div>
-        
       </div>
     </div>
   </div>
 </header>
- 
-<div class="container-fluid1">
-  <div class="logoimage"><img src="/images (1).jpg" alt="">
-  <div class="box-sentotp">
-    <h1 class="headsentotp1">OTPVerification</h1>
-            
-             <form action="/forgotPassword" class="sentotp"  id="emailValidate" method="post">
-              <div class="formforget1" >
-                <input type="email" class="sentotp1"  name="email" required placeholder="Enter email">
-                  <br>
-                  <input type="submit"  class="sentotp2" value="Sent OTP"><br>
-                  <div class="error " id="emailErr"></div>
-              </div>
-               <h5 class=""><%= message %></h5>  
-           
+
+<div class="container-fluid0">
+  <div class="logoimage">
+    <img src="/images (1).jpg" alt="" />
+    <div class="box-sentotp">
+      <h1
+        class="headsentotp1"
+        style="
+          position: relative;
+
+          right: 20px;
+        "
+      >
+        OTPVerification
+      </h1>
+      <form
+        action="/forgotPassword"
+        class="sentotp"
+        id="emailValidate"
+        method="post"
+        novalidate
+      >
+        <div class="mb-3">
+          <label
+            for="validationCustomUsername"
+            class="form-label"
+            style="color: white; position: relative; left: 50px"
+            >Email</label
+          >
+          <input
+            type="email"
+            class="sentotp1 form-control"
+            name="email"
+            required
+            style="width: 400px; position: relative; left: 50px"
+          />
+          <div class="invalid-feedback">
+            Please enter a valid email address.
+          </div>
+          <br />
+          <input
+            type="submit"
+            class="sentotp2 form-control"
+            value="Sent OTP"
+            style="
+              width: 400px;
+              position: relative;
+              margin-top: 15px;
+              border-radius: 10px;
+              color: white;
+              height: 40px;
+              font-weight: 500;
+              background-color: rgb(197, 95, 22);
+              border-style: hidden;
+            "
+          />
+          <div class="error" id="emailErr"></div>
+        </div>
+        <h5 class=""><%= message %></h5>
+      </form>
+    </div>
+  </div>
 </div>
-</div>
-</div>
- <%-include('../layouts/footer')%>  
+<%-include('../layouts/footer')%>
