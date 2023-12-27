@@ -9,12 +9,12 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   mobile: {
     type: Number,
     required: true,
-    unique: true
+    unique: true,
   },
   password: {
     type: String,
@@ -68,6 +68,36 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  address: [
+    {
+      _id: false,
+      firstname: {
+        type: String,
+      },
+      lastname: {
+        type: String,
+      },
+
+      address: {
+        type: String,
+      },
+      email: {
+        type: String,
+      },
+      city: {
+        type: String,
+      },
+      country: {
+        type: String,
+      },
+      pincode: {
+        type: Number,
+      },
+      mobile: {
+        type: Number,
+      },
+    },
+  ],
   cart: [
     {
       _id: false,
@@ -85,15 +115,12 @@ const userSchema = new mongoose.Schema({
       quantity: {
         type: Number,
       },
-      total:{
-        type:Number,
-      }
-
-    
+      total: {
+        type: Number,
+      },
     },
   ],
 });
-
 
 // const User = mongoose.model('User', userSchema);
 

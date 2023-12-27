@@ -348,5 +348,91 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   })();
 </script>
+
+
+<script>
+function previewFile() {
+  const preview = document.getElementById('preview-image');
+  const fileInput = document.getElementById('file-input');
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onloadend = function() {
+    preview.src = reader.result;
+    // Store the image data in localStorage
+    localStorage.setItem('savedImageData', reader.result);
+  }
+
+  if (file) {
+    reader.readAsDataURL(file);
+  } else {
+    preview.src = "#"; // Placeholder image source if no file selected
+  }
+}
+
+// Check if there's previously stored image data in localStorage
+window.onload = function() {
+  const savedImageData = localStorage.getItem('savedImageData');
+  const preview = document.getElementById('preview-image');
+
+  if (savedImageData) {
+    preview.src = savedImageData;
+  }
+}
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const addAddressBtn = document.querySelector("#add-address-btn");
+  const addAddressForm = document.querySelector("#add-address-form");
+  const userAddressDiv = document.querySelector(".useraddress");
+
+  // Hide the form initially
+  addAddressForm.style.display = "none";
+
+  // Logic to toggle the display of addAddressForm and userAddressDiv on addAddressBtn click
+  // ...
+
+  // Initially, display the userAddressDiv if there's content in it
+  const userAddressContent = userAddressDiv.innerHTML.trim();
+  if (userAddressContent.length > 0) {
+    addAddressForm.style.display = "none";
+    userAddressDiv.style.display = "block";
+  } else {
+    addAddressForm.style.display = "block";
+    userAddressDiv.style.display = "none";
+  }
+
+  addAddressBtn.addEventListener("click", function () {
+    // Toggle visibility of form and user address section on button click
+    if (addAddressForm.style.display === "none") {
+      addAddressForm.style.display = "block";
+      userAddressDiv.style.display = "none";
+    } else {
+      addAddressForm.style.display = "none";
+      userAddressDiv.style.display = "block";
+    }
+  });
+});
+</script>
+
+<script>
+  // Check if there's a flag for insufficient stock and display the popup if it exists
+    if (insufficientStock) {
+    document.addEventListener("DOMContentLoaded", function() {
+      const errorPopup = document.getElementById("errorPopup");
+      const errorMessage = document.getElementById("errorMessage");
+      errorMessage.innerHTML = "Product is out of stock or insufficient quantity.";
+      errorPopup.style.display = "block";
+    });
+    }  
+
+  // Function to close the error popup
+  function closePopup() {
+    const errorPopup = document.getElementById("errorPopup");
+    errorPopup.style.display = "none";
+  }
+</script>
+
 </body>
 </html>

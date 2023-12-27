@@ -1,5 +1,5 @@
 const User = require("../models/usermodel");
-
+const Order = require("../models/ordermodel");
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const config = require("../config/config");
@@ -328,8 +328,8 @@ const enterOtpForm = async (req, res, next) => {
 
 const generateOTP = function () {
   const OTP = Math.floor(100000 + Math.random() * 900000);
-  const timestamp = Date.now(); // Get current timestamp
-  const expirationTime = timestamp + 5 * 60 * 1000; // Set OTP expiration time (e.g., 5 minutes)
+  const timestamp = Date.now();
+  const expirationTime = timestamp + 5 * 60 * 1000;
 
   return {
     otp: OTP,
@@ -668,13 +668,12 @@ const addCart = async (req, res, next) => {
     );
 
     if (existingCartItem) {
-      // If the product already exists in the cart, increment its quantity
       existingCartItem.quantity += 1;
     } else {
-      // If the product doesn't exist, add it to the cart
       const productToAdd = {
         product: productId,
         quantity: 1,
+        stock: product.countInStock,
       };
       user.cart.push(productToAdd);
     }
@@ -729,7 +728,8 @@ const removeCart = async (req, res) => {
 };
 
 const updateCart = async (req, res, next) => {
-  const { product_id, updateQuantity } = req.body;
+  const { product_id, updateQuantity, fromPage } = req.body;
+  console.log("From page:", fromPage);
   const userId = req.user._id;
   try {
     const user = await User.findById(userId);
@@ -753,13 +753,227 @@ const updateCart = async (req, res, next) => {
     productInCart.quantity = newQuantity;
     await user.save();
 
-    return res.redirect("/shop-cart");
+    if (fromPage === "checkout") {
+      return res.redirect("/checkout"); // Redirect to the checkout page
+    } else {
+      return res.redirect("/shop-cart"); // Redirect to the shop-cart page
+    }
   } catch (error) {
     console.error("Error updating quantity:", error);
     next(error);
   }
 };
 
+const checkoutCart = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate("cart.product");
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+
+    if (user?.cart?.length <= 0) {
+      res.render("users/shop-cart", {
+        user,
+        isUserLoggedIn: true,
+        emptyCart: true,
+        listed: true,
+      });
+    }
+    const insufficientStockItems = user.cart.filter(
+      (cartItem) => cartItem.product.countInStock < cartItem.quantity
+    );
+
+    if (insufficientStockItems.length > 0) {
+      return res.render("users/checkout", {
+        user,
+        isUserLoggedIn: true,
+        insufficientStock: true,
+        listed: true,
+      });
+    }
+
+    return res.render("users/checkout", {
+      user,
+      isUserLoggedIn: true,
+      listed: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const userProfile = async (req, res, next) => {
+  try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate("cart.product");
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    res.render("users/edituser", { isUserLoggedIn, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateUser = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+
+    if (req.body.name) {
+      user.name = req.body.name;
+    }
+    if (req.body.email) {
+      user.email = req.body.email;
+    }
+    if (req.body.mobile) {
+      user.mobile = req.body.mobile;
+    }
+    if (req.body.changePassword && req.body.changePassword.trim() !== "") {
+      user.password = req.body.changePassword;
+    }
+    console.log("Request Body:", req.body);
+
+    // Validate if user input meets required criteria
+    const validationResult = user.validateSync();
+    if (validationResult) {
+      console.error("Validation error:", validationResult.errors);
+      return res.status(400).send("Validation error");
+    }
+
+    await user.save();
+    res.redirect("/edituser");
+  } catch (error) {}
+};
+
+const userAddress = async (req, res, next) => {
+  try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    const userAddress = user.address || [];
+    res.render("users/address", { isUserLoggedIn, userAddress });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateAddress = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const {
+      firstname,
+      lastname,
+      address,
+      email,
+      city,
+      country,
+      pincode,
+      mobile,
+    } = req.body;
+
+    const newAddress = {
+      firstname,
+      lastname,
+      address,
+      email,
+      city,
+      country,
+      pincode,
+      mobile,
+    };
+
+    const user = await User.findById(userId);
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    user.address.push(newAddress);
+    await user.save();
+    console.log("Address saved successfully:", newAddress);
+    res.redirect("/address");
+  } catch (error) {
+    next(error);
+  }
+};
+
+const orderInfo = async (req, res, next) => {
+  try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    const orderId = req.order._id;
+    const orders = await Order.findById(orderId);
+    res.render("users/order", { isUserLoggedIn, user, orders });
+  } catch (error) {}
+};
+
+const saveOrder = async (req, res, next) => {
+  try {
+    const {
+      productimage,
+      productname,
+      price,
+      quantity,
+      firstname,
+      lastname,
+      address,
+      city,
+      country,
+      pincode,
+      email,
+      mobile,
+    } = req.body;
+
+    const newOrder = new Order({
+      productimage,
+      productname,
+      price,
+      quantity,
+      firstname,
+      lastname,
+      address,
+      city,
+      country,
+      pincode,
+      email,
+      mobile,
+    });
+
+    await newOrder.save();
+    res.redirect("/users/order");
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   loadIndex,
   loadProductList,
@@ -784,4 +998,11 @@ module.exports = {
   addCart,
   removeCart,
   updateCart,
+  checkoutCart,
+  userProfile,
+  updateUser,
+  userAddress,
+  updateAddress,
+  orderInfo,
+  saveOrder,
 };

@@ -103,6 +103,7 @@ const updateProduct = async (req, res, next) => {
     product.brand = req.body.brand;
     product.price = req.body.price;
     product.category = foundCategory._id;
+    product.countInStock = req.body.countInStock;
     const filePromises = [];
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {

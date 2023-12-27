@@ -114,6 +114,7 @@
 </div>
 <!-- Page Title area Ends -->
 <!-- wishlist Area Start -->
+
 <div class="wishlist-area shopping_cart shop-list pt-105">
   <div class="container">
     <div class="row">
@@ -128,6 +129,7 @@
                   <tr>
                     <th scope="col"><span>PRODUCT</span></th>
                     <th scope="col"><span>UNIT PRICE</span></th>
+                    <th scope="col"><span>STOCK</span></th>
                     <th scope="col"><span>QUANTITY</span></th>
                     <th scope="col"><span>TOTAL</span></th>
                     <th scope="col"><span>REMOVE</span></th>
@@ -150,10 +152,13 @@
                         $<%= item.product.price %>
                       </td>
                       <td>
+                        <%= item.product.countInStock %>
+                      </td>
+                      <td>
                         <div class="cart-button">
                           <form action="/update-cart" method="POST" class="quantity-form">
                             <input type="hidden" name="product_id" value="<%= item.product._id %>">
-                            <div class="quantity-controls">
+                            <div class="quantity-controls"> &nbsp; &nbsp; &nbsp;
                               <button type="submit" name="updateQuantity" value="decrease">-</button>
                               <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="100">
                               <button type="submit" name="updateQuantity" value="increase">+</button>
@@ -191,6 +196,13 @@
       </div>
     </div>
   </div>
+
+  <div class="popup" id="errorPopup" style="display: none;">
+    <div class="popup-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <p id="errorMessage"></p>
+    </div>
+  </div>
   <div class="container pt-50">
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6">
@@ -212,7 +224,8 @@
             
           </ul>
           <p class="pt-15">Checkout with Mutilple Adresses</p>
-          <button class="p-btn border-0 mt-20">PROCEED TO CHECKOUT</button>
+          <a href="/checkout"> <button class="p-btn border-0 mt-20">PROCEED TO CHECKOUT</button></a>
+         
         </div>
       </div>
     </div>

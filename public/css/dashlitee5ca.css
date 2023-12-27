@@ -241,7 +241,7 @@ body {
   text-align: var(--bs-body-text-align);
   background-color: var(--bs-body-bg);
   -webkit-text-size-adjust: 100%;
- 
+
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -2024,7 +2024,7 @@ progress {
   font-size: 0.875em;
   color: var(--bs-secondary-color);
 }
- 
+
 .dashlitee-form-control {
   display: block;
   width: 100%;
@@ -42928,6 +42928,8 @@ div.dataTables_wrapper
   line-height: 37px;
   letter-spacing: 2px;
   text-transform: uppercase;
+  font-family: "Montserrat", sans-serif;
+  font-weight: inherit;
 }
 
 .page-bc .breadcrumb li:last-child a {
@@ -43398,7 +43400,7 @@ div.dataTables_wrapper
   margin-bottom: 25px;
   background-color: white;
   padding-left: 10px;
-  
+
   border-color: #000;
   border-width: 2px;
   border-style: groove;
@@ -43521,7 +43523,6 @@ div.dataTables_wrapper
 /* Add Category */
 
 .form1-addc {
-   
   position: relative;
   color: chocolate;
   margin-top: 30px;
@@ -43555,7 +43556,7 @@ div.dataTables_wrapper
   /* margin-top: 10px; */
 
   width: 240px;
- 
+
   border-radius: 10px;
   height: 40px;
 
@@ -43932,4 +43933,59 @@ div.dataTables_wrapper
   margin-bottom: 10px; /* Adjust margin as needed */
 }
 
+p {
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 300;
+  color: #7c7a7a;
+  margin-bottom: 15px;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+  font-weight: lighter;
+  color: #7c7a7a;
+}
+
+.bill-details h6 {
+  font-size: 20px;
+  line-height: 37px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: normal;
+  color: #292929;
+}
+
+/* profile Image */
+
+
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.popup-content {
+  text-align: center;
+}
+
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000000;
+  text-decoration: none;
+  cursor: pointer;
+}
 /*! END @iO */
