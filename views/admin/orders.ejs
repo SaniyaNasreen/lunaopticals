@@ -1,0 +1,287 @@
+<!-- prettier-ignore -->
+
+<div class="nk-app-root">
+    <div class="nk-main">
+<%- include('../admin/layouts/sidebar.ejs') %>
+
+ <%-include('../admin/layouts/navbar.ejs') %>
+
+ 
+  
+   
+  
+   
+ 
+<div class="nk-content" style=" display: flex;
+ 
+height: 100vh;">
+  <div class="container-fluid" style="  width: 100%;
+  max-width: 1570px;  
+  box-sizing: border-box;
+  padding-left: 300px; padding-top: 60px; ">
+    <div class="nk-content-inner">
+      <div class="nk-content-body">
+        <div class="nk-block-head nk-block-head-sm">
+          <div class="nk-block-between">
+            <div class="nk-block-head-content">
+              <h3 class="nk-block-title page-title">Orders</h3>
+            </div>
+            <div class="nk-block-head-content">
+              <div class="toggle-wrap nk-block-tools-toggle">
+                <a
+                  href="#"
+                  class="btn btn-icon btn-trigger toggle-expand me-n1"
+                  data-target="pageMenu"
+                  ><em class="icon ni ni-more-v"></em
+                ></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                  <ul class="nk-block-tools g-3">
+                    <li>
+                      <div class="form-control-wrap">
+                        <div class="form-icon form-icon-right">
+                          <em class="icon ni ni-search"></em>
+                        </div>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="default-04"
+                          placeholder="Quick search by id"
+                        />
+                      </div>
+                    </li>
+                    <li>
+                      <div class="drodown">
+                        <a
+                          href="#"
+                          class="dropdown-toggle dropdown-indicator btn btn-outline-light btn-white"
+                          data-bs-toggle="dropdown"
+                          >Status</a
+                        >
+                        <div class="dropdown-menu dropdown-menu-end">
+                          <ul class="link-list-opt no-bdr">
+                            <li>
+                              <a href="#"><span>On Hold</span></a>
+                            </li>
+                            <li>
+                              <a href="#"><span>Delevired</span></a>
+                            </li>
+                            <li>
+                              <a href="#"><span>Rejected</span></a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="nk-block-tools-opt">
+                      <a href="#" class="btn btn-icon btn-primary d-md-none"
+                        ><em class="icon ni ni-plus"></em></a
+                      ><a
+                        href="#"
+                        class="btn btn-primary d-none d-md-inline-flex"
+                        ><em class="icon ni ni-plus"></em
+                        ><span>Add Order</span></a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nk-block">
+          <div class="nk-tb-list is-separate is-medium mb-3" style="font-size: 14px; ">
+            <div class="nk-tb-item nk-tb-head">
+              <div class="nk-tb-col nk-tb-col-check">
+                <div
+                  class="custom-control custom-control-sm custom-checkbox notext"
+                >
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="oid"
+                  /><label class="custom-control-label" for="oid"></label>
+                </div>
+              </div>
+              <div class="nk-tb-col"><span>Order</span></div>
+              <div class="nk-tb-col tb-col-md"><span>Date</span></div>
+              <div class="nk-tb-col">
+                <span class="d-none d-sm-block">Status</span>
+              </div>
+              <div class="nk-tb-col tb-col-sm">
+                <span>Customer</span>
+              </div>
+              <div class="nk-tb-col tb-col-md">
+                <span>Purchased</span>
+              </div>
+              <div class="nk-tb-col"><span>Total</span></div>
+              <div class="nk-tb-col nk-tb-col-tools">
+                <ul class="nk-tb-actions gx-1 my-n1">
+                  <li>
+                    <div class="drodown">
+                      <a
+                        href="#"
+                        class="dropdown-toggle btn btn-icon btn-trigger me-n1"
+                        data-bs-toggle="dropdown"
+                        ><em class="icon ni ni-more-h"></em
+                      ></a>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <ul class="link-list-opt no-bdr">
+                          <li>
+                            <a href="#"
+                              ><em class="icon ni ni-edit"></em
+                              ><span>Update Status</span></a
+                            >
+                          </li>
+                          <li>
+                            <a href="#"
+                              ><em class="icon ni ni-truck"></em
+                              ><span>Mark as Delivered</span></a
+                            >
+                          </li>
+                          <li>
+                            <a href="#"
+                              ><em class="icon ni ni-money"></em
+                              ><span>Mark as Paid</span></a
+                            >
+                          </li>
+                          <li>
+                            <a href="#"
+                              ><em class="icon ni ni-report-profit"></em
+                              ><span>Send Invoice</span></a
+                            >
+                          </li>
+                          <li>
+                            <a href="#"
+                              ><em class="icon ni ni-trash"></em
+                              ><span>Remove Orders</span></a
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+              <% orders.forEach((order) => { %>
+                  <div class="nk-tb-item">
+                  
+                    <div class="nk-tb-col">
+                      
+                    
+                    </div>
+                    <div class="nk-tb-col tb-col-md">
+                      
+                      <span class="tb-sub" style="color: blue; font-weight: 500;">#<%- order.orderNumber %></span>
+                    </div>
+                    <div class="nk-tb-col tb-col-md">
+                      
+                      <span class="tb-sub" style="font-weight: 500;font-size: 12px;"><%- order.date instanceof Date ? order.date.toDateString() : '' %></span>
+                    </div>
+                    <div class="nk-tb-col">
+                      <button style="border-radius: 20px; border-style: none; background-color: blue; width: 80px;height:30px;"><span class="tb-lead" style="color: white;font-size: 11px;"><%- order.status %></span></button>
+                    </div>
+                    <div class="nk-tb-col">
+                      <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%- order.customer %></span>
+                    </div>
+                    <div class="nk-tb-col tb-col-md">
+                      <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                        <% order.purchasedItems.forEach((item) => { %>
+                          <span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;"><%- item.product && item.product.name ? item.product.name : 'Product Name Not Available' %></span>
+                        <% }); %>
+                      <% } else { %>
+                        <span class="tb-sub">No purchased items</span>
+                      <% } %>
+                    </div>
+                    <div class="nk-tb-col">
+                      <span class="tb-lead" style="font-size: 12px;">₹<%- order.totalAmount %></span>
+                    </div>
+                    <div class="nk-tb-col nk-tb-col-tools">
+                      <ul class="nk-tb-actions gx-1">
+                        <li class="nk-tb-action-hidden">
+                          <a href="#" class="btn btn-icon btn-trigger btn-tooltip" title="Mark as Delivered">
+                            <em class="icon ni ni-truck"></em>
+                          </a>
+                        </li>
+                        <li class="nk-tb-action-hidden">
+                          <a
+                            href="#"
+                            class="btn btn-icon btn-trigger btn-tooltip"
+                            title="View Order"
+                            ><em class="icon ni ni-eye"></em
+                          ></a>
+                        </li>
+                          <li>
+            <div class="drodown me-n1">
+              <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown">
+                <em class="icon ni ni-more-h"></em>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end">
+                <ul class="link-list-opt no-bdr">
+                  <!-- Existing actions -->
+                  <li>
+                    <a href="#">
+                      <em class="icon ni ni-eye"></em>
+                      <span>Order Details</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/admin/orders/updateOrderStatus/<%= order._id %>/markDelivered">
+                        <em class="icon ni ni-truck"></em>
+                        <span>Mark as Delivered</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markPaid">
+                        <em class="icon ni ni-money"></em>
+                        <span>Mark as Paid</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markProcessing">
+                        <em class="icon ni ni-money"></em>
+                        <span>Mark as Processing</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markOnHold">
+                        <em class="icon ni ni-money"></em>
+                        <span>Mark as On Hold</span>
+                      </a>
+                    </li>
+                  <li>
+                    <a href="#">
+                      <em class="icon ni ni-report-profit"></em>
+                      <span>Send Invoice</span>
+                    </a>
+                  </li>
+                  <li>
+                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markRejected">
+                        <em class="icon ni ni-money"></em>
+                        <span>Mark as Rejected</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markPlaced">
+                        <em class="icon ni ni-money"></em>
+                        <span>Mark as Placed</span>
+                      </a>
+                    </li>
+                        
+              </ul>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  </div>
+  <% }); %>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%-include('../admin/layouts/footer.ejs') %>
+        </div>
+      </div>

@@ -98,12 +98,16 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+  couponApplied: {
+    type: Boolean,
+    default: false,
+  },
   cart: [
     {
       _id: false,
       product: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product", // Reference the 'Product' model
+        ref: "Product",
         required: true,
       },
       images: [
@@ -121,7 +125,5 @@ const userSchema = new mongoose.Schema({
     },
   ],
 });
-
-// const User = mongoose.model('User', userSchema);
 
 module.exports = mongoose.model("User", userSchema);

@@ -208,9 +208,10 @@
                 <input class="qty" type="number" value="1">
               </div>
               <div class="add-tocart mr-20 mt-15 mt-sm-0">
-                <a class="p-btn position-relative addToCartBtn" href="/add-to-cart/<%= encodeURIComponent(product._id) %>" data-product-id="<%= product._id %>">
+                <a class="p-btn add-btn float-left position-relative add-to-cart-btn" href="/add-to-cart/<%= encodeURIComponent(product._id) %>" data-product-id="<%= product._id %>">
                     <span>Add to cart</span>
                 </a>
+                
             </div>
             
             <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel" aria-hidden="true">

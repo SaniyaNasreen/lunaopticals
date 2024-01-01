@@ -263,6 +263,37 @@ console.log(productId);
     });
   });
 </script>
+
+<script>
+  document.querySelectorAll('.cancel-item-btn').forEach(button => {
+    button.addEventListener('click', async (event) => {
+     
+      const _id = event.target.dataset._id;
+console.log(_id);
+      try {
+        const response = await fetch('http://localhost:4000/cancel-order', {
+          method: 'POST',
+          headers: {
+
+             
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+          body: JSON.stringify({ _id: _id})
+        });
+
+        if (response.ok) { 
+          event.target.parentElement.parentElement.cancel();  
+        } else {
+          const errorData = await response.json();
+          console.error('Error:', errorData.message); 
+        }
+      } catch (error) {
+        console.error('Error:', error); 
+      }
+    });
+  });
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const menuItems = document.querySelectorAll('.nk-menu-item');
@@ -381,58 +412,24 @@ window.onload = function() {
 }
 </script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-  const addAddressBtn = document.querySelector("#add-address-btn");
-  const addAddressForm = document.querySelector("#add-address-form");
-  const userAddressDiv = document.querySelector(".useraddress");
-
-  // Hide the form initially
-  addAddressForm.style.display = "none";
-
-  // Logic to toggle the display of addAddressForm and userAddressDiv on addAddressBtn click
-  // ...
-
-  // Initially, display the userAddressDiv if there's content in it
-  const userAddressContent = userAddressDiv.innerHTML.trim();
-  if (userAddressContent.length > 0) {
-    addAddressForm.style.display = "none";
-    userAddressDiv.style.display = "block";
-  } else {
-    addAddressForm.style.display = "block";
-    userAddressDiv.style.display = "none";
-  }
-
-  addAddressBtn.addEventListener("click", function () {
-    // Toggle visibility of form and user address section on button click
-    if (addAddressForm.style.display === "none") {
-      addAddressForm.style.display = "block";
-      userAddressDiv.style.display = "none";
-    } else {
-      addAddressForm.style.display = "none";
-      userAddressDiv.style.display = "block";
-    }
-  });
-});
-</script>
+ 
 
 <script>
-  // Check if there's a flag for insufficient stock and display the popup if it exists
-    if (insufficientStock) {
-    document.addEventListener("DOMContentLoaded", function() {
-      const errorPopup = document.getElementById("errorPopup");
-      const errorMessage = document.getElementById("errorMessage");
-      errorMessage.innerHTML = "Product is out of stock or insufficient quantity.";
-      errorPopup.style.display = "block";
+  function downloadInvoice(orderDetails) {
+    fetch('http://localhost:4000/download-invoice', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ orderDetails })
+    })
+    .then(response => {
+      // Handle the response or additional processing if needed
+    })
+    .catch(error => {
+      // Handle errors if any
     });
-    }  
-
-  // Function to close the error popup
-  function closePopup() {
-    const errorPopup = document.getElementById("errorPopup");
-    errorPopup.style.display = "none";
   }
 </script>
-
 </body>
 </html>

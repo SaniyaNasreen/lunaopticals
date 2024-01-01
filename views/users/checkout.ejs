@@ -30,31 +30,21 @@
 <!-- Page Title area Ends -->
 
 <!-- Checkout Area Start -->
-<div class="checkout-area pt-115" style="background-color: white">
-  <div class="container">
+<div class="checkout-area pt-115" style="background-color: white;height: auto;">
+  <div class="container" style="height:auto;">
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6">
         <div class="checkout">
-          <form
-            action="/saveOrder"
-            method="post"
-            class="bill-form pt-5"
-            style="position: relative; bottom: 10px"
-          ></form>
-          <p>Returning customer ?<a href="/login"> Click here to login</a></p>
-          <p>
-            Have a Coupon ?
-            <a href="my_wishlist.html">Click here to enter your code</a>
-          </p>
-        </div>
-        <div class="bill-details pt-15">
-          <h6>Billing Details</h6>
-          <form
-            action="/saveAddress"
-            method="post"
-            class="bill-form pt-5"
-            style="position: relative; bottom: 10px"
-          >
+          <div class="coupon_discount">
+            <h6>Coupon discount</h6>
+            <p>Enter your code if you have one...</p>
+            <form action="/checkout/applyCoupon" class="coupon-form pt-25" method="post">
+              <input type="text" name="code" placeholder="Enter your code here">
+              <button class="p-btn border-0 ml-20">APPLY COUPON</button>
+          </form>
+          </div>
+
+          <form action="/saveOrder" method="post" class="bill-form pt-5">
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
@@ -75,122 +65,148 @@
               <input type="text" name="address" id="addres" />
             </div>
             <div class="city pt-30">
-              <label for="cit">City/Town</label>
-              <input type="text" name="city" id="cit" />
+              <label for="cit">Country</label>
+              <input type="text" name="country" id="cit" />
             </div>
             <div class="row">
-              <div class="col-xl-6 col-lg-6 col-sm-6">
-                <div class="state pt-30">
-                  <label for="stat">Country/States</label>
-                  <div class="country-select position-relative">
-                    <select name="country" id="stat">
-                      <option value="India">India</option>
-                      <option value="Bangladesh">Bangladesh</option>
-                      <option value="US">US</option>
-                      <option value="UK">UK</option>
-                    </select>
-                  </div>
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                <div class="first-name pt-30">
+                  <label for="first-nem">City/Town</label>
+                  <input type="text" name="city" id="first-nem" />
                 </div>
               </div>
-              <div class="col-xl-6 col-lg-6 col-sm-6">
-                <div class="zip pt-30">
-                  <label for="zip-c">POSTCODE / ZIP</label>
-                  <input type="text" name="pincode" id="zip-c" />
-                </div>
-              </div>
-              <div class="col-xl-6 col-lg-6 col-sm-6">
-                <div class="email pt-30">
-                  <label for="emai">Email</label>
-                  <input type="text" name="email" id="emai" />
-                </div>
-              </div>
-              <div class="col-xl-6 col-lg-6 col-sm-6">
-                <div class="phone pt-30">
-                  <label for="pho">Phone</label>
-                  <input type="text" name="mobile" id="pho" />
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                <div class="first-name pt-30">
+                  <label for="first-nem">Pincode</label>
+                  <input type="text" name="pincode" id="first-nem" />
                 </div>
               </div>
             </div>
-          </form>
+
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                <div class="first-name pt-30">
+                  <label for="first-nem">Email</label>
+                  <input type="text" name="email" id="first-nem" />
+                </div>
+              </div>
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                <div class="first-name pt-30">
+                  <label for="first-nem">Mobile</label>
+                  <input type="text" name="mobile" id="first-nem" />
+                </div>
+              </div>
+            </div>
+            <!-- Include input fields for other address details such as country, pincode, email, and phone -->
+
+         
+          
         </div>
       </div>
-      <div class="col-xl-6 col-lg-6 col-md-6">
-        <div class="product-order pl-50 pr-50 pt-35 pb-55 mt-50 mt-md-0">
-          <h6 class="text-center pb-10">Your Order</h6>
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">PRODUCT</th>
-                <th style="padding-right: 50px; padding-left: 30px" scope="col">
-                  STOCK
-                </th>
-                <th scope="col">PRICE</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% let subtotal = 0; %> <% user.cart.forEach(item => { %>
-              <tr>
-                <td><%= item.product.name %></td>
-                <td style="padding-left: 30px">
-                  <%= item.product.countInStock %>
-                </td>
-                <td>$<%= item.quantity * item.product.price %></td>
-              </tr>
-              <% subtotal += item.quantity * item.product.price; %> <% }); %>
-            </tbody>
-          </table>
-          <hr class="mt-5" />
-          <p class="pt-15">
-            Sub Total
-            <span id="subTotal" class="float-right"
-              >$<%= subtotal.toFixed(2) %></span
-            >
-          </p>
-          <hr />
-          <p class="pt-15">Shipping <span class="float-right">$0</span></p>
-          <hr />
-          <p class="price-total pt-15">
-            Total
-            <span id="total" class="float-right"
-              >$<%= (subtotal + 0).toFixed(2) %></span
-            >
-          </p>
+      
+          <div class="col-xl-6 col-lg-6 col-md-6" >
+            <div class="product-order pl-50 pr-50 pt-35 pb-55 mt-50 mt-md-0">
+              <h6 class="text-center pb-10">Your Order</h6>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">PRODUCT</th>
+          <th scope="col" style="  padding-left: 30px">QUANTITY</th>
+          <th scope="col" style="padding-right: 50px; padding-left: 30px">STOCK</th>
+          <th scope="col">PRICE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% let subtotal = 0; %> <% user.cart.forEach(item => { %>
+        <tr>
+          <td><%= item.product.name %></td>
+          <td>
+            <div style="display: flex; align-items: center;">
+              <form action="/update-cart" method="POST" style="display: flex; align-items: center;">
+                <input type="hidden" name="product_id" value="<%= item.product._id %>">
+                <button type="submit" name="updateQuantity" value="decrease" style="height: 20px; width: 20px; font-size: 12px;position: relative; left: 3px;">-</button>
+                <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="100" style="height: 20px; width: 20px; font-size: 12px; text-align: center;position: relative; left: 30px;">
+                <button type="submit" name="updateQuantity" value="increase" style="height: 20px; width: 20px; font-size: 12px;position: relative; left: 35px;">+</button>
+              </form>
+            </div>
+          </td>
+          <td style="padding-left: 30px">
+            <%= item.product.countInStock %>
+          </td>
+          <td>$<%= item.quantity * item.product.price %></td>
+        </tr>
+        <% subtotal += item.quantity * item.product.price; %> <% });
+        %>
+      </tbody>
+    </table>
+              <hr class="mt-5" />
+              <p class="pt-15">
+                Sub Total
+                <span id="subTotal" class="float-right"
+                  >$<%= subtotal %></span
+                > 
+              </p>
+              <% if (user.couponApplied===true) { %> 
+                <p class="pt-15">Discount<span class="float-right"><%= coupon.discount %></span></p>
 
-          <div class="payment-method mt-55">
-            <div class="direct-bank position-relative pl-25">
-              <input type="radio" id="rad" name="payment" />
-              <span class="check-mark"></span>
-              <label for="rad">Direct bank transfer</label>
+<% } %>
+              <hr />
+              <% if (subtotal > 2000) { %>
+                <p class="pt-15">Shipping <span class="float-right">$0</span></p>
+             
+                <% } else { %>
+                  <p class="pt-15">Shipping <span class="float-right">$100</span></p>   
+                <% } %>
+               
+ 
+                <hr />
+                 
+                <% if (user.couponApplied===true) { %> 
+                <p class="price-total pt-15">
+                  Total
+                  <span id="total" class="float-right">
+                    $<%= (subtotal + (subtotal > 2000 ? 0 : 100)).toFixed(2) %>
+                  </span>
+                </p>
+                <% } else { %>
+                  
+                   
+                <p class="price-total pt-15">
+                  Total
+                  <span id="total" class="float-right">
+                    $<%= (subtotal + (subtotal > 2000 ? 0 : 100)).toFixed(2) %>
+                  </span>
+                </p>
+                <% } %>
+               
+              <div class="payment-method mt-55">
+                <div class="direct-bank position-relative pl-25">
+                  <input type="radio" id="rad" name="payment" />
+                  <span class="check-mark"></span>
+                  <label for="rad">Direct bank transfer</label>
+                </div>
+                <div class="Cheque position-relative pl-25 mt-20">
+                  <input type="radio" id="Chequ" name="payment" />
+                  <span class="check-mark"></span>
+                  <label for="Chequ">Cheque Payment </label>
+                </div>
+                <div class="COD position-relative pl-25 mt-20">
+                  <input type="radio" id="Cod" name="paymentMethod" value="Cash on delivery" />
+                  <span class="check-mark"></span>
+                  <label for="Cod">Cash on delivery </label>
+                </div>
+                 
+                   <button  type="submit" class="p-btn border-0 mt-45">PLACE ORDER</button>
+                   
+          </form>
+              </div>
             </div>
-            <div class="Cheque position-relative pl-25 mt-20">
-              <input type="radio" id="Chequ" name="payment" />
-              <span class="check-mark"></span>
-              <label for="Chequ">Cheque Payment </label>
-            </div>
-            <div class="COD position-relative pl-25 mt-20">
-              <input type="radio" id="Cod" name="payment" />
-              <span class="check-mark"></span>
-              <label for="Cod">Cash on delivery </label>
-            </div>
-            <!-- <div class="payment-card position-relative pl-25 mt-15">
-                <input type="radio"  id="card" name="payment">
-                <span class="check-mark"></span>
-                <label for="card">
-                  <span><i class="fab fa-cc-mastercard"></i></span>
-                  <span><i class="fab fa-cc-visa"></i></span>
-                  <span><i class="fab fa-paypal"></i></span>
-                  <span><i class="fab fa-cc-discover"></i></span>
-                </label>
-              </div> -->
-            <form action="/saveOrder" method="post">
-              <button class="p-btn border-0 mt-45">PLACE ORDER</button>
-            </form>
           </div>
         </div>
       </div>
     </div>
+    <%- include('../users/layouts/footer.ejs') %>
+    <!-- prettier-ignore -->
+    <%-include('../layouts/footer')%>
   </div>
 </div>
-<%- include('../users/layouts/footer.ejs') %>
-<!-- prettier-ignore -->
-<%-include('../layouts/footer')%>

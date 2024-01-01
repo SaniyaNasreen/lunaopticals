@@ -22,6 +22,7 @@ const addProduct = async (req, res, next) => {
       brand,
       price,
       category,
+      images,
       countInStock,
       rating,
       numReviews,
@@ -37,17 +38,10 @@ const addProduct = async (req, res, next) => {
       return res.status(404).send("Category not found or undefined");
     }
 
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).send("No file uploaded.");
-    }
-    const fileUrls = req.files.map(
-      (file) => `http://localhost:4000/${file.path}`
-    );
     const product = new Product({
       name,
       description,
       richDescription,
-      images: fileUrls,
       brand,
       price,
       category: foundCategory._id,
@@ -57,6 +51,28 @@ const addProduct = async (req, res, next) => {
       dateCreated: Date.now(),
       is_admin: 0,
     });
+    const filePromises = [];
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const filePath = path.join("public/uploads", file.filename);
+        const outputCroppedPath = path.join(
+          "public/uploads",
+          `cropped_${file.filename}`
+        );
+
+        const cropPromise = new Promise((resolve, reject) => {
+          cropToSquare(filePath, outputCroppedPath, 600, 600);
+          resolve();
+        });
+
+        filePromises.push(cropPromise);
+
+        const fileUrl = `http://localhost:4000/public/uploads/cropped_${file.filename}`;
+        product.images.push(fileUrl);
+      }
+
+      await Promise.all(filePromises); // Wait for all image cropping operations to finish
+    }
     const productData = await product.save();
 
     if (!productData) {

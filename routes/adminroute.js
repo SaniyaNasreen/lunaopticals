@@ -4,6 +4,8 @@ const auth = require("../miidleware/auth");
 const admincontroller = require("../controllers/admincontroller");
 const productcontroller = require("../controllers/productcontroller");
 const categorycontroller = require("../controllers/categorycontroller");
+const ordercontroller = require("../controllers/ordercontroller");
+const couponcontroller = require("../controllers/couponcontroller");
 const multer = require("multer");
 const upload = multer({ dest: "public/uploads" });
 
@@ -56,4 +58,25 @@ admin_route.get("/customers", auth.isAdmin, admincontroller.loadCustomer);
 admin_route.post("/customers/delete-user/:id", admincontroller.deleteUser);
 admin_route.get("/search-user", admincontroller.searchUser);
 
+//Order management
+admin_route.get("/orders", auth.isAdmin, ordercontroller.loadOrder);
+admin_route.get(
+  "/orders/updateOrderStatus/:orderId/:action",
+  auth.isAdmin,
+  ordercontroller.updateStatus
+);
+admin_route.put(
+  "/orders/updateOrderStatus/:orderId/",
+  auth.isAdmin,
+  ordercontroller.updateStatus
+);
+
+//Coupon management
+admin_route.get("/coupon", couponcontroller.loadCoupon);
+admin_route.post("/coupon/add-coupon", couponcontroller.addCouponForCategory);
+admin_route.post(
+  "/coupon/edit-coupon/:id",
+  auth.isAdmin,
+  couponcontroller.editCouponForCategory
+);
 module.exports = admin_route;

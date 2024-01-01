@@ -39,95 +39,35 @@
           </div>
           <div class="col-xl-9 col-lg-8 col-md-12">
                 
-              <button id="add-address-btn"  style="width: 330px; height: 40px; background-color: blue; position: relative; bottom: 100px; left: 465px; color: white; border-style: none;">
-                Add Address
-              </button>
-          
+             <a href="/addAddress"><button  style="width: 330px; height: 40px; background-color: blue; position: relative; bottom: 100px; left: 465px; color: white; border-style: none;">
+              Add Address
+            </button>
+        </a> 
               <div   class="bill-details pt-15" style="background-color: white; position: relative; bottom: 55px; left: 100px; width: 700px;  ">
                 <div class="useraddress" style="width: 640px; height: auto;  position: relative; left: 30px;">
-                    
-                    <% if (userAddress && userAddress.length > 0) { %>
-                        <% userAddress.forEach(address => { %>
+                  <% if (userAddress && userAddress.length > 0) { %>
+                    <% userAddress.forEach((address, index) => { %>
                             <div style="margin-bottom: 20px;">
                                 <div style="border: 1px solid #ccc; padding: 10px; display: flex; flex-wrap: wrap; width: 670px; word-wrap: break-word; background-color:rgb(246, 247, 251) ; ">
-                                    
-                                    <p style="font-size: 20px; color: black; margin: 5px;"><%= `${address.firstname}${address.lastname}` %>-</p>
-                                    <p style="font-size: 12px; color: black; margin: 5px;"><%= address.address %>,</p>
-                                    <p style="font-size: 12px; color: black; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.email %>,</p>
-                                    <p style="font-size: 12px; color: black; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.city %>,</p>
-                                    <p style="font-size: 12px; color: black; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.country %>,</p>
-                                    <p style="font-size: 12px; color: black; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.pincode %>,</p>
-                                    <p style="font-size: 12px; color: black; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.mobile %></p>
+                                 
+                                    <p style="font-weight: bold; color: black; font-size:14px; margin: 5px;"><%= `${address.firstname}${address.lastname}` %>-</p>
+                                    <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px;"><%= address.address %>,</p>
+                                    <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; "><%= address.email %>,</p>
+                                    <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.city %>,</p>
+                                    <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.country %>,</p>
+                                    <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.pincode %>,</p>
+                                    <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.mobile %></p>
+                                   <a href="/users/editAddress/<%= user._id%>?index=<%= index %>"><button id="editAddressBtn" style="float: right;position: relative; left: 600px; background-color: rgb(255, 82, 53); border-style: none; color: white; font-size: 14px;  font-weight: 600; width: 50px;">Edit</button></a> 
                                 </div>
+                             
                             </div>
-                        <% }); %>
-                    <% } else { %>
-                        <p>No address found</p>
-                    <% } %>
+                            <% }); %>
+                            <% } else { %>
+                              <p>No address found</p>
+                            <% } %>
                 </div>
-                <form  id="add-address-form" action="/saveAddress" method="post" class="bill-form pt-5 " style="position: relative; bottom: 85px;">
-      
-                    <div class="row">
-                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                        <div class="first-name pt-30">
-                          <label for="first-nem" >First Name</label>
-                          <input type="text" name="firstname" id="first-nem" />
-                        </div>
-                      </div>
-                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                        <div class="last-name pt-30">
-                          <label for="last-nam">Last Name</label>
-                          <input type="text" name="lastname" id="last-nam" />
-                        </div>
-                      </div>
-                    </div>
-              
-                    <div class="address pt-30">
-                      <label for="addres">Address</label>
-                      <input type="text" name="address" id="addres" />
-                    </div>
-                    <div class="city pt-30">
-                      <label for="cit">City/Town</label>
-                      <input type="text" name="city" id="cit" />
-                    </div>
-                    <div class="row">
-                      <div class="col-xl-6 col-lg-6 col-sm-6">
-                        <div class="state pt-30">
-                          <label for="stat">Country/States</label>
-                          <div class="country-select position-relative">
-                            <select name="country"  id="stat">
-                              <option value="India">India</option>
-                              <option value="Bangladesh">Bangladesh</option>
-                              <option value="US">US</option>
-                              <option value="UK">UK</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-xl-6 col-lg-6 col-sm-6">
-                        <div class="zip pt-30">
-                          <label for="zip-c">POSTCODE / ZIP</label>
-                          <input type="text" name="pincode" id="zip-c" />
-                        </div>
-                      </div>
-                      <div class="col-xl-6 col-lg-6 col-sm-6">
-                        <div class="email pt-30">
-                          <label for="emai">Email</label>
-                          <input type="text" name="email" id="emai" />
-                        </div>
-                      </div>
-                      <div class="col-xl-6 col-lg-6 col-sm-6">
-                        <div class="phone pt-30">
-                          <label for="pho">Phone</label>
-                          <input type="text" name="mobile" id="pho" />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="address pt-30">
-                      <button style="width: 700px; height: 45px; border-style: none; background-color: rgb(255, 82, 53);">Save</button>
-                    </div>
-                     
-                  </form>
+               
+                  
             </div>
           
         </div>

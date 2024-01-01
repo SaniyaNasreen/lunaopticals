@@ -1,0 +1,129 @@
+<%- include('../users/layouts/navbar.ejs') %>
+
+<div class="page-title-area pt-150 pb-55">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="page-titel-detalis">
+          <div class="section-title">
+            <h2>User Profile</h2>
+          </div>
+          <div class="page-bc">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li
+                  class="breadcrumb-item position-relative active"
+                  aria-current="page"
+                >
+                  <a href="/edituser">profile</a>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="shop-grid-s pt-120" style="background-color: white; height: 850px">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="d-flex">
+          <div class="col-xl-3 col-lg-4 col-md-12">
+            <div class="sidebar">
+              <!-- Include sidebar content -->
+              <%- include('../users/layouts/sidebar.ejs') %>
+            </div>
+          </div>
+          <div class="col-xl-9 col-lg-8 col-md-12">
+                
+             
+              <div   class="bill-details pt-15" style="background-color: white; position: relative; bottom: 55px; left: 100px; width: 700px;  ">
+                <% if (userAddress && userAddress.length > 0) { %>
+                  <% userAddress.forEach((address, index) => { %>
+                    <% if (index.toString() === req.query.index) { %>
+                <form  id="add-address-form" action="/users/editAddress/<%= user._id %>?index=<%= index %>" method="post" class="bill-form pt-5 " style="position: relative; bottom: 85px;">
+      
+                    <div class="row">
+                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <div class="first-name pt-30">
+                          <label for="first-nem" >First Name</label>
+                          <input type="text" name="firstname" value="<%= address.firstname %> "id="first-nem" />
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                        <div class="last-name pt-30">
+                          <label for="last-nam">Last Name</label>
+                          <input type="text" name="lastname"  value="<%= address.lastname %>" id="last-nam" />
+                        </div>
+                      </div>
+                    </div>
+              
+                    <div class="address pt-30">
+                      <label for="addres">Address</label>
+                      <input type="text" name="address" value="<%= address.address %>" id="addres" />
+                    </div>
+                    <div class="city pt-30">
+                      <label for="cit">City/Town</label>
+                      <input type="text" name="city"  value="<%= address.city %>" id="cit" />
+                    </div>
+                    <div class="row">
+                      <div class="col-xl-6 col-lg-6 col-sm-6">
+                        <div class="state pt-30">
+                          <label for="stat">Country/States</label>
+                          <div class="country-select position-relative">
+                            <select name="country" value="<%= address.country %>"  id="stat">
+                              <option value="India">India</option>
+                              <option value="Bangladesh">Bangladesh</option>
+                              <option value="US">US</option>
+                              <option value="UK">UK</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-lg-6 col-sm-6">
+                        <div class="zip pt-30">
+                          <label for="zip-c">POSTCODE / ZIP</label>
+                          <input type="text" name="pincode" value="<%= address.pincode %>" id="zip-c" />
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-lg-6 col-sm-6">
+                        <div class="email pt-30">
+                          <label for="emai">Email</label>
+                          <input type="text" name="email" value="<%= address.email %>" id="emai" />
+                        </div>
+                      </div>
+                      <div class="col-xl-6 col-lg-6 col-sm-6">
+                        <div class="phone pt-30">
+                          <label for="pho">Phone</label>
+                          <input type="text" name="mobile" value="<%= address.mobile %>" id="pho" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="address pt-30">
+                      <button style="width: 700px; height: 45px; border-style: none; background-color: rgb(255, 82, 53);">Save</button>
+                    </div>
+                     
+                  </form>
+                  <% } %>
+                  <% }); %>
+                  <% } else { %>
+                    <p>No address found</p>
+                <% } %>
+                   
+               
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../users/layouts/footer.ejs') %>
+      </div>
+    </div>
+  </div>
+</div>

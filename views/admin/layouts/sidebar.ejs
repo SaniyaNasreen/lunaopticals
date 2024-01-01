@@ -1,0 +1,149 @@
+<%- include('../../layouts/header.ejs') %>
+
+ <!-- < class="nk-body bg-lighter npc-general has-sidebar"> -->
+ 
+      <div
+        class="nk-sidebar nk-sidebar-fixed is-light"
+        data-content="sidebarMenu"
+      >
+        <div class="nk-sidebar-element nk-sidebar-head">
+          <div class="nk-sidebar-brand">
+            <a href="/admin/indexhome" class="logo-link nk-sidebar-logo"
+              ><img
+                class="logo-light logo-img"
+                src="/public/images (1).jpg"
+                srcset=""
+                alt="logo" /><img
+                class="logo-dark logo-img"
+                src="/public/images (1).jpg"
+                srcset="/demo2/images/logo-dark2x.png 2x"
+                alt="logo-dark" /><img
+                class="logo-small logo-img logo-img-small"
+                src="/public/images (1).jpg"
+                srcset="/demo2/images/logo-small2x.png 2x"
+                alt="logo-small"
+            /></a>
+          </div>
+          <div class="nk-menu-trigger me-n2">
+            <a
+              href="#"
+              class="nk-nav-toggle nk-quick-nav-icon d-xl-none"
+              data-target="sidebarMenu"
+              ><em class="icon ni ni-arrow-left"></em></a
+            ><a
+              href="#"
+              class="nk-nav-compact nk-quick-nav-icon d-none d-xl-inline-flex"
+              data-target="sidebarMenu"
+              ><em class="icon ni ni-menu"></em
+            ></a>
+          </div>
+        </div>
+        <div class="nk-sidebar-element">
+          <div class="nk-sidebar-content">
+            <div class="nk-sidebar-menu" data-simplebar>
+              <ul class="nk-menu">
+                <li class="nk-menu-item">
+                  <a href="/admin/indexhome" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-dashboard-fill"></em></span
+                    ><span class="nk-menu-text">Dashboard</span></a
+                  >
+                </li>
+                <li class="nk-menu-item">
+                  <a href="orders" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-bag-fill"></em></span
+                    ><span class="nk-menu-text">Orders</span></a
+                  >
+                </li>
+                <li class="nk-menu-item">
+                  <a href="products" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-package-fill"></em></span
+                    ><span class="nk-menu-text">Products</span></a
+                  >
+                </li>
+              </li>
+              <li class="nk-menu-item">
+                <a href="categories" class="nk-menu-link"
+                  ><span class="nk-menu-icon"
+                    ><em class="icon ni ni-package-fill"></em></span
+                  ><span class="nk-menu-text">Categories</span></a
+                >
+              </li>
+                <li class="nk-menu-item">
+                  <a href="customers" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      >
+                      <em class="icon ni ni-users-fill"></em></span
+                    >
+                    <span class="nk-menu-text">Customers</span></a
+                  >
+                </li>
+                <li class="nk-menu-item">
+                    <a href="coupon" class="nk-menu-link"
+                      ><span class="nk-menu-icon"
+                        ><em class="icon ni ni-opt-alt-fill"></em></span
+                      ><span class="nk-menu-text">Coupons</span></a
+                    >
+                  </li>
+                <li class="nk-menu-item">
+                  <a href="/admim/supports.html" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-chat-fill"></em></span
+                    ><span class="nk-menu-text">Supports</span></a
+                  >
+                </li>
+                <li class="nk-menu-item">
+                  <a href="/admin/settings.html" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-opt-alt-fill"></em></span
+                    ><span class="nk-menu-text">Settings</span></a
+                  >
+                </li>
+                <li class="nk-menu-item">
+                  <a href="registration" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-opt-alt-fill"></em></span
+                    ><span class="nk-menu-text">Register</span></a
+                  >
+                </li>
+                <!-- <li class="nk-menu-item">
+                  <a href="users/login" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-opt-alt-fill"></em></span
+                    ><span class="nk-menu-text">Login</span></a
+                  >
+                </li> -->
+                <li class="nk-menu-item">
+                  <!-- <a href="integration.html" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-server-fill"></em></span
+                    ><span class="nk-menu-text">Integration</span></a
+                  > -->
+                </li>
+                <li class="nk-menu-heading">
+                  <h6 class="overline-title text-primary-alt">Return to</h6>
+                </li>
+                <li class="nk-menu-item">
+                  <a href="/admin/indexhome" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-dashlite-alt"></em></span
+                    ><span class="nk-menu-text">Main Dashboard</span></a
+                  >
+                </li>
+                <!-- <li class="nk-menu-item">
+                   <a href="../components.html" class="nk-menu-link"
+                    ><span class="nk-menu-icon"
+                      ><em class="icon ni ni-layers-fill"></em></span
+                    ><span class="nk-menu-text">All Components</span></a
+                  >
+                </li> -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <%- include('../../layouts/footer.ejs') %>

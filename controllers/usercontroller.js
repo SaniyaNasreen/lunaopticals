@@ -1,7 +1,9 @@
 const User = require("../models/usermodel");
-const Order = require("../models/ordermodel");
+
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
+const Order = require("../models/ordermodel");
+const Coupon = require("../models/couponmodel");
 const config = require("../config/config");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
@@ -704,7 +706,11 @@ const loginCart = async (req, res, next) => {
       });
       return;
     }
-    res.render("users/shop-cart", { user, isUserLoggedIn: true, listed: true });
+    res.render("users/shop-cart", {
+      user,
+      isUserLoggedIn: true,
+      listed: true,
+    });
   } catch (error) {
     console.error("Error fetching user cart:", error);
     return res.status(500).send("Internal Server Error");
@@ -754,9 +760,9 @@ const updateCart = async (req, res, next) => {
     await user.save();
 
     if (fromPage === "checkout") {
-      return res.redirect("/checkout"); // Redirect to the checkout page
+      return res.redirect("/checkout");
     } else {
-      return res.redirect("/shop-cart"); // Redirect to the shop-cart page
+      return res.redirect("/shop-cart");
     }
   } catch (error) {
     console.error("Error updating quantity:", error);
@@ -766,21 +772,26 @@ const updateCart = async (req, res, next) => {
 
 const checkoutCart = async (req, res, next) => {
   try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
     const userId = req.user._id;
     const user = await User.findById(userId).populate("cart.product");
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
-
+    const order = await Order.find({ _id: userId });
     if (user?.cart?.length <= 0) {
       res.render("users/shop-cart", {
         user,
-        isUserLoggedIn: true,
+        isUserLoggedIn,
         emptyCart: true,
         listed: true,
       });
     }
+
     const insufficientStockItems = user.cart.filter(
       (cartItem) => cartItem.product.countInStock < cartItem.quantity
     );
@@ -788,7 +799,8 @@ const checkoutCart = async (req, res, next) => {
     if (insufficientStockItems.length > 0) {
       return res.render("users/checkout", {
         user,
-        isUserLoggedIn: true,
+        order,
+        isUserLoggedIn,
         insufficientStock: true,
         listed: true,
       });
@@ -798,6 +810,7 @@ const checkoutCart = async (req, res, next) => {
       user,
       isUserLoggedIn: true,
       listed: true,
+      order,
     });
   } catch (error) {
     next(error);
@@ -872,7 +885,53 @@ const userAddress = async (req, res, next) => {
       return res.status(404).send("User not found");
     }
     const userAddress = user.address || [];
-    res.render("users/address", { isUserLoggedIn, userAddress });
+    res.render("users/address", { isUserLoggedIn, userAddress, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const loadAddAddress = async (req, res, next) => {
+  try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    const userAddress = user.address || [];
+    res.render("users/addaddress", { isUserLoggedIn, userAddress, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const loadEditAddress = async (req, res, next) => {
+  try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+
+    if (!req?.user?._id) {
+      console.error("User ID not found");
+      return res.status(404).send("User ID not found");
+    }
+    const userId = req.user._id;
+    const user = await User.findById(userId);
+    console.log(user);
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    const userAddress = user.address || [];
+    res.render("users/editaddress", { isUserLoggedIn, userAddress, user, req });
   } catch (error) {
     next(error);
   }
@@ -904,6 +963,7 @@ const updateAddress = async (req, res, next) => {
     };
 
     const user = await User.findById(userId);
+
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
@@ -919,61 +979,141 @@ const updateAddress = async (req, res, next) => {
 
 const orderInfo = async (req, res, next) => {
   try {
-    let isUserLoggedIn = false;
-    if (req?.session?.user_id) {
-      isUserLoggedIn = true;
+    let isUserLoggedIn = !!req?.session?.user_id;
+
+    // Check if req.user exists before accessing its properties
+    const userId = req.user?._id;
+    if (!userId) {
+      console.error("User ID not found in the request");
+      return res.status(404).send("User ID not found");
     }
+
+    const orders = await Order.find({ user: userId }).populate(
+      "purchasedItems.product"
+    );
+
+    if (!orders) {
+      console.error("Order not found");
+      return res.status(404).send("Order not found");
+    }
+
+    res.render("users/order", {
+      isUserLoggedIn,
+      user: req.user,
+      orders,
+    });
+  } catch (error) {}
+};
+const generateOrderNumber = function () {
+  return Math.floor(Math.random() * 1000000);
+};
+const saveOrder = async (req, res, next) => {
+  console.log("hello");
+  try {
+    let isUserLoggedIn = !!req.session.user_id;
+
     const userId = req.user._id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate({
+      path: "cart.product",
+      model: "Product",
+    });
 
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
-    const orderId = req.order._id;
-    const orders = await Order.findById(orderId);
-    res.render("users/order", { isUserLoggedIn, user, orders });
-  } catch (error) {}
-};
 
-const saveOrder = async (req, res, next) => {
-  try {
+    const cartItems = user.cart;
+
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).send("Cart is empty");
+    }
+
+    const ordersToSave = [];
     const {
-      productimage,
-      productname,
-      price,
-      quantity,
       firstname,
       lastname,
       address,
+      email,
       city,
       country,
       pincode,
-      email,
       mobile,
+      paymentMethod,
+      paymentStatus,
     } = req.body;
 
-    const newOrder = new Order({
-      productimage,
-      productname,
-      price,
-      quantity,
-      firstname,
-      lastname,
-      address,
-      city,
-      country,
-      pincode,
-      email,
-      mobile,
-    });
+    let newOrder = {
+      user: userId,
+      address: {
+        firstname,
+        lastname,
+        address,
+        email,
+        city,
+        country,
+        pincode,
+        mobile,
+      },
+      orderNumber: generateOrderNumber(),
+      date: new Date(),
+      purchasedItems: [],
+      totalAmount: 0,
+      payment: {
+        type: paymentMethod,
+        status: paymentStatus,
+      },
+    };
 
-    await newOrder.save();
-    res.redirect("/users/order");
+    for (const cartItem of cartItems) {
+      const { product, quantity, images } = cartItem;
+      const { _id, price } = product;
+      newOrder.totalAmount += price * quantity;
+
+      newOrder.purchasedItems.push({
+        product: _id,
+        price,
+        quantity,
+        images,
+      });
+    }
+
+    const orderInstance = new Order(newOrder);
+    await orderInstance.save();
+    user.cart = [];
+    await user.save();
+    res.status(200).send("Order saved successfully");
   } catch (error) {
     next(error);
   }
 };
+
+const removeOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user._id;
+
+    // Update the user's order status to 'cancelled'
+    const user = await User.findOneAndUpdate(
+      { _id: userId, "order._id": orderId },
+      { $set: { "order.$.status": "cancelled" } },
+      { new: true }
+    );
+
+    // Update the order status to 'cancelled'
+    const cancelledOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { $set: { status: "cancelled" } },
+      { new: true }
+    );
+
+    res.redirect("/order");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   loadIndex,
   loadProductList,
@@ -1002,7 +1142,10 @@ module.exports = {
   userProfile,
   updateUser,
   userAddress,
+  loadAddAddress,
+  loadEditAddress,
   updateAddress,
   orderInfo,
   saveOrder,
+  removeOrder,
 };

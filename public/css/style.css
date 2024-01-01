@@ -730,7 +730,7 @@ hr {
   border-style: hidden;
   height: 40px;
   border-radius: 10px;
-  color: rgb(254, 128, 44);
+  color: orangered;
 }
 .box-sentotp {
   background-color: rgb(13, 13, 12);
@@ -740,7 +740,7 @@ hr {
   margin-left: 500px;
   background-size: 10px;
   border-style: groove;
-  border-color: chocolate;
+  border-color: orangered;
   background-image: url("public/ecommerce18.jpg");
 }
 .headsentotp1 {
@@ -749,7 +749,7 @@ hr {
   padding-left: 150px;
   font-weight: 700;
   padding-top: 100px;
-  color: chocolate;
+  color: orangered;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
@@ -771,7 +771,7 @@ hr {
   border-style: hidden;
   height: 40px;
   border-radius: 10px;
-  color: rgb(254, 128, 44);
+  color: orangered;
 }
 .box-checkotp {
   background-color: rgb(13, 13, 12);
@@ -781,8 +781,7 @@ hr {
   margin-left: 500px;
   background-size: 10px;
   border-style: groove;
-  border-color: chocolate;
-  background-image: url("public/ecommerce18.jpg");
+  border-color: orangered;
 }
 .headcheckotp {
   font-size: 30px;
@@ -795,24 +794,19 @@ hr {
 }
 .container-fluid1 {
   height: 1000px;
-  /* margin-left: 400px; */
   padding-top: 10px;
-  background-image: url("/public/profile1.jpg");
-  background-color: rgb(28, 28, 28);
+
+  background-color: var(--bs-body-bg);
 }
 .container-fluid0 {
   height: 629px;
-  /* margin-left: 400px; */
   padding-top: 10px;
-  background-image: url("/public/profile1.jpg");
-  background-color: rgb(28, 28, 28);
+  background-color: var(--bs-body-bg);
 }
 
-/* CSS Stylesheet */
 .existing-image {
-  width: 50px; /* Example width */
-  height: auto; /* Maintain aspect ratio */
-  /* Additional styles */
+  width: 50px;
+  height: auto;
 }
 
 .logoimage {
@@ -820,9 +814,7 @@ hr {
   height: 100px;
   border-radius: 0px;
 }
-/* img{
-  border-radius: 30px;
-} */
+
 .header {
   height: 100px;
   width: 100%;

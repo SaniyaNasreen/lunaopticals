@@ -170,8 +170,8 @@
                         $<%= item.quantity * item.product.price %>
                       </td>
                       <td>
-                        <button class="remove-item-btn" data-product-id="<%= item.product._id %>">
-                          <a href="/remove-from-cart/<%= item.product._id %>">Remove</a>
+                        <button class="remove-item-btn" style="background-color: red; border-style: none;  " data-product-id="<%= item.product._id %>">
+                          <a href="/remove-from-cart/<%= item.product._id %>" style="color: white;">Remove</a>
                         </button>
                       </td>
                     </tr>
@@ -206,23 +206,19 @@
   <div class="container pt-50">
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6">
-        <div class="coupon_discount">
-          <h6>Counpon discount</h6>
-          <p>Enter your code if you have one. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae</p>
-          <form action="#" class="coupon-form pt-25">
-            <input type="text" placeholder="Enter your code here">
-            <button class="p-btn border-0 ml-20">APPLY COUNPON</button>
-          </form>
-        </div>
+       
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6">
         <div class="cart-total pt-30 pl-40 pr-30 pb-50 mt-40 mt-md-0">
           <h6>Cart Total</h6>
-          <ul>
-            <li>Sub Total <span class="float-right">$42.00</span></li>
-            <li>Grand Total <span class="float-right">$48.00</span></li>
-            
-          </ul>
+          <% let subtotal = 0; %> <% user.cart.forEach(item => { %>
+            <ul>
+              <li>Sub Total <span class="float-right">$<%= item.quantity * item.product.price %></span></li>
+              <li>Grand Total <span class="float-right"> <% subtotal += subtotal %></span></li>
+              
+            </ul> <% });
+            %>
+        
           <p class="pt-15">Checkout with Mutilple Adresses</p>
           <a href="/checkout"> <button class="p-btn border-0 mt-20">PROCEED TO CHECKOUT</button></a>
          

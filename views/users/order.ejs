@@ -12,6 +12,7 @@
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
+               
                 <li
                   class="breadcrumb-item position-relative active"
                   aria-current="page"
@@ -26,7 +27,7 @@
     </div>
   </div>
 </div>
-<div class="shop-grid-s pt-120" style="background-color: white; height: 850px">
+<div class="shop-grid-s pt-120" style="background-color: white; height:auto">
     <div class="container">
       <div class="row">
         <div class="col-xl-12">
@@ -38,17 +39,30 @@
               </div>
             </div>
             <div class="col-xl-9 col-lg-8 col-md-12">
-                <div class="useraddress" style="width: 640px; height: auto;  position: relative; left: 30px;">
-                    
-                    
-                            <div style="margin-bottom: 20px;">
-                                <div style="border: 1px solid #ccc; padding: 10px; display: flex; flex-wrap: wrap; width: 670px; word-wrap: break-word; background-color:rgb(246, 247, 251) ; ">
-                                    
-                                  
-                                </div>
-                            </div>
-                     
-
+              <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
+                <div style="margin-bottom: 20px;">
+                  <div style="  padding: 10px; width: 1000px;">
+                    <% if (orders && orders.length > 0) { %>
+                      <% orders.forEach(order => { %>
+                        <% order.purchasedItems.forEach(purchasedItem => { %>
+                          <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
+                            <p style="font-weight: bold; color: black; font-size:14px;">  <%= purchasedItem.product.name %></p>
+                      <button style="float: right; position: relative; bottom: 40px; font-weight: 500 ; color: rgb(250, 249, 249); font-size: 13px; background-color: blue; border-style: none;"><%= order.status %></button>     
+                            <p style="float: right; position: relative; bottom: 40px; font-weight: 500; right: 300px; color: black; font-size: 13px;">₹ <%= purchasedItem.price %></p>
+                            <p style="float:right; font-weight: bold; color: black; font-size:14px; position: relative; bottom: 40px; right: 100px;">  <%=  order.date instanceof Date ? order.date.toDateString() : ''%></p>
+ 
+                            <!-- Add other order details as needed -->
+                            <a href="/users/orderInfo/<%= encodeURIComponent(order._id) %>" class="view-order-btn" style="color:orangered; font-size:medium;">View Details</a>
+                          </div>
+                        <% }) %>
+                      <% }) %>
+                    <% } else { %>
+                      <p>No orders found</p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -61,4 +75,49 @@
     </div>
   </div>
    
+  <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to <span id="actionText"></span> this user?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    function openConfirmationModal(_id) {
+      const modal = document.getElementById('confirmationModal');
+      const actionText = modal.querySelector('#actionText');
+      const confirmActionBtn = modal.querySelector('#confirmActionBtn');
+   
+      const order = getUserById(_); 
+      actionText.textContent = cancel;
+  
+      const bootstrapModal = new bootstrap.Modal(modal);
+      bootstrapModal.show();
+  
+       
+      confirmActionBtn.onclick = function () {
+      
+        const form = document.getElementById(`orderform_${ _id}`);
+        form.submit();
+  
+        
+        bootstrapModal.hide();
+      };
+    }
+  
+  
+     
+  </script>
   
