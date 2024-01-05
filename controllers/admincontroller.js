@@ -73,7 +73,7 @@ const loadIndex = async (req, res) => {
   }
 };
 
-const loadCustomer = async (req, res) => {
+const loadCustomer = async (req, res, next) => {
   try {
     const users = await User.find({ is_admin: 0 });
     if (!users) {
@@ -81,7 +81,36 @@ const loadCustomer = async (req, res) => {
       error.statusCode = 404;
       throw error;
     }
-    return res.render("admin/customers", { users: users });
+    let sortOption = {};
+    const sortQuery = req.query.sort;
+    if (sortQuery === "price_asc") {
+      sortOption = { price: 1 };
+    } else if (sortQuery === "price_desc") {
+      sortOption = { price: -1 };
+    } else {
+      sortOption = { createdAt: -1 };
+    }
+
+    const totalUser = await User.countDocuments();
+    const sortedUser = await User.find().sort(sortOption).lean().exec();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedUser = sortedUser.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalUser / limit);
+    const currentPage = page;
+    const selectedSort = sortQuery;
+    return res.render("admin/customers", {
+      users: users,
+      selectedSort,
+      currentPage,
+      totalPages,
+      totalItems: totalUser,
+      users: paginatedUser,
+      limit,
+    });
   } catch (error) {
     next(error);
   }

@@ -93,7 +93,73 @@
     </div>
   </div>
 </div>
+<script>
+  $(document).ready(function () {
+    $('form[action="/saveUserProfile"]').submit(function (event) {
+      event.preventDefault(); // Prevent the default form submission
 
+      // Validate the form fields
+      if (!validateUserProfileForm()) {
+        // If validation fails, prevent the form submission and return
+        return;
+      }
+
+      // If validation passes, continue with form submission
+      this.submit(); // Submit the form
+    });
+
+    function validateUserProfileForm() {
+      const name = $('#name').val().trim();
+      const email = $('#email').val().trim();
+      const mobile = $('#mobile').val().trim();
+
+      let isValid = true;
+
+      if (name === '') {
+        displayError('name', 'Please enter your username.');
+        isValid = false;
+      } else {
+        removeError('name');
+      }
+
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        displayError('email', 'Please enter a valid email address.');
+        isValid = false;
+      } else {
+        removeError('email');
+      }
+
+      // Validate mobile number
+      const mobileRegex = /^\d{10}$/;
+      if (!mobileRegex.test(mobile)) {
+        displayError('mobile', 'Please enter a valid 10-digit mobile number.');
+        isValid = false;
+      } else {
+        removeError('mobile');
+      }
+
+      return isValid;
+    }
+
+    function displayError(fieldId, message) {
+      const field = $('#' + fieldId);
+      const errorDiv = $('<div class="error-message"></div>').text(message).css('color', 'red');
+      const existingError = field.parent().find('.error-message');
+
+      if (existingError.length) {
+        existingError.remove();
+      }
+
+      field.parent().append(errorDiv);
+    }
+
+    function removeError(fieldId) {
+      $('#' + fieldId).parent().find('.error-message').remove();
+    }
+  });
+</script>
 <%- include('../users/layouts/footer.ejs') %>
       </div>
     </div>

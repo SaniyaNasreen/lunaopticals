@@ -70,6 +70,11 @@ admin_route.put(
   auth.isAdmin,
   ordercontroller.updateStatus
 );
+admin_route.get(
+  "/orderInfo/:id",
+  auth.isAdmin,
+  ordercontroller.loadAdminOrderDetails
+);
 
 //Coupon management
 admin_route.get("/coupon", couponcontroller.loadCoupon);

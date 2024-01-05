@@ -25,9 +25,6 @@ const couponSchema = new mongoose.Schema({
       },
       message: "Discount should be a percentage between 0 and 100",
     },
-    default: 0,
-    get: (v) => `${v}%`,
-    set: (v) => parseFloat(v),
   },
   validity: {
     type: Date,

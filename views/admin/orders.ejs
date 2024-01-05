@@ -16,9 +16,9 @@
  
 height: 100vh;">
   <div class="container-fluid" style="  width: 100%;
-  max-width: 1570px;  
+  max-width: 1700px;  
   box-sizing: border-box;
-  padding-left: 300px; padding-top: 60px; ">
+  padding-left: 300px; padding-top: 70px; height:980px; ">
     <div class="nk-content-inner">
       <div class="nk-content-body">
         <div class="nk-block-head nk-block-head-sm">
@@ -72,16 +72,7 @@ height: 100vh;">
                         </div>
                       </div>
                     </li>
-                    <li class="nk-block-tools-opt">
-                      <a href="#" class="btn btn-icon btn-primary d-md-none"
-                        ><em class="icon ni ni-plus"></em></a
-                      ><a
-                        href="#"
-                        class="btn btn-primary d-none d-md-inline-flex"
-                        ><em class="icon ni ni-plus"></em
-                        ><span>Add Order</span></a
-                      >
-                    </li>
+                    
                   </ul>
                 </div>
               </div>
@@ -182,17 +173,30 @@ height: 100vh;">
                       <button style="border-radius: 20px; border-style: none; background-color: blue; width: 80px;height:30px;"><span class="tb-lead" style="color: white;font-size: 11px;"><%- order.status %></span></button>
                     </div>
                     <div class="nk-tb-col">
-                      <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%- order.customer %></span>
+                      <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%- order.address.firstname %></span>
                     </div>
                     <div class="nk-tb-col tb-col-md">
                       <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
                         <% order.purchasedItems.forEach((item) => { %>
                           <span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;"><%- item.product && item.product.name ? item.product.name : 'Product Name Not Available' %></span>
+                          
                         <% }); %>
                       <% } else { %>
                         <span class="tb-sub">No purchased items</span>
                       <% } %>
                     </div>
+                    <div class="nk-tb-col tb-col-md">
+                      <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                        <% order.purchasedItems.forEach((item) => { %>
+                          <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%-  item.product.quantity ? item.product.quantity : 'Product quantity Not Available' %></span>
+                        <% }); %>
+                      <% } else { %>
+                        <span class="tb-sub">No purchased items</span>
+                      <% } %>
+                    </div>
+                     
+                      
+                  
                     <div class="nk-tb-col">
                       <span class="tb-lead" style="font-size: 12px;">₹<%- order.totalAmount %></span>
                     </div>
@@ -220,7 +224,7 @@ height: 100vh;">
                 <ul class="link-list-opt no-bdr">
                   <!-- Existing actions -->
                   <li>
-                    <a href="#">
+                    <a href="/admin/orderInfo/<%= encodeURIComponent(order._id) %>">
                       <em class="icon ni ni-eye"></em>
                       <span>Order Details</span>
                     </a>
@@ -231,12 +235,7 @@ height: 100vh;">
                         <span>Mark as Delivered</span>
                       </a>
                     </li>
-                    <li>
-                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markPaid">
-                        <em class="icon ni ni-money"></em>
-                        <span>Mark as Paid</span>
-                      </a>
-                    </li>
+                     
                     <li>
                       <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markProcessing">
                         <em class="icon ni ni-money"></em>
@@ -249,18 +248,18 @@ height: 100vh;">
                         <span>Mark as On Hold</span>
                       </a>
                     </li>
-                  <li>
+                  <!-- <li>
                     <a href="#">
                       <em class="icon ni ni-report-profit"></em>
                       <span>Send Invoice</span>
                     </a>
-                  </li>
-                  <li>
+                  </li> -->
+                  <!-- <li>
                       <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markRejected">
                         <em class="icon ni ni-money"></em>
                         <span>Mark as Rejected</span>
                       </a>
-                    </li>
+                    </li> -->
                     <li>
                       <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markPlaced">
                         <em class="icon ni ni-money"></em>
@@ -282,6 +281,10 @@ height: 100vh;">
     </div>
   </div>
 </div>
-<%-include('../admin/layouts/footer.ejs') %>
+<div style="position: relative; top: 110px;left: 320px; width: 1170px;">
+ 
+<%- include('../admin/layouts/footer.ejs')%>
+</div>
         </div>
       </div>
+<%- include('../layouts/footer.ejs') %>

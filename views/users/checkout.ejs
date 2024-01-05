@@ -36,15 +36,18 @@
       <div class="col-xl-6 col-lg-6 col-md-6">
         <div class="checkout">
           <div class="coupon_discount">
+           
             <h6>Coupon discount</h6>
             <p>Enter your code if you have one...</p>
-            <form action="/checkout/applyCoupon" class="coupon-form pt-25" method="post">
-              <input type="text" name="code" placeholder="Enter your code here">
-              <button class="p-btn border-0 ml-20">APPLY COUPON</button>
-          </form>
+         
+              <form action="/checkout/applyCoupon" class="coupon-form pt-25"  method="post">
+                <input type="text" name="code" placeholder="Enter your code here">
+                <button class="p-btn border-0 ml-20">APPLY COUPON</button>
+              </form>
+           
           </div>
 
-          <form action="/saveOrder" method="post" class="bill-form pt-5">
+          <form action="/saveOrder" method="post" class="bill-form pt-5" id="orderForm">
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
@@ -66,19 +69,19 @@
             </div>
             <div class="city pt-30">
               <label for="cit">Country</label>
-              <input type="text" name="country" id="cit" />
+              <input type="text" name="country" id="country" />
             </div>
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">City/Town</label>
-                  <input type="text" name="city" id="first-nem" />
+                  <input type="text" name="city" id="city" />
                 </div>
               </div>
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">Pincode</label>
-                  <input type="text" name="pincode" id="first-nem" />
+                  <input type="text" name="pincode" id="pincode" />
                 </div>
               </div>
             </div>
@@ -87,13 +90,13 @@
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">Email</label>
-                  <input type="text" name="email" id="first-nem" />
+                  <input type="text" name="email" id="email" />
                 </div>
               </div>
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">Mobile</label>
-                  <input type="text" name="mobile" id="first-nem" />
+                  <input type="text" name="mobile" id="mob" />
                 </div>
               </div>
             </div>
@@ -111,73 +114,78 @@
       <thead>
         <tr>
           <th scope="col">PRODUCT</th>
-          <th scope="col" style="  padding-left: 30px">QUANTITY</th>
-          <th scope="col" style="padding-right: 50px; padding-left: 30px">STOCK</th>
-          <th scope="col">PRICE</th>
+          <th scope="col" style="  padding-left: 150px">QUANTITY</th> 
+          <th scope="col"style="  padding-left:   50px">PRICE</th>
         </tr>
       </thead>
-      <tbody>
-        <% let subtotal = 0; %> <% user.cart.forEach(item => { %>
-        <tr>
-          <td><%= item.product.name %></td>
-          <td>
-            <div style="display: flex; align-items: center;">
-              <form action="/update-cart" method="POST" style="display: flex; align-items: center;">
-                <input type="hidden" name="product_id" value="<%= item.product._id %>">
-                <button type="submit" name="updateQuantity" value="decrease" style="height: 20px; width: 20px; font-size: 12px;position: relative; left: 3px;">-</button>
-                <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="100" style="height: 20px; width: 20px; font-size: 12px; text-align: center;position: relative; left: 30px;">
-                <button type="submit" name="updateQuantity" value="increase" style="height: 20px; width: 20px; font-size: 12px;position: relative; left: 35px;">+</button>
-              </form>
-            </div>
-          </td>
-          <td style="padding-left: 30px">
-            <%= item.product.countInStock %>
-          </td>
-          <td>$<%= item.quantity * item.product.price %></td>
-        </tr>
-        <% subtotal += item.quantity * item.product.price; %> <% });
-        %>
-      </tbody>
-    </table>
-              <hr class="mt-5" />
-              <p class="pt-15">
-                Sub Total
-                <span id="subTotal" class="float-right"
-                  >$<%= subtotal %></span
-                > 
-              </p>
-              <% if (user.couponApplied===true) { %> 
-                <p class="pt-15">Discount<span class="float-right"><%= coupon.discount %></span></p>
-
-<% } %>
-              <hr />
-              <% if (subtotal > 2000) { %>
-                <p class="pt-15">Shipping <span class="float-right">$0</span></p>
-             
-                <% } else { %>
-                  <p class="pt-15">Shipping <span class="float-right">$100</span></p>   
-                <% } %>
-               
- 
-                <hr />
-                 
-                <% if (user.couponApplied===true) { %> 
-                <p class="price-total pt-15">
-                  Total
-                  <span id="total" class="float-right">
-                    $<%= (subtotal + (subtotal > 2000 ? 0 : 100)).toFixed(2) %>
-                  </span>
-                </p>
-                <% } else { %>
-                  
-                   
-                <p class="price-total pt-15">
-                  Total
-                  <span id="total" class="float-right">
-                    $<%= (subtotal + (subtotal > 2000 ? 0 : 100)).toFixed(2) %>
-                  </span>
-                </p>
-                <% } %>
+      
+      <table>
+        <tbody>
+          <% let subtotal = 0; %>
+          <% userCart.forEach(item => { %>
+            <tr>
+              <td><%= item.product.name %></td>
+              <td><%= item.quantity %></td>
+              <td>$<%= item.quantity * item.product.price %></td>
+            </tr>
+            <% subtotal += item.quantity * item.product.price; %>
+          <% }); %>
+        </tbody>
+      </table>
+     
+      <% if (req.body.code&&coupon.status === "Active") { %> 
+        <hr class="mt-5" />
+        <p class="pt-15">
+          Sub Total
+          <span id="subTotal" class="float-right">
+            $<%= subtotal.toFixed(2) %>
+          </span>
+        </p>
+        <!-- Calculate discount and show -->
+       
+        <p class="pt-15">
+          Discount
+          <span id="discount" class="float-right">
+            $<%= discountAmount%>
+          </span>
+        </p>
+      <% } else { %>
+        <!-- If there's no code provided -->
+        <hr class="mt-5" />
+        <p class="pt-15">
+          Sub Total
+          <span id="subTotal" class="float-right">
+            $<%= subtotal.toFixed(2) %>
+          </span>
+        </p>
+        <!-- No discount in this case -->
+      <% } %>
+    
+      <!-- Shipping -->
+      <hr />
+      <% if (subtotal > 2000) { %>
+        <p class="pt-15">Shipping <span class="float-right">$0</span></p>
+      <% } else { %>
+        <p class="pt-15">Shipping <span class="float-right">$100</span></p>
+      <% } %>
+    
+      <!-- Total -->
+      <hr />
+      <% if (req.body.code&&coupon.status === "Active") { %> 
+        <p class="price-total pt-15">
+          Total
+          <span id="total" class="float-right">
+            $<%= (subtotal - discountAmount).toFixed(2) %>
+          </span>
+        </p>
+      <% } else { %>
+        <p class="price-total pt-15">
+          Total 
+          <span id="total" class="float-right">
+            $<%= (subtotal + (subtotal > 2000 ? 0 : 100)).toFixed(2) %>
+          </span>
+        </p>
+      <% } %>
                
               <div class="payment-method mt-55">
                 <div class="direct-bank position-relative pl-25">
@@ -196,17 +204,51 @@
                   <label for="Cod">Cash on delivery </label>
                 </div>
                  
-                   <button  type="submit" class="p-btn border-0 mt-45">PLACE ORDER</button>
+                <button type="submit" class="p-btn border-0 mt-45"  id="placeOrderBtn">PLACE ORDER</button>
                    
           </form>
+          <div id="success_tic" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+              <!-- Modal content -->
+              <div class="modal-content">
+                <a class="close" href="#" data-dismiss="modal">&times;</a>
+                <div class="page-body">
+                  <div class="head">  
+                    <h3 style="margin-top:5px;">Order Successful</h3>
+                    <h5>Thank You for your order,Continue shopping</h5>
+                  </div>
+                  <h1 style="text-align:center;">
+                    <div class="checkmark-circle">
+                      <div class="background"></div>
+                      <div class="checkmark draw"></div>
+                    </div>
+                  </h1>
+                  <a href="/shop-list" style="position: relative;left: 70px;">Continue shopping</a>
+                </div>
+              </div>
+            </div>
+          </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  
     <%- include('../users/layouts/footer.ejs') %>
+    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; width: 300px; display: none;">
+      <div class="toast-header">
+        <strong class="mr-auto">Out of Stock</strong>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="toast-body">
+        The selected quantity is more than available stock.
+      </div>
+    </div>
     <!-- prettier-ignore -->
+ 
     <%-include('../layouts/footer')%>
   </div>
 </div>

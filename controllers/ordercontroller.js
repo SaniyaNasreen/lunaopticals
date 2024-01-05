@@ -4,16 +4,44 @@ const Category = require("../models/categorymodel");
 const User = require("../models/usermodel");
 const Order = require("../models/ordermodel");
 const { upload, cropToSquare } = require("../utils/multer");
-
 const loadOrder = async (req, res, next) => {
   try {
     const orders = await Order.find().populate("purchasedItems.product");
-    res.render("admin/orders", { orders });
+    let sortOption = {};
+    const sortQuery = req.query.sort;
+    if (sortQuery === "price_asc") {
+      sortOption = { price: 1 };
+    } else if (sortQuery === "price_desc") {
+      sortOption = { price: -1 };
+    } else {
+      sortOption = { createdAt: -1 };
+    }
+
+    const totalOrders = await Order.countDocuments();
+    const sortedOrders = await Order.find().sort(sortOption).lean().exec();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedOrders = sortedOrders.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalOrders / limit);
+    const currentPage = page;
+    const selectedSort = sortQuery;
+
+    res.render("admin/orders", {
+      orders,
+      selectedSort,
+      currentPage,
+      totalPages,
+      totalItems: totalOrders,
+      orders: paginatedOrders,
+      limit,
+    });
   } catch (error) {
     next(error);
   }
 };
-
 const updateStatus = async (req, res, next) => {
   try {
     const { orderId, action } = req.params;
@@ -93,9 +121,35 @@ const loadOrderDetails = async (req, res, next) => {
     next(error);
   }
 };
+const loadAdminOrderDetails = async (req, res, next) => {
+  try {
+    console.log(req.params);
+    const orderId = req.params.id;
+    if (!orderId) {
+      console.error("Order ID not found in the request");
+      return res
+        .status(400)
+        .json({ error: "Order ID not found in the request" });
+    }
 
+    const orders = await Order.findById(orderId)
+      .populate("purchasedItems.product")
+      .exec();
+    console.log(orders);
+    if (!orders) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.render("admin/orderInfo", {
+      orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   loadOrder,
   updateStatus,
   loadOrderDetails,
+  loadAdminOrderDetails,
 };

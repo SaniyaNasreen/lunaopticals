@@ -37,7 +37,87 @@
   countdown();
  </script>  
  
+  
+ <script>
+  $(document).ready(function () {
+    $('#orderForm').submit(function (event) {
+      event.preventDefault();
+      if (!validateCheckoutForm()) {
+        return;
+      }
+      $.ajax({
+        type: 'POST',
+        url: '/saveOrder',
+        data: $(this).serialize(),
+        success: function (response) {
+          $('#success_tic').modal('show');
+        },
+        error: function (xhr, status, error) {
+          console.error('Error placing order:', error);
+          if (xhr.status === 400) {
+            console.log('Toast will be shown.'); // Add this line for debugging
+$('#toast').toast('show');
+          }
+        },
+      });
+    });
 
+
+        function displayError(fieldId, message) { 
+          const field = $('#' + fieldId);
+          const errorDiv = $('<div class="error-message"></div>').text(message).css('color', 'red');
+          const existingError = field.parent().find('.error-message');
+
+          if (existingError.length) {
+            existingError.remove();
+          }
+
+          field.parent().append(errorDiv);
+        }
+
+        function validateCheckoutForm() {
+          const requiredFields = [
+            'first-nem',
+            'last-nam',
+            'addres',
+            'country',
+            'city',
+            'pincode',
+            'email',
+            'mob',
+          ];
+
+          let isValid = true;
+
+          requiredFields.forEach(function (fieldId) {
+            const fieldValue = $('#' + fieldId).val().trim();
+
+            if (fieldValue === '') {
+              displayError(fieldId, 'Please enter the required information.');
+              isValid = false;
+            } else {
+              $('#' + fieldId).parent().find('.error-message').remove();
+            }
+          });
+
+          const email = $('#email').val().trim();
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            displayError('email', 'Please enter a valid email address.');
+            isValid = false;
+          }
+
+          const mobile = $('#mob').val().trim();
+          const mobileRegex = /^\d{10}$/;
+          if (!mobileRegex.test(mobile)) {
+            displayError('mob', 'Please enter a valid 10-digit mobile number.');
+            isValid = false;
+          }
+
+          return isValid;
+        }
+      });
+    </script>
 
 <script>
   $(document).ready(function() {
@@ -121,7 +201,7 @@ function unblockUser(userId) {
   document.getElementById('file-upload').addEventListener('change', function () {
       const files = this.files;
       const imagePreviewContainer = document.getElementById('image-preview-container');
-      imagePreviewContainer.innerHTML = ''; 
+      imagePreviewContainer.innerHTML = '';
 
       for (let i = 0; i < files.length; i++) {
           const file = files[i];
@@ -143,7 +223,6 @@ function unblockUser(userId) {
 <script>
 
   function previewImages(event) {
-    
     const files = event.target.files;
     const newlyAddedImagesContainer = document.querySelector('.newly-added-images');
     newlyAddedImagesContainer.innerHTML = '';
@@ -163,7 +242,7 @@ function unblockUser(userId) {
 
       deleteLabel.textContent = 'Delete Image';
       deleteCheckbox.type = 'checkbox';
-      deleteCheckbox.name = 'deleteImages'; // You might want to assign a unique identifier here for the new images
+      deleteCheckbox.name = 'deleteImages'; 
       deleteCheckbox.value = i; // Adjust the value as per your requirements
 
       imageContainer.classList.add('existing-image');
@@ -430,6 +509,66 @@ window.onload = function() {
       // Handle errors if any
     });
   }
+</script>
+
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+  async function openConfirmationModal(orderId) {
+    const modal = document.getElementById('confirmationModal');
+    const actionText = modal.querySelector('#actionText');
+    const confirmActionBtn = modal.querySelector('#confirmActionBtn');
+
+    try {
+      // Fetch order details to populate the confirmation modal
+      const response = await fetch(`/api/orders/${orderId}`); // Replace with your API endpoint
+      const order = await response.json();
+
+      if (!order) {
+        console.error("Order not found");
+        return;
+      }
+
+      actionText.textContent = `cancel order ${order._id}`; // Update the action text
+
+      const bootstrapModal = new bootstrap.Modal(modal);
+      bootstrapModal.show();
+
+      confirmActionBtn.onclick = async function () {
+        try {
+          const cancelOrderForm = document.getElementById('cancelOrderForm');
+          const formData = new FormData(cancelOrderForm);
+
+          const cancelResponse = await fetch(`/users/orderInfo/cancel-order/${orderId}`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (cancelResponse.ok) {
+            console.log("Order cancelled");
+            bootstrapModal.hide();
+            // Perform UI updates or page refresh upon successful cancellation
+          } else {
+            console.error("Failed to cancel order");
+            // Handle error or show an error message to the user
+          }
+        } catch (error) {
+          console.error(error);
+          // Handle errors or display an error message to the user
+        }
+      };
+    } catch (error) {
+      console.error(error);
+      // Handle errors or display an error message to the user
+    }
+  }
+
+  // Event listener or trigger for openConfirmationModal
+  // For example, you might trigger it on a button click or any appropriate event
+  const orderId = 'someOrderId'; // Replace with the actual order ID
+  openConfirmationModal(orderId);
+});
+
+   
 </script>
 </body>
 </html>

@@ -1,155 +1,168 @@
-<%- include('../layouts/header.ejs') %>
-<header>
-  <div class="header-1">
-    <div class="container">
-      <div class="row align-items-center">
-        <!-- Added align-items-center for vertical alignment -->
-        <div
-          class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1"
-        >
-          <div class="logo3 text-md-center text-lg-left">
-            <a href="/">
-              <div
-                class="logo3"
-                style="background-image: url('/public/images\ \(1\).jpg')"
-              ></div>
-            </a>
+  <%- include('../layouts/header.ejs') %>
+  <header>
+    <div class="header-1">
+      <div class="container">
+        <div class="row align-items-center">
+          <!-- Added align-items-center for vertical alignment -->
+          <div
+            class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1"
+          >
+            <div class="logo3 text-md-center text-lg-left">
+              <a href="/">
+                <div
+                  class="logo3"
+                  style="background-image: url('/public/images\ \(1\).jpg')"
+                ></div>
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</header>
-<!-- header area ends -->
-<div class="container-fluid0">
-  <div class="logoimage">
-    <img src="/images (1).jpg" alt="" />
-    <div class="box-checkotp" style="height: 400px;">
-      <h1
-        class="headcheckotp"
-        style="
-          position: relative;
-          bottom: 60px;
-          right: 10px;
-          width: 330px;
-          color: white;
-        "
-      >
-        OTPVerification
-      </h1>
-      <div id="timer"></div>
-      <!-- Update the action attribute to point to the correct route for OTP verification -->
-      <form
-        action="/verify-otp"
-        class="form-checkotp needs-validation"
-        method="post"
-        style="position: relative; bottom: 120px; left: 30px"
-        novalidate
-      >
-        <div class="mb-3">
-          <label
-            for="validationCustomUsername"
-            class="form-label"
-            style="color: white; position: relative; top: 80px"
-            >Email</label
-          >
-          <input
-            type="email"
-            class="checkotp1 form-control"
-            name="email"
-            required
-            style="position: relative; top: 30px; width: 430px"
-          />
-          <div class="invalid-feedback" style="position: relative; top: 30px">
-            Please enter a valid email address.
-          </div>
-        </div>
-        <div class="mb-3">
+  </header>
+  <!-- header area ends -->
+  <div class="container-fluid0">
+    <div class="logoimage">
+      <!-- <img src="/images (1).jpg" alt="" /> -->
+      <div class="box-checkotp" style="height: 450px; position: relative;bottom: 50px;">
+        <h1
+          class="headcheckotp"
+          style="
+            position: relative;
+            bottom: 60px;
+            right: 10px;
+            width: 330px;
+            color: white;
+          "
+        >
+          OTPVerification
+        </h1>
+        <div id="timer" style="color: white; font-size: 12px;position: relative; bottom: 50px; left: 170px;"></div>
+        <!-- Update the action attribute to point to the correct route for OTP verification -->
+        <form
+          action="/verify-otp"
+          class="form-checkotp needs-validation"
+          method="post"
+          style="position: relative; bottom: 120px; left: 30px"
+          novalidate
+        >
           <div class="mb-3">
             <label
               for="validationCustomUsername"
               class="form-label"
-              style="color: white; position: relative; top: 30px"
-              >OTP</label
+              style="color: white; position: relative; top: 80px"
+              >Email</label
             >
-          <input
-            type="number"
-            class="checkotp1 form-control"
-            name="otp"
-            required
-            style="width: 430px;position: relative; bottom: 20px"
-          />
-          <div class="invalid-feedback">Please enter the OTP.</div>
-        </div>
-        <div class="mb-3">
-          <input
-            type="submit"
-            class="checkotp2 form-control"
-            value="Login"
-            style="
-              width: 430px;
-              position: relative;
+            <input
+              type="email"
+              class="checkotp1 form-control"
+              name="email"
+              required
+              style="position: relative; top: 30px; width: 430px"
+            />
+            <div class="invalid-feedback" style="position: relative; top: 30px">
+              Please enter a valid email address.
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="mb-3">
+              <label
+                for="validationCustomUsername"
+                class="form-label"
+                style="color: white; position: relative; top: 30px"
+                >OTP</label
+              >
+            <input
+              type="number"
+              class="checkotp1 form-control"
+              name="otp"
+              required
+              style="width: 430px;position: relative; bottom: 20px"
+            />
+            <div class="invalid-feedback">Please enter the OTP.</div>
+          </div>
+          <div class="mb-3">
+            <input
+              type="submit"
+              class="checkotp2 form-control"
+              value="Login"
+              style="
+                width: 430px;
+                position: relative;
 
-             
-              border-radius: 10px;
-              color: white;
-              height: 40px;
-              font-weight: 500;
-              background-color: rgb(197, 95, 22);
-              border-style: hidden;
-            "
-          />
-        </div>
-        <button
-  id="resendOtpBtn"
-  class="resend-otp-btn"
-  style="color: white; background-color: blue;"
-  onclick="resendOTP()"
->
-  Resend OTP
-</button>
-      </form>
-     
+              
+                border-radius: 10px;
+                color: white;
+                height: 40px;
+                font-weight: 500;
+                background-color: rgb(197, 95, 22);
+                border-style: hidden;
+              "
+            />
+          </div>
+          <button
+          id="resendOtpBtn"
+          class="resend-otp-btn"
+          style="color: white; background-color: blue;"
+        >
+          Resend OTP
+        </button>
+        </form>
+      
+      </div>
     </div>
-  </div>
-</div>  
-<script>
-  const expirationTime =timestamp + 5 * 60 * 1000;; // Set the expiration time
+  </div>  
+  <script>
+  function startTimer(expirationTime) {
+    const timerInterval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = expirationTime - now;
 
-  function resendOTP() {
-    // Logic to generate a new OTP
-    const newOTP = generateOTP(); // Assuming you have a function to generate OTP
+      if (distance > 0) {
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // Logic to send the new OTP to the user's email
-    emailOtp(email, newOTP)
-      .then(() => {
-        // Handle success - maybe update UI or show a message
-        console.log('OTP resent successfully');
-      })
-      .catch((error) => {
-        // Handle error - show an error message or log the error
-        console.error('Error resending OTP:', error.message);
-      });
-  }
+        document.getElementById('timer').innerHTML =
+          'Time remaining: ' + minutes + 'm ' + seconds + 's ';
+      } else {
+        clearInterval(timerInterval);
+        document.getElementById('timer').innerHTML = 'OTP Expired'; 
+      }
+    }, 1000);
+  } 
+  
+  const expirationTime = Date.now() + 1 * 60 * 1000;
+  startTimer(expirationTime);
+  </script>
+  <script>
+    document.getElementById('resendOtpBtn').addEventListener('click', async (event) => {
+  event.preventDefault();
 
-  // Calculate and display the countdown timer
-  const timerInterval = setInterval(() => {
-    const now = new Date().getTime();
-    const distance = expirationTime - now;
+  const email = document.querySelector('.checkotp1[name="email"]').value;
 
-    if (distance > 0) {
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  try {
+    const response = await fetch('/resend-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
 
-      document.getElementById('timer').innerHTML =
-        'Time remaining: ' + minutes + 'm ' + seconds + 's ';
+    const data = await response.json();
 
+    if (response.ok) {
+      // Handle success
+      alert(data.message); // Show success message
     } else {
-      clearInterval(timerInterval);
-      document.getElementById('timer').innerHTML = 'OTP Expired';
-      // Handle expired OTP here - maybe disable the form submission
+      // Handle error
+      alert(data.message); // Show error message
     }
-  }, 1000);
-</script>
- 
-<%- include('../layouts/footer.ejs') %>
+  } catch (error) {
+    console.error('Error:', error.message);
+    // Handle other errors
+    alert('Failed to resend OTP');
+  }
+});
+  </script>
+  <%- include('../layouts/footer.ejs') %>

@@ -1,86 +1,53 @@
 <%- include('../../layouts/header.ejs') %>
-<div class="card" style=" display: flex; width: 1170px;
-height: 12vh; margin-bottom: 30px; margin-left: 320px;">
-    <div class="card-inner" style="  width: 100%;
-    max-width: 1570px;  
-    box-sizing: border-box;
-    padding-left: 300px; ">
-      <div class="nk-block-between-md g-3">
-        <div class="g"  style="  margin-left: -270px;">
-          <ul
-            class="pagination justify-content-center justify-content-md-start"
-           
-          >
-            <li class="page-item" >
-              <a class="page-link" href="#"
-                ><em class="icon ni ni-chevrons-left"></em
-              ></a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">1</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">2</a>
-            </li>
-            <li class="page-item">
-              <span class="page-link"
-                ><em class="icon ni ni-more-h"></em
-              ></span>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">6</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#">7</a>
-            </li>
-            <li class="page-item">
-              <a class="page-link" href="#"
-                ><em class="icon ni ni-chevrons-right"></em
-              ></a>
-            </li>
-          </ul>
-        </div>
-        <div class="g">
-          <div
-            class="pagination-goto d-flex justify-content-center justify-content-md-start gx-3"
-          >
-            <div>Page</div>
-            <div>
-              <select
-                class="form-select js-select2"
-                data-search="on"
-                data-dropdown="xs center"
-              >
-                <option value="page-1">1</option>
-                <option value="page-2">2</option>
-                <option value="page-4">4</option>
-                <option value="page-5">5</option>
-                <option value="page-6">6</option>
-                <option value="page-7">7</option>
-                <option value="page-8">8</option>
-                <option value="page-9">9</option>
-                <option value="page-10">10</option>
-                <option value="page-11">11</option>
-                <option value="page-12">12</option>
-                <option value="page-13">13</option>
-                <option value="page-14">14</option>
-                <option value="page-15">15</option>
-                <option value="page-16">16</option>
-                <option value="page-17">17</option>
-                <option value="page-18">18</option>
-                <option value="page-19">19</option>
-                <option value="page-20">20</option>
-              </select>
-            </div>
-            <div>OF 102</div>
-          </div>
-        </div>
-      </div>
+
+<div
+  class="container"
+  style="
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    min-height: 10vh;
+  "
+>
+  <div
+    class="card-inner"
+    style="
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+      padding-left: 20px;
+    "
+  >
+    <div
+      class="pagination-wrapper"
+      style="width: 100%; display: flex; justify-content: end"
+    >
+      <ul
+        class="pagination justify-content-center justify-content-md-start"
+        style="list-style: none; padding: 0; margin: 0"
+      >
+        <% if (currentPage > 1) { %>
+        <a
+          href="/admin/<%= section %>?page=<%= currentPage - 1 %>&limit=<%= limit %>&sort=<%= selectedSort %>"
+          class="page-link"
+          >&lt;</a
+        >
+        <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+        <a
+          href="/admin/<%= section %>?page=<%= i %>&limit=<%= limit %>&sort=<%= selectedSort %>"
+          class="page-link <% if (currentPage === i) { %>active<% } %>"
+          ><%= i %></a
+        >
+        <% } %> <% if (currentPage < totalPages) { %>
+        <a
+          href="/admin/<%= section %>?page=<%= currentPage + 1 %>&limit=<%= limit %>&sort=<%= selectedSort %>"
+          class="page-link"
+          >&gt;</a
+        >
+        <% } %>
+      </ul>
     </div>
   </div>
 </div>
-</div>
-</div>
-</div>
-</div>
+
 <%- include('../../layouts/footer.ejs') %>

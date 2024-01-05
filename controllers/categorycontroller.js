@@ -4,7 +4,37 @@ const Category = require("../models/categorymodel");
 const loadCategory = async (req, res, next) => {
   try {
     const categories = await Category.find();
-    res.render("admin/categories", { categories: categories });
+    let sortOption = {};
+    const sortQuery = req.query.sort;
+    if (sortQuery === "price_asc") {
+      sortOption = { price: 1 };
+    } else if (sortQuery === "price_desc") {
+      sortOption = { price: -1 };
+    } else {
+      sortOption = { createdAt: -1 };
+    }
+
+    const totalCategory = await Category.countDocuments();
+    const sortedCategory = await Category.find().sort(sortOption).lean().exec();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedCategory = sortedCategory.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalCategory / limit);
+    const currentPage = page;
+    const selectedSort = sortQuery;
+
+    res.render("admin/categories", {
+      categories: categories,
+      selectedSort,
+      currentPage,
+      totalPages,
+      totalItems: totalCategory,
+      categories: paginatedCategory,
+      limit,
+    });
   } catch (error) {
     next(error);
   }

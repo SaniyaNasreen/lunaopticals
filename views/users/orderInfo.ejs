@@ -44,8 +44,12 @@
                   <div style="background-color:white; padding: 10px; width: 1000px; height: auto;">
                     
                               <div style="  background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                                  <% if (orders && orders.length > 0) { %>
-                                      <% orders.forEach(order => { %>
+                              
+                                <% if (orders && orders.length > 0) { %>
+                                      <% orders.forEach(order => { %> 
+                                                  <button style="float: right; position: relative; bottom: 40px; font-weight: 500; width: 200px; height: 50px; color: rgb(250, 249, 249); font-size: 17px; background-color: blue; border-style: none;">
+                                                    <%= order.status %>
+                                                  </button> 
                                           <h4>View order details</h4>
                                           <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
                                               <p>Order Date: <%= order.date %></p>
@@ -79,10 +83,48 @@
                                                       
                                                   </div>
                                               <% }) %>
-                                              <div class="cancel" >
-                                                <button class="cancelbutton" style="background-color: red; border-style: none;">
-                                                  <a href="" style="color: white;">Cancel Order</a>
-                                                </button>
+                                              <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                      Are you sure you want to <span id="actionText"></span> this user?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                      <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+                                                    </div>
+                                                  </div>
+                                                </div>        
+                                              </div>
+                                              <div class="cancel">
+                                                <% const currentDate = new Date(); %>
+                                                <% const orderDate = new Date(order.date); %>
+                                                <% const timeDifference = currentDate.getTime() - orderDate.getTime(); %>
+                                                <% const daysDifference = timeDifference / (1000 * 3600 * 24); %>
+                                              
+                                                <% if (order.status === 'Processing') { %>
+                                                  <% if (daysDifference <= 7) { %>
+                                                    <form id="cancelOrderForm" action="/users/orderInfo/cancel-order/<%= order._id %>" method="POST">
+                                                      <button type="submit" class="cancelbutton" style="background-color: red; border-style: none; color: white;">
+                                                        Cancel Order
+                                                      </button>
+                                                    </form>
+                                                  <% } else { %>
+                                                    <!-- Show a disabled button if the order date is above 7 days -->
+                                                    <button type="button" class="cancelbutton" style="background-color: lightgrey; border-style: none; color: black;" disabled>
+                                                      Cannot Cancel (Order older than 7 days)
+                                                    </button>
+                                                  <% } %>
+                                                <% } else if (order.status === 'Delivered') { %>
+                                                  <!-- Show a disabled button if the order status is 'Delivered' -->
+                                                  <button type="button" class="cancelbutton" style="background-color:rgb(22, 152, 22); border-style: none; color: rgb(253, 251, 251);" disabled>
+                                                    Order Delivered
+                                                  </button>
+                                                <% } %>
                                               </div>
                                                 
                                       <% }) %>
@@ -107,8 +149,11 @@
   </div>
   </div>
   </div>
+  
+  
 
   <%- include('../users/layouts/footer.ejs') %>
+ 
   </div>
   </div>
   </div>

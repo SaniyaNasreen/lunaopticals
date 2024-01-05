@@ -2,6 +2,7 @@ const express = require("express");
 const user_route = express.Router();
 const auth = require("../miidleware/auth");
 const usercontroller = require("../controllers/usercontroller");
+const User = require("../models/usermodel");
 const ordercontroller = require("../controllers/ordercontroller");
 const couponcontroller = require("../controllers/couponcontroller");
 const PDFDocument = require("pdfkit");
@@ -22,7 +23,8 @@ user_route.get("/login", usercontroller.loginLoad);
 user_route.post("/login", usercontroller.verifyLogin);
 user_route.get("/logout", auth.isUser, usercontroller.userLogout);
 user_route.get("/edituser", auth.isUser, usercontroller.userProfile);
-user_route.get("/addAddress", usercontroller.loadAddAddress);
+user_route.get("/addAddress", auth.isUser, usercontroller.loadAddAddress);
+user_route.post("/addAddress", auth.isUser, usercontroller.addAddress);
 user_route.get(
   "/users/editAddress/:id",
   auth.isUser,
@@ -42,7 +44,7 @@ user_route.post("/forgotPassword", usercontroller.loginOtp);
 user_route.get("/send-email-otp", usercontroller.sendEmailOtp);
 user_route.get("/enter-otp", usercontroller.enterOtpForm);
 user_route.post("/verify-otp", usercontroller.verifyOtp);
-
+user_route.post("/resend-otp", usercontroller.resendOtp);
 //get forgetpassword page
 user_route.get("/forget-password", usercontroller.loadForget);
 user_route.post("/forget-password", usercontroller.verifyForgetPassword);
@@ -61,7 +63,11 @@ user_route.post("/update-cart", auth.isUser, usercontroller.updateCart);
 
 //order
 user_route.get("/order", auth.isUser, usercontroller.orderInfo);
-user_route.get("/cancel-order/:id", auth.isUser, usercontroller.removeOrder);
+user_route.post(
+  "/users/orderInfo/cancel-order/:id",
+  auth.isUser,
+  usercontroller.removeOrder
+);
 user_route.get(
   "/users/orderInfo/:id",
   auth.isUser,

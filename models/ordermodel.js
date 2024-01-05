@@ -28,7 +28,6 @@ const orderSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ["Cash on delivery"],
-      required: true,
     },
     details: {
       type: Object,

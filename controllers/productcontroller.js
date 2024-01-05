@@ -6,7 +6,37 @@ const loadProducts = async (req, res) => {
   try {
     const categories = await Category.find();
     const products = await Product.find().populate("category");
-    return res.render("admin/products", { products, categories });
+    let sortOption = {};
+    const sortQuery = req.query.sort;
+    if (sortQuery === "price_asc") {
+      sortOption = { price: 1 };
+    } else if (sortQuery === "price_desc") {
+      sortOption = { price: -1 };
+    } else {
+      sortOption = { createdAt: -1 };
+    }
+    const totalProducts = await Product.countDocuments();
+    const sortedProducts = await Product.find().sort(sortOption).lean().exec();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+
+    const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalProducts / limit);
+    const currentPage = page;
+    const selectedSort = sortQuery;
+
+    return res.render("admin/products", {
+      products,
+      categories,
+      selectedSort,
+      currentPage,
+      totalPages,
+      totalItems: totalProducts,
+      products: paginatedProducts,
+      limit,
+    });
   } catch (error) {
     console.error(error.message);
     return res.status(500).send("Error loading products");

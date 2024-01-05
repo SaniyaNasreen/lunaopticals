@@ -81,9 +81,11 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
     const productRows = data.products.map(
       (product) => `
         <tr>
+        <td>${product.name}</td>
           <td>${product.description}</td>
           <td>${product.quantity}</td>
           <td>$${product.price}</td>
+          <td>$${product.price * product.quantity}</td>
         </tr>
       `
     );
@@ -96,53 +98,86 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
         <style>
           /* Your CSS styles here */
           /* ... */
+          .invoice-products table {
+            border-collapse: collapse; 
+            width: 100%; 
+          }
+        
+          .invoice-products thead th {
+            border-bottom: 1px solid black;  
+            padding-top: 10px; 
+            position:relative;
+            right:30px;
+             font-size:25px;
+          }
+        
+          .invoice-products tbody td {
+            padding-top: 10px; 
+            font-size:20px;
+          }
         </style>
       </head>
       <body>
         <div class="invoice-container">
-          <div class="invoice-header">
-            <!-- Replace the heading with the logo -->
-            <img src="path/to/your/logo.png" alt="Company Logo" />
+          <div class="invoice-header" >
+            <!-- Replace the heading with an image -->
+            <img src="'/public/images\ \(1\).jpg'" alt="Invoice Header Image" />
+            <p>Contact Number:8921047415|| saniyanasreen@gamil.com</p>
+            <h4>Tech Connect Retail Private Limited<p>Gandhi nagar,Second Street,Delhi,675846</p></h4> 
           </div>
-          <div class="invoice-details">
-            <h3>Client Information:</h3>
-            <p>Name: ${data.client.name}</p>
-            <p>Address: ${data.client.address}</p>
-            <p>Email: ${data.client.email}</p>
-            <!-- Add more client details using 'data' -->
-            <h3>Invoice Details:</h3>
-            <p>Order Date: ${data.orderDate}</p>
-            <p>Invoice Date: ${data.invoiceDate}</p>
-            <!-- Add more invoice details using 'data' -->
+          <div class="invoice-details" style="display:flex;position:relative; top:130px;border-style:groove;border: 1px solid black;  border-left: none; border-right: none;" >
+          <div style="font-size:20px ;">
+          <h3>Order Dates:</h3>
+          <p>Order Date: ${data.invoice.date}</p>
+          <p>Current Date: ${new Date().toISOString().split("T")[0]}</p>
           </div>
-          <div class="invoice-products">
-            <h3>Ordered Products:</h3>
+          <div style="font-size:20px;position:relative; left:30px">
+            <h3>Shipping Address</h3>
+            <p>${data.client.name},<br>${data.client.address},<br>${
+      data.client.email
+    }</p>
+            
+           </div>  
+          </div>
+          <div class="invoice-products"style=" height:100px; position:relative; top:120px;border-style:groove; border: 1px solid black;  border-left: none; border-top:none;border-right: none;">
+            <!-- Heading for products -->
+            
+            <!-- Display product details -->
             <table>
-              <thead>
+        
+              <thead >
+              
                 <tr>
+                <th >Name</th>
                   <th>Description</th>
                   <th>Quantity</th>
                   <th>Price</th>
-                </tr>
+                  <th>Total</th>
+                </tr> 
               </thead>
+           
               <tbody>
-                ${productRows.join(
-                  ""
-                )} <!-- Ensure productRows are included here -->
+              
+                ${productRows.join("")}
               </tbody>
+           
             </table>
           </div>
-          <div class="invoice-total">
-            <h3>
-              Total Amount: $${data.products.reduce(
-                (total, product) => total + product.quantity * product.price,
-                0
-              )}
-            </h3>
+          <div class="invoice-total"style="font-size:20px;display:flex;position:relative; top:170px;border-style:groove; border : 1px solid black;border-top:none; padding-left:600px ; border-left: none; border-right: none;  ">
+            <!-- Calculate and display the total amount -->
+            <div style="position:relative;left:200px">
+            <h3  style="float:left; ">Total Amount: $${data.products.reduce(
+              (total, product) => total + product.quantity * product.price,
+              0
+            )}</h3> 
           </div>
+         
         </div>
+       
       </body>
-    </html>`;
+      <p style="position:relative; top:190px;left:300px;">This is computer generated invoice .No signature required.</p>
+    </html>
+    `;
     const browser = await puppeteer.launch({
       headless: "new", // Ensure you've updated headless mode if needed
     });

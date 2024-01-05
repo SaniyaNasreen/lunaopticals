@@ -121,7 +121,68 @@
     </div>
   </div>
 </div>
+<script>
+  $(document).ready(function () {
+    $('#add-address-form').submit(function (event) {
+      event.preventDefault(); // Prevent the default form submission
 
+      // Validate the form fields
+      if (!validateAddAddressForm()) {
+        // If validation fails, prevent the form submission and return
+        return;
+      }
+
+      // If validation passes, continue with form submission
+      this.submit(); // Submit the form
+    });
+
+    function validateAddAddressForm() {
+      const requiredFields = ['first-nem', 'last-nam', 'addres', 'cit', 'stat', 'zip-c', 'emai', 'pho'];
+
+      let isValid = true;
+
+      requiredFields.forEach(function (fieldId) {
+        const fieldValue = $('#' + fieldId).val().trim();
+
+        if (fieldValue === '') {
+          displayError(fieldId, 'Please enter the required information.');
+          isValid = false;
+        } else {
+          $('#' + fieldId).parent().find('.error-message').remove();
+        }
+      });
+
+      // Additional validation logic for email and phone number
+      const email = $('#emai').val().trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        displayError('emai', 'Please enter a valid email address.');
+        isValid = false;
+      }
+
+      const phone = $('#pho').val().trim();
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(phone)) {
+        displayError('pho', 'Please enter a valid 10-digit phone number.');
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    function displayError(fieldId, message) {
+      const field = $('#' + fieldId);
+      const errorDiv = $('<div class="error-message"></div>').text(message).css('color', 'red');
+      const existingError = field.parent().find('.error-message');
+
+      if (existingError.length) {
+        existingError.remove();
+      }
+
+      field.parent().append(errorDiv);
+    }
+  });
+</script>
 <%- include('../users/layouts/footer.ejs') %>
       </div>
     </div>

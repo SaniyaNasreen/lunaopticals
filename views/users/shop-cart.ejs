@@ -129,7 +129,7 @@
                   <tr>
                     <th scope="col"><span>PRODUCT</span></th>
                     <th scope="col"><span>UNIT PRICE</span></th>
-                    <th scope="col"><span>STOCK</span></th>
+                    
                     <th scope="col"><span>QUANTITY</span></th>
                     <th scope="col"><span>TOTAL</span></th>
                     <th scope="col"><span>REMOVE</span></th>
@@ -151,9 +151,7 @@
                       <td>
                         $<%= item.product.price %>
                       </td>
-                      <td>
-                        <%= item.product.countInStock %>
-                      </td>
+                      
                       <td>
                         <div class="cart-button">
                           <form action="/update-cart" method="POST" class="quantity-form">
