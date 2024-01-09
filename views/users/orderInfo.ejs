@@ -109,7 +109,7 @@
                                                 <% if (order.status === 'Processing') { %>
                                                   <% if (daysDifference <= 7) { %>
                                                     <form id="cancelOrderForm" action="/users/orderInfo/cancel-order/<%= order._id %>" method="POST">
-                                                      <button type="submit" class="cancelbutton" style="background-color: red; border-style: none; color: white;">
+                                                      <button type="button" id="cancelButton" class="cancelbutton" style="background-color: red; border-style: none; color: white;">
                                                         Cancel Order
                                                       </button>
                                                     </form>
@@ -158,3 +158,27 @@
   </div>
   </div>
   </div>
+  <script>
+    document.getElementById('cancelButton').addEventListener('click', function() {
+      // Show SweetAlert confirmation dialog
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will not be able to recover this order!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, cancel it!",
+        cancelButtonText: "No, keep it"
+      }).then((result) => {
+        if (result.isConfirmed) {
+         
+          // If user confirms, submit the form
+          document.getElementById('cancelOrderForm').submit(); 
+ 
+        } else {
+          // If user cancels, do nothing or provide feedback
+          Swal.fire("Cancel", "Your order is safe :)", "info");
+        }
+      });
+    });
+    </script>

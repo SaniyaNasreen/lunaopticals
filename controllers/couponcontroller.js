@@ -9,37 +9,10 @@ const loadCoupon = async (req, res, next) => {
     const status = {
       enum: ["Active", "In Active"],
     };
-    // let sortOption = {};
-    // const sortQuery = req.query.sort;
-    // if (sortQuery === "price_asc") {
-    //   sortOption = { price: 1 };
-    // } else if (sortQuery === "price_desc") {
-    //   sortOption = { price: -1 };
-    // } else {
-    //   sortOption = { createdAt: -1 };
-    // }
-
-    // const totalCoupon = await Order.countDocuments();
-    // const sortedCoupon = await Order.find().sort(sortOption).lean().exec();
-    // const page = parseInt(req.query.page) || 1;
-    // const limit = parseInt(req.query.limit) || 8;
-    // const startIndex = (page - 1) * limit;
-    // const endIndex = startIndex + limit;
-
-    // const paginatedCoupon = sortedCoupon.slice(startIndex, endIndex);
-    // const totalPages = Math.ceil(totalCoupon / limit);
-    // const currentPage = page;
-    // const selectedSort = sortQuery;
     res.render("admin/coupon", {
       categories,
       status,
       coupons,
-      // selectedSort,
-      // currentPage,
-      // totalPages,
-      // totalItems: totalCoupon,
-      // coupons: paginatedCoupon,
-      // limit,
     });
   } catch (error) {
     next(error);
@@ -91,8 +64,6 @@ const addCouponForCategory = async (req, res, next) => {
       });
     }
     console.log(foundCategory);
-
-    // Create the coupon for the specified category
     const newCoupon = new Coupon({
       categories,
       name,
@@ -104,7 +75,6 @@ const addCouponForCategory = async (req, res, next) => {
       minAmount,
       maxAmount,
     });
-
     const savedCoupon = await newCoupon.save();
     res.json({ message: "Coupon added successfully", coupon: savedCoupon });
   } catch (error) {
@@ -127,17 +97,13 @@ const editCouponForCategory = async (req, res, next) => {
     }
 
     console.log(req.body);
-
     coupon.name = req.body.name;
-
     coupon.status = req.body.status;
     coupon.discount = req.body.discount;
     coupon.category = foundCategory._id;
     coupon.minAmount = req.body.minAmount;
     coupon.maxAmount = req.body.maxAmount;
-
     await coupon.save();
-
     console.log("Coupon updated successfully:", coupon);
     res.redirect("/admin/coupon");
   } catch (error) {
@@ -161,7 +127,6 @@ const applyCoupon = async (req, res, next) => {
     const usercart = user.cart;
     const { code } = req.body;
     const coupon = await Coupon.findOne({ code: code });
-
     if (!coupon) {
       console.log("Coupon not found");
       return res.render("users/checkout", {
@@ -202,25 +167,17 @@ const applyCoupon = async (req, res, next) => {
         showModal: true,
       });
     }
-
     const currentDate = new Date();
     if (currentDate > coupon.validity) {
       console.log("Coupon has expired");
       return res.status(400).json({ message: "Coupon has expired" });
     }
-
-    // if (user.couponApplied) {
-    //   console.log("Coupon has already been applied by the user");
-    //   return res.status(400).json({ message: "Coupon already applied" });
-    // }
-
     const cartItems = user.cart;
 
     if (!cartItems || cartItems.length === 0) {
       console.log("Cart is empty");
       return res.status(400).json({ message: "Cart is empty" });
     }
-
     const order = await Order.find({ _id: userId });
     if (user?.cart?.length <= 0) {
       res.render("users/shop-cart", {
@@ -231,7 +188,6 @@ const applyCoupon = async (req, res, next) => {
       });
     }
     const updatedUser = await User.findById(userId).populate("cart.product");
-
     const discountPercentage = coupon.discount
       ? parseFloat(coupon.discount) / 100
       : 0;
@@ -242,9 +198,7 @@ const applyCoupon = async (req, res, next) => {
     }
     const discountAmount = updatedSubtotal * discountPercentage;
     const total = updatedSubtotal - discountAmount;
-
     const couponAlreadyApplied = user.couponApplied;
-
     await user.save();
     console.log("Coupon applied successfully");
     res.render("users/checkout", {

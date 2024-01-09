@@ -12,6 +12,11 @@ const easyinvoice = require("easyinvoice");
 const puppeteer = require("puppeteer");
 const Order = require("./models/ordermodel");
 const fs = require("fs");
+const Razorpay = require("razorpay");
+const instance = new Razorpay({
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,10 +29,8 @@ app.use(
 );
 app.use("/public", express.static("public"));
 app.use(nocache());
-// View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
 app.use(errorHandler);
 app.use("/", userroute);
 app.use("/admin", adminroute);
@@ -37,15 +40,12 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
     const order = await Order.findOne({ orderNumber })
       .populate("user")
       .populate("purchasedItems.product");
-
-    // Check if order exists
     if (!order) {
       return res.status(404).send("Order not found");
     }
     if (!order.address || !order.address.firstname || !order.address.email) {
       return res.status(400).send("Invalid order address");
     }
-    // Construct data object for the invoice
     const clientName = `${order.address.firstname} ${
       order.address.lastname || ""
     }`;
@@ -55,9 +55,8 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
     const productsData = order.purchasedItems.map((item) => ({
       description: item.product.name || "N/A",
       quantity: item.quantity || 0,
-      price: item.product.price || 0, // Assuming product price is retrieved from the product object
+      price: item.product.price || 0,
     }));
-
     const data = {
       client: {
         name: clientName,
@@ -70,14 +69,12 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
       },
       products: productsData,
       billing: {
-        address: clientAddress, // or any other billing address field
+        address: clientAddress,
       },
       settings: {
         currency: "USD",
       },
     };
-
-    // Construct HTML template for the invoice
     const productRows = data.products.map(
       (product) => `
         <tr>
@@ -170,39 +167,56 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
               (total, product) => total + product.quantity * product.price,
               0
             )}</h3> 
-          </div>
-         
-        </div>
-       
+          </div> 
+        </div> 
       </body>
       <p style="position:relative; top:190px;left:300px;">This is computer generated invoice .No signature required.</p>
     </html>
     `;
     const browser = await puppeteer.launch({
-      headless: "new", // Ensure you've updated headless mode if needed
+      headless: "new",
     });
-    // Prepare data for easyinvoice
     const page = await browser.newPage();
     await page.setContent(invoiceHTML);
-
     const pdfBuffer = await page.pdf({ format: "A4" });
-
     await browser.close();
-
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       `inline; filename="invoice_${order.orderNumber}.pdf"`
     );
-
     res.send(pdfBuffer);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
   }
 });
-// Start the server
+
+function checkEnvVariables() {
+  const requiredEnvVariables = [
+    "PORT",
+    "API_URL",
+    "CONNECTION_STRING",
+    "SESSION_SECRET",
+    "EMAIL_USER",
+    "EMAIL_PASS",
+  ];
+
+  const missingVariables = requiredEnvVariables.filter(
+    (variable) => !process.env[variable]
+  );
+
+  if (missingVariables.length > 0) {
+    console.error(
+      `Error: The following environment variables are missing: ${missingVariables.join(
+        ", "
+      )}`
+    );
+    process.exit(1);
+  }
+}
+checkEnvVariables();
+
 app.listen(process.env.PORT, () => {
   console.log(`Server is running at http://localhost:${process.env.PORT}`);
 });
-// Construct HTML template for the invoice

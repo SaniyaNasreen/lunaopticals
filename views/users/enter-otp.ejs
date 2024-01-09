@@ -100,13 +100,7 @@
               "
             />
           </div>
-          <button
-          id="resendOtpBtn"
-          class="resend-otp-btn"
-          style="color: white; background-color: blue;"
-        >
-          Resend OTP
-        </button>
+         
         </form>
       
       </div>
@@ -123,7 +117,7 @@
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         document.getElementById('timer').innerHTML =
-          'Time remaining: ' + minutes + 'm ' + seconds + 's ';
+          'Resend OTP In: ' + minutes + 'm ' + seconds + 's ';
       } else {
         clearInterval(timerInterval);
         document.getElementById('timer').innerHTML = 'OTP Expired'; 
@@ -134,35 +128,5 @@
   const expirationTime = Date.now() + 1 * 60 * 1000;
   startTimer(expirationTime);
   </script>
-  <script>
-    document.getElementById('resendOtpBtn').addEventListener('click', async (event) => {
-  event.preventDefault();
-
-  const email = document.querySelector('.checkotp1[name="email"]').value;
-
-  try {
-    const response = await fetch('/resend-otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      // Handle success
-      alert(data.message); // Show success message
-    } else {
-      // Handle error
-      alert(data.message); // Show error message
-    }
-  } catch (error) {
-    console.error('Error:', error.message);
-    // Handle other errors
-    alert('Failed to resend OTP');
-  }
-});
-  </script>
+  
   <%- include('../layouts/footer.ejs') %>

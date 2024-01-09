@@ -621,34 +621,37 @@
                                 </div>
                               </div>
                               <div class="data">
-                                <div class="amount">$74,958.49</div>
+                                <div class="amount"><%= totalSales %></div>
                                 <div class="info">
-                                  <strong>$7,395.37</strong> in last month
+                                  <strong><%= lastMonthTotalSales %></strong> in last month
                                 </div>
                               </div>
                               <div class="data">
                                 <h6 class="sub-title">This week so far</h6>
                                 <div class="data-group">
-                                  <div class="amount">$1,338.72</div>
+                                  <div class="amount" id="thisWeekTotalOrders"><%= lastWeekTotalOrders %></div>
                                   <div class="info text-end">
-                                    <span class="change up text-danger"
-                                      ><em class="icon ni ni-arrow-long-up"></em
-                                      >4.63%</span
-                                    ><br /><span>vs. last week</span>
+                                    <span class="change up text-danger" id="ordersPercentageChange">
+                                      <em class="icon ni ni-arrow-long-up"></em>4.63%
+                                    </span><br />
+                                    <span>vs. last week</span>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div
-                              class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom"
-                            >
-                              <div class="nk-ecwg1-ck">
-                                <canvas
-                                  class="ecommerce-line-chart-s1"
-                                  id="totalSales"
-                                ></canvas>
+                              <div
+                              class="w-100 d-flex justify-content-around"
+                              >
+                                <div class="nk-ecwg1-ck" style="position: relative; bottom: 30px;">
+                                  <input type="hidden" id="totalSales" value="<%= JSON.stringify(totalSalesData) %>">
+                                  <div class="w-100 d-flex justify-content-around">
+                                    <div> 
+                                      <canvas id="labelChart" width="500" height="auto" style="width: 512px; height: 400px"></canvas><br>
+                                    </div>
+                                  </div>
+                                
+                                </div>
                               </div>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -701,11 +704,14 @@
                               </div>
                               <h6 class="sub-title">Orders over time</h6>
                             </div>
-                            <div class="nk-ecwg2-ck">
-                              <canvas
-                                class="ecommerce-bar-chart-s1"
-                                id="averargeOrder"
-                              ></canvas>
+                            <div class="nk-ecwg1-ck" style="position: relative; bottom: 40px;">
+                              <input type="hidden" id="totalAverageOrders" value="<%= JSON.stringify(averageOrder) %>">
+                              <div class="w-100 d-flex justify-content-around">
+                                <div> 
+                                  <canvas id="averageOrderChart" width="500" height="auto" style="width: 512px; height: 400px"></canvas><br>
+                                </div>
+                              </div>
+                            
                             </div>
                           </div>
                         </div>
@@ -723,7 +729,7 @@
                                   </div>
                                   <div class="data">
                                     <div class="data-group">
-                                      <div class="amount">329</div>
+                                      <div class="amount"><%= lastWeekTotalOrders %></div>
                                       <div class="info text-end">
                                         <span class="change up text-danger"
                                           ><em
@@ -738,12 +744,15 @@
                                 <div
                                   class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom"
                                 >
-                                  <div class="nk-ecwg3-ck">
-                                    <canvas
-                                      class="ecommerce-line-chart-s1"
-                                      id="totalOrders"
-                                    ></canvas>
+                                <div class="nk-ecwg1-ck" style="position: relative; bottom: 40px;">
+                                  <input type="hidden" id="totalOrders" value="<%= JSON.stringify(totalOrdersData) %>">
+                                  <div class="w-100 d-flex justify-content-around">
+                                    <div> 
+                                      <canvas id="orderChart" width="500" height="auto" style="width: 512px; height: 400px"></canvas><br>
+                                    </div>
                                   </div>
+                                
+                                </div>
                                 </div>
                               </div>
                             </div>
@@ -774,12 +783,15 @@
                                 <div
                                   class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom"
                                 >
-                                  <div class="nk-ecwg3-ck">
-                                    <canvas
-                                      class="ecommerce-line-chart-s1"
-                                      id="totalCustomers"
-                                    ></canvas>
+                                <div class="nk-ecwg1-ck" style="position: relative; bottom: 40px;">
+                                  <input type="hidden" id="totalCustomers" value="<%= JSON.stringify(totalCustomersData) %>">
+                                  <div class="w-100 d-flex justify-content-around">
+                                    <div> 
+                                      <canvas id="customerChart" width="500" height="auto" style="width: 512px; height: 400px"></canvas><br>
+                                    </div>
                                   </div>
+                                
+                                </div>
                                 </div>
                               </div>
                             </div>
@@ -811,74 +823,16 @@
                                 <span class="d-none d-sm-inline">Status</span>
                               </div>
                             </div>
+                            <% 
+                            const lastFiveOrders = orders.slice(-5); 
+                            
+                            lastFiveOrders.forEach((order) => {
+                              %>
+                          
                             <div class="nk-tb-item">
                               <div class="nk-tb-col">
                                 <span class="tb-lead"
-                                  ><a href="#">#95954</a></span
-                                >
-                              </div>
-                              <div class="nk-tb-col tb-col-sm">
-                                <div class="user-card">
-                                  <div class="user-avatar sm bg-purple-dim">
-                                    <span>AB</span>
-                                  </div>
-                                  <div class="user-name">
-                                    <span class="tb-lead"
-                                      >Abu Bin Ishtiyak</span
-                                    >
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="nk-tb-col tb-col-md">
-                                <span class="tb-sub">02/11/2020</span>
-                              </div>
-                              <div class="nk-tb-col">
-                                <span class="tb-sub tb-amount"
-                                  >4,596.75 <span>USD</span></span
-                                >
-                              </div>
-                              <div class="nk-tb-col">
-                                <span
-                                  class="badge badge-dot badge-dot-xs bg-success"
-                                  >Paid</span
-                                >
-                              </div>
-                            </div>
-                            <div class="nk-tb-item">
-                              <div class="nk-tb-col">
-                                <span class="tb-lead"
-                                  ><a href="#">#95850</a></span
-                                >
-                              </div>
-                              <div class="nk-tb-col tb-col-sm">
-                                <div class="user-card">
-                                  <div class="user-avatar sm bg-azure-dim">
-                                    <span>DE</span>
-                                  </div>
-                                  <div class="user-name">
-                                    <span class="tb-lead">Desiree Edwards</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="nk-tb-col tb-col-md">
-                                <span class="tb-sub">02/02/2020</span>
-                              </div>
-                              <div class="nk-tb-col">
-                                <span class="tb-sub tb-amount"
-                                  >596.75 <span>USD</span></span
-                                >
-                              </div>
-                              <div class="nk-tb-col">
-                                <span
-                                  class="badge badge-dot badge-dot-xs bg-danger"
-                                  >Canceled</span
-                                >
-                              </div>
-                            </div>
-                            <div class="nk-tb-item">
-                              <div class="nk-tb-col">
-                                <span class="tb-lead"
-                                  ><a href="#">#95812</a></span
+                                  ><a href="#">#<%- order.orderNumber %></a></span
                                 >
                               </div>
                               <div class="nk-tb-col tb-col-sm">
@@ -890,87 +844,29 @@
                                     />
                                   </div>
                                   <div class="user-name">
-                                    <span class="tb-lead">Blanca Schultz</span>
+                                    <span class="tb-lead"><%- order.address.firstname %></span>
                                   </div>
                                 </div>
                               </div>
                               <div class="nk-tb-col tb-col-md">
-                                <span class="tb-sub">02/01/2020</span>
+                                <span class="tb-sub"><%- order.date instanceof Date ? order.date.toDateString() : '' %></span>
                               </div>
                               <div class="nk-tb-col">
                                 <span class="tb-sub tb-amount"
-                                  >199.99 <span>USD</span></span
+                                  >₹<%- order.totalAmount %><span>USD</span></span
                                 >
                               </div>
                               <div class="nk-tb-col">
                                 <span
                                   class="badge badge-dot badge-dot-xs bg-success"
-                                  >Paid</span
+                                  >₹<%- order.status %></span
                                 >
                               </div>
                             </div>
-                            <div class="nk-tb-item">
-                              <div class="nk-tb-col">
-                                <span class="tb-lead"
-                                  ><a href="#">#95256</a></span
-                                >
-                              </div>
-                              <div class="nk-tb-col tb-col-sm">
-                                <div class="user-card">
-                                  <div class="user-avatar sm bg-purple-dim">
-                                    <span>NL</span>
-                                  </div>
-                                  <div class="user-name">
-                                    <span class="tb-lead">Naomi Lawrence</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="nk-tb-col tb-col-md">
-                                <span class="tb-sub">01/29/2020</span>
-                              </div>
-                              <div class="nk-tb-col">
-                                <span class="tb-sub tb-amount"
-                                  >1099.99 <span>USD</span></span
-                                >
-                              </div>
-                              <div class="nk-tb-col">
-                                <span
-                                  class="badge badge-dot badge-dot-xs bg-success"
-                                  >Paid</span
-                                >
-                              </div>
-                            </div>
-                            <div class="nk-tb-item">
-                              <div class="nk-tb-col">
-                                <span class="tb-lead"
-                                  ><a href="#">#95135</a></span
-                                >
-                              </div>
-                              <div class="nk-tb-col tb-col-sm">
-                                <div class="user-card">
-                                  <div class="user-avatar sm bg-success-dim">
-                                    <span>CH</span>
-                                  </div>
-                                  <div class="user-name">
-                                    <span class="tb-lead">Cassandra Hogan</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="nk-tb-col tb-col-md">
-                                <span class="tb-sub">01/29/2020</span>
-                              </div>
-                              <div class="nk-tb-col">
-                                <span class="tb-sub tb-amount"
-                                  >1099.99 <span>USD</span></span
-                                >
-                              </div>
-                              <div class="nk-tb-col">
-                                <span
-                                  class="badge badge-dot badge-dot-xs bg-warning"
-                                  >Due</span
-                                >
-                              </div>
-                            </div>
+                            <% 
+                          });
+                        %>
+                           
                           </div>
                         </div>
                       </div>
@@ -1093,28 +989,28 @@
                               <li class="item">
                                 <div class="info">
                                   <div class="title">Orders</div>
-                                  <div class="count">1,795</div>
+                                  <div class="count"><%- totalOrders %></div>
                                 </div>
                                 <em class="icon bg-primary-dim ni ni-bag"></em>
                               </li>
                               <li class="item">
                                 <div class="info">
                                   <div class="title">Customers</div>
-                                  <div class="count">2,327</div>
+                                  <div class="count"><%- totalCustomers %></div>
                                 </div>
                                 <em class="icon bg-info-dim ni ni-users"></em>
                               </li>
                               <li class="item">
                                 <div class="info">
                                   <div class="title">Products</div>
-                                  <div class="count">674</div>
+                                  <div class="count"><%- totalProducts %></div>
                                 </div>
                                 <em class="icon bg-pink-dim ni ni-box"></em>
                               </li>
                               <li class="item">
                                 <div class="info">
                                   <div class="title">Categories</div>
-                                  <div class="count">68</div>
+                                  <div class="count"><%- totalCategories %></div>
                                 </div>
                                 <em
                                   class="icon bg-purple-dim ni ni-server"
@@ -2216,6 +2112,6 @@
         Looking for Advanced <br />
         Investment Platform?
       </div></a
-    >
-
+    > 
+     
 <%- include('../layouts/footer.ejs') %>

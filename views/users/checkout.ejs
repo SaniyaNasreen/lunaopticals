@@ -48,40 +48,42 @@
           </div>
 
           <form action="/saveOrder" method="post" class="bill-form pt-5" id="orderForm">
+            <% if(user && user.address && user.address.length > 0) { %>
+              <% const defaultAddress = user.address[0]; %>
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">First Name</label>
-                  <input type="text" name="firstname" id="first-nem" />
+                  <input type="text" name="firstname" id="first-nem" value="<%= defaultAddress.firstname %>" />
                 </div>
               </div>
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="last-name pt-30">
                   <label for="last-nam">Last Name</label>
-                  <input type="text" name="lastname" id="last-nam" />
+                  <input type="text" name="lastname" id="last-nam"  value="<%= defaultAddress.lastname %>" />
                 </div>
               </div>
             </div>
 
             <div class="address pt-30">
               <label for="addres">Address</label>
-              <input type="text" name="address" id="addres" />
+              <input type="text" name="address" id="addres"  value="<%= defaultAddress.address %>"/>
             </div>
             <div class="city pt-30">
               <label for="cit">Country</label>
-              <input type="text" name="country" id="country" />
+              <input type="text" name="country" id="country"  value="<%= defaultAddress.country %>" />
             </div>
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">City/Town</label>
-                  <input type="text" name="city" id="city" />
+                  <input type="text" name="city" id="city"  value="<%= defaultAddress.city %>" />
                 </div>
               </div>
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">Pincode</label>
-                  <input type="text" name="pincode" id="pincode" />
+                  <input type="text" name="pincode" id="pincode"  value="<%= defaultAddress.pincode %>" />
                 </div>
               </div>
             </div>
@@ -90,22 +92,19 @@
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">Email</label>
-                  <input type="text" name="email" id="email" />
+                  <input type="text" name="email" id="email"  value="<%= defaultAddress.email %>" />
                 </div>
               </div>
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30">
                   <label for="first-nem">Mobile</label>
-                  <input type="text" name="mobile" id="mob" />
+                  <input type="text" name="mobile" id="mob"  value="<%= defaultAddress.mobile %>" />
                 </div>
               </div>
-            </div>
-            <!-- Include input fields for other address details such as country, pincode, email, and phone -->
-
-         
-          
+            </div> 
         </div>
       </div>
+     
       
           <div class="col-xl-6 col-lg-6 col-md-6" >
             <div class="product-order pl-50 pr-50 pt-35 pb-55 mt-50 mt-md-0">
@@ -118,8 +117,7 @@
           <th scope="col"style="  padding-left:   50px">PRICE</th>
         </tr>
       </thead>
-      
-      <table>
+      <table> 
         <tbody>
           <% let subtotal = 0; %>
           <% userCart.forEach(item => { %>
@@ -205,7 +203,8 @@
                 </div>
                  
                 <button type="submit" class="p-btn border-0 mt-45"  id="placeOrderBtn">PLACE ORDER</button>
-                   
+                <% } %>   
+                
           </form>
           <div id="success_tic" class="modal fade" role="dialog">
             <div class="modal-dialog">
@@ -228,7 +227,7 @@
               </div>
             </div>
           </div>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -236,18 +235,42 @@
     </div>
   
     <%- include('../users/layouts/footer.ejs') %>
-    <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; width: 300px; display: none;">
-      <div class="toast-header">
-        <strong class="mr-auto">Out of Stock</strong>
-        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="toast-body">
-        The selected quantity is more than available stock.
-      </div>
-    </div>
-    <!-- prettier-ignore -->
+     
+    <!-- prettier-ignore
+ <script>
+  //  Address changing
+const selectAddressForm = document.querySelector('#selectAddressForm'); 
+if (user && user.address) {
+  selectAddressForm.addEventListener('change', (event) => {
+    const selectedIndex = event.target.value;
+    const selectedAddress = user.address[selectedIndex]; 
+
+    const firstNameField = document.getElementById('first-name');
+    const lastNameField = document.getElementById('last-name');
+    const addressField = document.getElementById('address');  
+    const countryField = document.getElementById('country');
+    const cityField = document.getElementById('city');
+    const pincodeField = document.getElementById('pincode');
+    const emailField = document.getElementById('email');
+    const mobField = document.getElementById('mob');
+
+    if (firstNameField && lastNameField && addressField && countryField && cityField && pincodeField && emailField && mobField) {
+      firstNameField.value = selectedAddress.firstName;
+      lastNameField.value = selectedAddress.lastName;
+      addressField.value = selectedAddress.address;
+      countryField.value = selectedAddress.country;
+      cityField.value = selectedAddress.city;
+      pincodeField.value = selectedAddress.pincode;
+      emailField.value = selectedAddress.email;
+      mobField.value = selectedAddress.phone;
+    } else {
+      console.error('One or more element IDs not found in the HTML.')
+    }
+  });
+} else {
+  console.error('user or user.address not defined.');
+}
+ </script> -->
  
     <%-include('../layouts/footer')%>
   </div>

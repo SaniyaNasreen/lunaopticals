@@ -43987,27 +43987,25 @@ body {
   cursor: pointer;
 }
 
-
 /* Order Placement */
 
-
- #success_tic .page-body{
-  max-width:300px;
-  background-color:#FFFFFF;
-  margin:10% auto;
+#success_tic .page-body {
+  max-width: 300px;
+  background-color: #ffffff;
+  margin: 10% auto;
 }
- #success_tic .page-body .head{
-  text-align:center;
+#success_tic .page-body .head {
+  text-align: center;
 }
 /* #success_tic .tic{
   font-size:186px;
 } */
-#success_tic .close{
-      opacity: 1;
-    position: absolute;
-    right: 0px;
-    font-size: 30px;
-    padding: 3px 15px;
+#success_tic .close {
+  opacity: 1;
+  position: absolute;
+  right: 0px;
+  font-size: 30px;
+  padding: 3px 15px;
   margin-bottom: 10px;
 }
 #success_tic .checkmark-circle {
@@ -44061,7 +44059,7 @@ body {
   border-right: 15px solid #fff;
   border-top: 15px solid #fff;
   border-radius: 2.5px !important;
-  content: '';
+  content: "";
   left: 35px;
   top: 80px;
   position: absolute;
@@ -44134,6 +44132,9 @@ body {
   }
 }
 
-
+canvas {
+  overflow-clip-margin: content-box;
+  overflow: clip;
+}
 
 /*! END @iO */

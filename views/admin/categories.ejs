@@ -228,14 +228,12 @@
                                           
                                           <form action="/admin/categories/add-category" method="post" enctype="multipart/form-data" class="form1-addc needs-validation" novalidate>
                                             <div id="category-image-preview-container" class="cat-preview"></div>
-                                        
                                             <div class="mb-3">
                                                 <input type="file" id="category-file-upload" class="form-control1-addc form-control" name="image" required>
                                                 <div class="invalid-feedback">
                                                     Please upload an image.
                                                 </div>
                                             </div>
-                                        
                                             <div class="mb-3">
                                               <input type="text" class="form-control2-addc form-control <%-
                                                   (typeof errorWith != 'undefined' && errorWith === 'CATEGORY') ? 'is-invalid' : '' %>" 

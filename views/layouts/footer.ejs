@@ -7,12 +7,130 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- prettier-ignore -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script>
+  const thisWeekOrders = totalOrdersData[totalOrdersData.length - 1];
+const lastWeekOrders = totalOrdersData[totalOrdersData.length - 2];
+
+// Calculate percentage change
+const percentageChange = ((thisWeekOrders - lastWeekOrders) / lastWeekOrders) * 100;
+
+// Update the HTML elements
+document.getElementById('thisWeekTotalOrders').innerText = `$${thisWeekOrders.toFixed(2)}`;
+document.getElementById('ordersPercentageChange').innerText = `${percentageChange.toFixed(2)}%`;
+
+// Change color based on positive/negative percentage
+if (percentageChange > 0) {
+  document.getElementById('ordersPercentageChange').classList.add('text-danger');
+} else {
+  document.getElementById('ordersPercentageChange').classList.add('text-success');
+}
+ </script>
+<script>
+  // Retrieve monthly sales data and create a line chart
+  var ctxLabel = document.getElementById("labelChart").getContext('2d');
+  let totalSales = JSON.parse(document.getElementById('totalSales').value);
+
+  var totalChart = new Chart(ctxLabel, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: totalSales.length }, (_, i) => ` ${i + 1}`),
+      datasets: [{
+        label: 'Total Sales',
+        data: totalSales,
+        borderColor: 'blue',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+   
+  var ctxAverage = document.getElementById("averageOrderChart").getContext('2d');
+  let totalAverageOrders = JSON.parse(document.getElementById('totalAverageOrders').value);
+
+  var averageOrderChart = new Chart(ctxAverage, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: totalAverageOrders.length }, (_, i) => ` ${i + 1}`),
+      datasets: [{
+        label: 'Average Order',
+        data: totalAverageOrders,
+        borderColor: 'blue',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+   
+
+  var ctxOrder = document.getElementById("orderChart").getContext('2d');
+  let totalOrders = JSON.parse(document.getElementById('totalOrders').value);
+
+  var orderChart = new Chart(ctxOrder, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: totalOrders.length }, (_, i) => ` ${i + 1}`),
+      datasets: [{
+        label: 'Total Order',
+        data: totalOrders,
+        borderColor: 'blue',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+   
 
 
+  var ctxCustomer = document.getElementById("customerChart").getContext('2d');
+  let totalCustomers = JSON.parse(document.getElementById('totalCustomers').value);
+
+  var customerChart = new Chart(ctxCustomer, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: totalCustomers.length }, (_, i) => ` ${i  }`),
+      datasets: [{
+        label: 'Total Customer',
+        data: totalCustomers,
+        borderColor: 'blue',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 </script>
-
-
+ 
+ 
  <script>
   function countdown() {
     let seconds = 59;
@@ -23,8 +141,7 @@
         "0:" + (seconds < 10 ? "0" : "") + String(seconds);
       if (seconds > 0) {
         setTimeout(tick, 1000);
-      } else {
-          // Change the button style here 
+      } else { 
           const resendBtn = document.getElementById("verifiBtn");
         resendBtn.innerHTML = `
           <button type="submit" class="btn btn-primary btn-block border-dark curved" onclick="location.reload()" style="width: 40%;">Resend OTP</button>
@@ -36,7 +153,6 @@
   }
   countdown();
  </script>  
- 
   
  <script>
   $(document).ready(function () {
@@ -55,14 +171,12 @@
         error: function (xhr, status, error) {
           console.error('Error placing order:', error);
           if (xhr.status === 400) {
-            console.log('Toast will be shown.'); // Add this line for debugging
-$('#toast').toast('show');
+            console.log('Toast will be shown.');  
+            $('#toast').toast('show');
           }
         },
       });
-    });
-
-
+    }); 
         function displayError(fieldId, message) { 
           const field = $('#' + fieldId);
           const errorDiv = $('<div class="error-message"></div>').text(message).css('color', 'red');
@@ -85,35 +199,29 @@ $('#toast').toast('show');
             'pincode',
             'email',
             'mob',
-          ];
-
-          let isValid = true;
-
+          ]; 
+          let isValid = true; 
           requiredFields.forEach(function (fieldId) {
-            const fieldValue = $('#' + fieldId).val().trim();
-
+            const fieldValue = $('#' + fieldId).val().trim(); 
             if (fieldValue === '') {
               displayError(fieldId, 'Please enter the required information.');
               isValid = false;
             } else {
               $('#' + fieldId).parent().find('.error-message').remove();
             }
-          });
-
+          }); 
           const email = $('#email').val().trim();
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (!emailRegex.test(email)) {
             displayError('email', 'Please enter a valid email address.');
             isValid = false;
-          }
-
+          } 
           const mobile = $('#mob').val().trim();
           const mobileRegex = /^\d{10}$/;
           if (!mobileRegex.test(mobile)) {
             displayError('mob', 'Please enter a valid 10-digit mobile number.');
             isValid = false;
-          }
-
+          } 
           return isValid;
         }
       });
@@ -124,20 +232,18 @@ $('#toast').toast('show');
     $('.dropdown-toggle').dropdown();
   });
 </script>
+
 <script>
 function blockUser(userId) {
   fetch('/admin/users/block/' + userId, { method: 'POST' })
     .then(response => response.json())
     .then(data => {
-      if (data.message === 'User blocked successfully') {
-        // Update UI to reflect blocked state
-      } else {
-        // Handle error response
+      if (data.message === 'User blocked successfully') { 
+      } else { 
       }
     })
     .catch(error => console.error(error));
-}
- 
+} 
 function unblockUser(userId) {
   fetch('/admin/users/unblock/' + userId, { method: 'POST' })
     .then(response => response.json())
@@ -147,8 +253,7 @@ function unblockUser(userId) {
       }
     })
     .catch(error => console.error(error));
-}
- 
+} 
 </script>
 
 <script>
@@ -158,8 +263,7 @@ function unblockUser(userId) {
         const categories = await response.json();
         <ul id="categoryList"></ul>
         const categoryList = document.getElementById('categoryList');
-        categoryList.innerHTML = ''; 
-    
+        categoryList.innerHTML = '';  
         categories.forEach(category => {
           const listItem = document.createElement('li');
           listItem.innerHTML = `
@@ -179,8 +283,7 @@ function unblockUser(userId) {
           headers: {
             'Content-Type': 'application/json'
           }
-        });
-
+        }); 
         if (response.ok) {
           alert('Category unlisted successfully!');
           fetchAndRenderCategories(); 
@@ -194,15 +297,12 @@ function unblockUser(userId) {
     }
     window.onload = fetchAndRenderCategories;
   </script>
-
-
 <script>
-  
   document.getElementById('file-upload').addEventListener('change', function () {
       const files = this.files;
       const imagePreviewContainer = document.getElementById('image-preview-container');
-      imagePreviewContainer.innerHTML = '';
-
+      imagePreviewContainer.innerHTML = ''; // Clear previous images
+  
       for (let i = 0; i < files.length; i++) {
           const file = files[i];
           if (file) {
@@ -218,70 +318,59 @@ function unblockUser(userId) {
           }
       }
   });
-</script>
+  </script>
 
-<script>
-
+<script> 
   function previewImages(event) {
     const files = event.target.files;
     const newlyAddedImagesContainer = document.querySelector('.newly-added-images');
-    newlyAddedImagesContainer.innerHTML = '';
-
+    newlyAddedImagesContainer.innerHTML = ''; 
     for (let i = 0; i < files.length; i++) {
       const reader = new FileReader();
       const imageContainer = document.createElement('div');
       const imageElement = document.createElement('img');
       const deleteLabel = document.createElement('label');
-      const deleteCheckbox = document.createElement('input');
-
+      const deleteCheckbox = document.createElement('input'); 
       reader.onload = function (e) {
         imageElement.src = e.target.result;
-      };
-
-      reader.readAsDataURL(files[i]);
-
+      }; 
+      reader.readAsDataURL(files[i]); 
       deleteLabel.textContent = 'Delete Image';
       deleteCheckbox.type = 'checkbox';
       deleteCheckbox.name = 'deleteImages'; 
-      deleteCheckbox.value = i; // Adjust the value as per your requirements
-
+      deleteCheckbox.value = i;  
       imageContainer.classList.add('existing-image');
       imageContainer.appendChild(imageElement);
       imageContainer.appendChild(deleteLabel);
-      imageContainer.appendChild(deleteCheckbox);
-
+      imageContainer.appendChild(deleteCheckbox); 
       newlyAddedImagesContainer.appendChild(imageContainer);
     }
   }
 </script>
 <script>
- document.getElementById('category-file-upload').addEventListener('change', function () {
-    const file = this.files[0];
-    const categoryImagePreviewContainer = document.getElementById('category-image-preview-container');
-    categoryImagePreviewContainer.innerHTML = '';   
-
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const imgElement = document.createElement('img');
-            imgElement.setAttribute('src', e.target.result);
-            imgElement.setAttribute('class', 'preview-category-image');
-            imgElement.setAttribute('alt', 'Category Image Preview');
-            categoryImagePreviewContainer.appendChild(imgElement);
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-</script>
-
-
-<script>
-  // Function to handle file input change event
+  document.getElementById('category-file-upload').addEventListener('change', function () {
+      const file = this.files[0];
+      const categoryImagePreviewContainer = document.getElementById('category-image-preview-container');
+      categoryImagePreviewContainer.innerHTML = ''; // Clear previous image
+  
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+              const imgElement = document.createElement('img');
+              imgElement.setAttribute('src', e.target.result);
+              imgElement.setAttribute('class', 'preview-category-image');
+              imgElement.setAttribute('alt', 'Category Image Preview');
+              categoryImagePreviewContainer.appendChild(imgElement);
+          };
+          reader.readAsDataURL(file);
+      }
+  });
+  </script>
+  
+<script> 
   document.getElementById('imageUpload').addEventListener('change', function() {
       const file = this.files[0];
-      const reader = new FileReader();
-
+      const reader = new FileReader(); 
       reader.onload = function(e) {
           const existingImage = document.querySelector('.existing-image');
           if (existingImage) {
@@ -294,42 +383,34 @@ function unblockUser(userId) {
               newImage.style = 'width: 100px; height: 100px; position: relative; bottom: 10px;';
               this.parentNode.insertBefore(newImage, this.nextSibling);
           }
-      };
-
+      }; 
       reader.readAsDataURL(file);
   });
 </script>
 
 <script>
-  window.onload = function () {
-      // Check if the page is refreshed
-      if (window.performance.navigation.type === 1) {
-          // Clear the input field
-          document.querySelector('input[name="name"]').value = '';
-          
-          // Hide the error message
+  window.onload = function () { 
+      if (window.performance.navigation.type === 1) { 
+          document.querySelector('input[name="name"]').value = ''; 
           document.querySelector('.invalid-feedback').style.display = 'none';
       }
   };
 </script>
+
 <script>
   document.querySelectorAll('.remove-item-btn').forEach(button => {
-    button.addEventListener('click', async (event) => {
-     
+    button.addEventListener('click', async (event) => { 
       const productId = event.target.dataset.productId;
-console.log(productId);
+          console.log(productId);
       try {
         const response = await fetch('http://localhost:4000/remove-from-cart', {
           method: 'POST',
-          headers: {
-
-             
+          headers: {   
             'Content-Type': 'application/json'
           },
           withCredentials: true,
           body: JSON.stringify({ productId: productId })
-        });
-
+        }); 
         if (response.ok) { 
           event.target.parentElement.parentElement.remove();  
         } else {
@@ -345,22 +426,18 @@ console.log(productId);
 
 <script>
   document.querySelectorAll('.cancel-item-btn').forEach(button => {
-    button.addEventListener('click', async (event) => {
-     
+    button.addEventListener('click', async (event) => { 
       const _id = event.target.dataset._id;
-console.log(_id);
+         console.log(_id);
       try {
         const response = await fetch('http://localhost:4000/cancel-order', {
           method: 'POST',
-          headers: {
-
-             
+          headers: { 
             'Content-Type': 'application/json'
           },
           withCredentials: true,
           body: JSON.stringify({ _id: _id})
-        });
-
+        }); 
         if (response.ok) { 
           event.target.parentElement.parentElement.cancel();  
         } else {
@@ -373,26 +450,21 @@ console.log(_id);
     });
   });
 </script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const menuItems = document.querySelectorAll('.nk-menu-item');
-  const currentPath = window.location.pathname;
-
+  const currentPath = window.location.pathname; 
   menuItems.forEach(item => {
     const menuItemLink = item.querySelector('.nk-menu-link');
-    const menuItemHref = menuItemLink.getAttribute('href');
-
+    const menuItemHref = menuItemLink.getAttribute('href'); 
     if (currentPath.includes(menuItemHref)) {
       item.classList.add('active');
-    }
-
-    menuItemLink.addEventListener('click', function() {
-      // Remove 'active' class from all items
+    } 
+    menuItemLink.addEventListener('click', function() { 
       menuItems.forEach(item => {
         item.classList.remove('active');
-      });
-
-      // Add 'active' class to the parent item when a link is clicked
+      }); 
       item.classList.add('active');
     });
   });
@@ -402,20 +474,15 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
   $(document).ready(function() {
     $('.add-to-cart-btn').click(function(event) {
-      event.preventDefault(); // Prevent default link behavior
-  
-      const url = $(this).attr('href');
-  
-      // Perform the AJAX request to add the product to the cart
+      event.preventDefault();  
+      const url = $(this).attr('href'); 
       $.ajax({
         type: 'GET',
         url: url,
-        success: function(response) {
-          // If the request was successful, show the modal
+        success: function(response) { 
           $('#cartModal').modal('show');
         },
-        error: function(error) {
-          // Handle errors if needed
+        error: function(error) { 
           console.error('Error:', error);
         }
       });
@@ -423,21 +490,16 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   </script>
 
-
 <script>
-  $(document).ready(function() {
-    // When the "Add to cart" button is clicked
-    $('.addToCartBtn').on('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
+  $(document).ready(function() { 
+    $('.addToCartBtn').on('click', function(event) { 
         
-        var productId = $(this).data('product-id'); // Get the product ID from data attribute
-        
-        // Here, you might have AJAX or other logic to add the product to the cart
-        // Assuming success, show the modal
+        var productId = $(this).data('product-id'); 
         $('#cartModal').modal('show');
     });
 });
 </script>
+
 <script>
   (function () {
     "use strict";
@@ -449,8 +511,7 @@ document.addEventListener('DOMContentLoaded', function() {
           if (!form.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
-          }
-
+          } 
           form.classList.add("was-validated");
         },
         false
@@ -458,41 +519,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   })();
 </script>
-
-
+ 
 <script>
 function previewFile() {
   const preview = document.getElementById('preview-image');
   const fileInput = document.getElementById('file-input');
   const file = fileInput.files[0];
-  const reader = new FileReader();
-
+  const reader = new FileReader(); 
   reader.onloadend = function() {
-    preview.src = reader.result;
-    // Store the image data in localStorage
+    preview.src = reader.result; 
     localStorage.setItem('savedImageData', reader.result);
-  }
-
+  } 
   if (file) {
     reader.readAsDataURL(file);
   } else {
-    preview.src = "#"; // Placeholder image source if no file selected
+    preview.src = "#";  
   }
-}
-
-// Check if there's previously stored image data in localStorage
+} 
 window.onload = function() {
   const savedImageData = localStorage.getItem('savedImageData');
-  const preview = document.getElementById('preview-image');
-
+  const preview = document.getElementById('preview-image'); 
   if (savedImageData) {
     preview.src = savedImageData;
   }
 }
 </script>
-
  
-
 <script>
   function downloadInvoice(orderDetails) {
     fetch('http://localhost:4000/download-invoice', {
@@ -502,11 +554,9 @@ window.onload = function() {
       },
       body: JSON.stringify({ orderDetails })
     })
-    .then(response => {
-      // Handle the response or additional processing if needed
+    .then(response => { 
     })
-    .catch(error => {
-      // Handle errors if any
+    .catch(error => { 
     });
   }
 </script>
@@ -516,59 +566,45 @@ window.onload = function() {
   async function openConfirmationModal(orderId) {
     const modal = document.getElementById('confirmationModal');
     const actionText = modal.querySelector('#actionText');
-    const confirmActionBtn = modal.querySelector('#confirmActionBtn');
-
-    try {
-      // Fetch order details to populate the confirmation modal
-      const response = await fetch(`/api/orders/${orderId}`); // Replace with your API endpoint
-      const order = await response.json();
-
+    const confirmActionBtn = modal.querySelector('#confirmActionBtn'); 
+    try { 
+      const response = await fetch(`/api/orders/${orderId}`);  
+      const order = await response.json(); 
       if (!order) {
         console.error("Order not found");
         return;
-      }
-
-      actionText.textContent = `cancel order ${order._id}`; // Update the action text
-
+      } 
+      actionText.textContent = `cancel order ${order._id}`;   
       const bootstrapModal = new bootstrap.Modal(modal);
-      bootstrapModal.show();
-
+      bootstrapModal.show(); 
       confirmActionBtn.onclick = async function () {
         try {
           const cancelOrderForm = document.getElementById('cancelOrderForm');
-          const formData = new FormData(cancelOrderForm);
-
+          const formData = new FormData(cancelOrderForm); 
           const cancelResponse = await fetch(`/users/orderInfo/cancel-order/${orderId}`, {
             method: 'POST',
             body: formData,
-          });
-
+          }); 
           if (cancelResponse.ok) {
             console.log("Order cancelled");
-            bootstrapModal.hide();
-            // Perform UI updates or page refresh upon successful cancellation
+            bootstrapModal.hide(); 
           } else {
-            console.error("Failed to cancel order");
-            // Handle error or show an error message to the user
+            console.error("Failed to cancel order"); 
           }
         } catch (error) {
-          console.error(error);
-          // Handle errors or display an error message to the user
+          console.error(error); 
         }
       };
     } catch (error) {
-      console.error(error);
-      // Handle errors or display an error message to the user
+      console.error(error); 
     }
-  }
-
-  // Event listener or trigger for openConfirmationModal
-  // For example, you might trigger it on a button click or any appropriate event
-  const orderId = 'someOrderId'; // Replace with the actual order ID
+  } 
+  const orderId = 'someOrderId';  
   openConfirmationModal(orderId);
-});
-
-   
+}); 
 </script>
+
+
+ 
 </body>
 </html>

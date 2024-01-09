@@ -156,13 +156,14 @@
                         <div class="cart-button">
                           <form action="/update-cart" method="POST" class="quantity-form">
                             <input type="hidden" name="product_id" value="<%= item.product._id %>">
-                            <div class="quantity-controls"> &nbsp; &nbsp; &nbsp;
+                            <div class="quantity-controls">
                               <button type="submit" name="updateQuantity" value="decrease">-</button>
                               <input type="number" name="quantity" value="<%= item.quantity %>" min="1" max="100">
                               <button type="submit" name="updateQuantity" value="increase">+</button>
                             </div>
                           </form>
                         </div>
+                        
                       </td>
                       <td>
                         $<%= item.quantity * item.product.price %>
@@ -218,8 +219,9 @@
             %>
         
           <p class="pt-15">Checkout with Mutilple Adresses</p>
-          <a href="/checkout"> <button class="p-btn border-0 mt-20">PROCEED TO CHECKOUT</button></a>
-         
+          <form action="/checkoutCart" method="post">
+            <button type="submit" id="checkoutButton" class="p-btn border-0 mt-20">PROCEED TO CHECKOUT</button>
+          </form>
         </div>
       </div>
     </div>

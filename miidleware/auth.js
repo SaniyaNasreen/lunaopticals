@@ -45,6 +45,7 @@ const isUser = async (req, res, next) => {
         return;
       }
       req.user = userData;
+
       next();
     } else {
       res.redirect("/login");

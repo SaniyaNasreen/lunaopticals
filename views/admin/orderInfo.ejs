@@ -17,93 +17,97 @@
             <div class="nk-block-between">
               <div class="nk-block-head-content">
                 <h3 class="nk-block-title page-title">Coupons</h3>
-              </div> 
+            
 
 
               <div class="col-xl-9 col-lg-8 col-md-12">
-                <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
+                <div class="useraddress" style="width: 640px; height: auto; position: relative;top: 50px;  ">
                   <div style="margin-bottom: 20px;">
-                    <div style="background-color:white; padding: 10px; width: 1000px; height: auto;">
+                    <div style="background-color:white; padding: 10px; width: 1130px; height: auto;">
                       
                                 <div style="  background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                                      <% console.log("Orders:", orders); %>
-                                    <% if (orders && orders.length > 0) { %>
-                                        <% orders.forEach(order => { %>
-                                         
-                                               
-                                                   
-                                                
-                                                    <button style="float: right; position: relative; bottom: 40px; font-weight: 500; width: 200px; height: 50px; color: rgb(250, 249, 249); font-size: 17px; background-color: blue; border-style: none;">
-                                                      <%= order.status %>
-                                                    </button>
-                                                 
-                                                 
-                                              
-                                             
-                                         
-                                            <h4>View order details</h4>
-                                            <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                                                <p>Order Date: <%= order.date %></p>
-                                                <p>Order ID: <%= order.orderNumber %></p>
-                                                <p>Total Price: $<%= order.totalAmount %></p>
+                                   
+                                                <button style="float: right; position: relative; bottom: 130px; font-weight: 500; width: 200px; height: 50px; color: rgb(250, 249, 249); font-size: 17px; background-color: blue; border-style: none;">
+                                                  <%= order.status %>
+                                                </button> 
+                                        <h4>View order details</h4>
+                                        <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
+                                            <p>Order Date: <%= order.date %></p>
+                                            <p>Order ID: <%= order.orderNumber %></p>
+                                            <p>Total Price: $<%= order.totalAmount %></p>
+                                        </div>
+                                        <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 20px; padding: 10px; font-size: larger; font-weight: bold; position: relative; bottom: 10px;">
+                                          <a href="http://localhost:4000/download-invoice/<%= order.orderNumber %>" style="font-size: large; font-weight: 300;">Download Invoice</a>
+                                        </div>
+                                            <!-- Shipping Address -->
+                                            <h4>Shipping Address</h4>
+                                            <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
+                                                <p><%= order.address.firstname %></p>
+                                                <p><%= order.address.lastname %>, <%= order.address.address %>, <%= order.address.country %> <%= order.address.city %> <%= order.address.pincode %>,</p>
+                                                <p><%= order.address.email %>, <%= order.address.mobile %></p>
                                             </div>
-                                            <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 20px; padding: 10px; font-size: larger; font-weight: bold; position: relative; bottom: 10px;">
-                                              <a href="http://localhost:4000/download-invoice/<%= order.orderNumber %>" style="font-size: large; font-weight: 300;">Download Invoice</a>
+                                
+                                            <!-- Payment Details (Assuming this applies to the entire order) -->
+                                            <h4>Payment Details</h4>
+                                            <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
+                                                <p>Cash on delivery</p>
                                             </div>
-                                                <!-- Shipping Address -->
-                                                <h4>Shipping Address</h4>
+                                
+                                            <!-- Ordered Items -->
+                                            <h4>Ordered</h4>
+                                            <% order.purchasedItems.forEach(item => { %>
                                                 <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                    <p><%= order.address.firstname %></p>
-                                                    <p><%= order.address.lastname %>, <%= order.address.address %>, <%= order.address.country %> <%= order.address.city %> <%= order.address.pincode %>,</p>
-                                                    <p><%= order.address.email %>, <%= order.address.mobile %></p>
+                                                    <p><%= item.product.name %></p>
+                                                    <p><%= item.price %></p>
+                                                    <p>Qty: <%= item.quantity %></p>
+                                                    
                                                 </div>
-                                    
-                                                <!-- Payment Details (Assuming this applies to the entire order) -->
-                                                <h4>Payment Details</h4>
-                                                <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                    <p>Cash on delivery</p>
+                                            <% }) %>
+                                            <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                                              <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                  </div>
+                                                  <div class="modal-body">
+                                                    Are you sure you want to <span id="actionText"></span> this user?
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+                                                  </div>
                                                 </div>
-                                    
-                                                <!-- Ordered Items -->
-                                                <h4>Ordered</h4>
-                                                <% order.purchasedItems.forEach(item => { %>
-                                                    <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                        <p><%= item.product.name %></p>
-                                                        <p><%= item.price %></p>
-                                                        <p>Qty: <%= item.quantity %></p>
-                                                        
-                                                    </div>
-                                                <% }) %>
-                                                <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                                                  <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                      <div class="modal-header">
-                                                        <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                      </div>
-                                                      <div class="modal-body">
-                                                        Are you sure you want to <span id="actionText"></span> this user?
-                                                      </div>
-                                                      <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
-                                                      </div>
-                                                    </div>
-                                                  </div>        
-                                                </div>
-                                                <div class="cancel">
+                                              </div>        
+                                            </div>
+                                            <div class="cancel">
+                                              <% const currentDate = new Date(); %>
+                                              <% const orderDate = new Date(order.date); %>
+                                              <% const timeDifference = currentDate.getTime() - orderDate.getTime(); %>
+                                              <% const daysDifference = timeDifference / (1000 * 3600 * 24); %>
+                                            
+                                              <% if (order.status === 'Processing') { %>
+                                                <% if (daysDifference <= 7) { %>
                                                   <form id="cancelOrderForm" action="/users/orderInfo/cancel-order/<%= order._id %>" method="POST">
                                                     <button type="submit" class="cancelbutton" style="background-color: red; border-style: none; color: white;">
                                                       Cancel Order
                                                     </button>
                                                   </form>
-                                                </div>
-                                                  
-                                        <% }) %>
-                                    <% } else { %>
-                                        <p>No orders found</p>
-                                    <% } %>
-                                        
+                                                <% } else { %>
+                                                  <!-- Show a disabled button if the order date is above 7 days -->
+                                                  <button type="button" class="cancelbutton" style="background-color: lightgrey; border-style: none; color: black;" disabled>
+                                                    Cannot Cancel (Order older than 7 days)
+                                                  </button>
+                                                <% } %>
+                                              <% } else if (order.status === 'Delivered') { %>
+                                                <!-- Show a disabled button if the order status is 'Delivered' -->
+                                                <button type="button" class="cancelbutton" style="background-color:rgb(22, 152, 22); border-style: none; color: rgb(253, 251, 251);" disabled>
+                                                  Order Delivered
+                                                </button>
+                                              <% } %>
+                                            </div>
+                                 
+                                          </div>   
                                 </div>
                               
                     </div>

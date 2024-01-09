@@ -1,6 +1,9 @@
 const User = require("../models/usermodel");
 const Admin = require("../models/adminmodel");
+const Order = require("../models/ordermodel");
 const bcrypt = require("bcrypt");
+const Product = require("../models/productmodel");
+const Category = require("../models/categorymodel");
 
 const securePassword = async (password) => {
   try {
@@ -62,14 +65,136 @@ const adminLogout = async (req, res) => {
   }
 };
 
+const salesdetails = async (req, res) => {
+  console.log("heyy");
+  function getWeekNumber(date) {
+    const oneJan = new Date(date.getFullYear(), 0, 1);
+    const millisecondsPerWeek = 604800000;
+    return Math.ceil((date - oneJan) / millisecondsPerWeek + 1);
+  }
+
+  try {
+    const products = await Product.find({});
+    const categories = await Category.find({});
+    const orders = await Order.find({})
+      .populate("user")
+      .populate("purchasedItems.product");
+    const totalSales = orders.reduce(
+      (acc, order) => acc + order.totalAmount,
+      0
+    );
+    const totalOrders = orders.length;
+    const totalProducts = products.length;
+    const totalCategories = categories.length;
+    const averageOrder = totalSales / totalOrders;
+    const uniqueCustomers = new Set(orders.map((order) => order.user._id)).size;
+    const totalSalesData = orders.map((order) => order.totalAmount);
+    const totalOrdersData = orders.map((order, index) => index + 1);
+    const totalCustomersData = Array.from(
+      { length: totalOrders },
+      (_, index) => index + 1
+    );
+    const lastWeekTotalOrders = totalOrdersData[totalOrdersData.length - 2];
+    const lastMonthTotalSales = totalSalesData[totalSalesData.length - 2];
+
+    // const totalAmountLastWeek = lastWeekTotalOrders.reduce(
+    //   (acc, order) => acc + order.totalAmount,
+    //   0
+    // );
+
+    const weekSales = {};
+    const monthSales = {};
+
+    orders.forEach((order) => {
+      const orderDate = new Date(order.date); // Assuming there's a 'date' field in your order schema
+      const weekNumber = getWeekNumber(orderDate);
+      const monthYear =
+        orderDate.getMonth() + 1 + "-" + orderDate.getFullYear();
+
+      if (!weekSales[weekNumber]) {
+        weekSales[weekNumber] = 0;
+      }
+      if (!monthSales[monthYear]) {
+        monthSales[monthYear] = 0;
+      }
+
+      weekSales[weekNumber] += order.totalAmount;
+      monthSales[monthYear] += order.totalAmount;
+    });
+
+    console.log("Sales details fetched successfully");
+    return {
+      orders,
+      totalSales,
+      weekSales,
+      averageOrder,
+      totalOrders,
+      totalCategories,
+      totalProducts,
+      totalCustomers: uniqueCustomers,
+      weeklySalesData: weekSales,
+      totalSalesData,
+      totalOrdersData,
+      totalCustomersData,
+      lastMonthTotalSales,
+      lastWeekTotalOrders,
+      // totalAmountLastWeek,
+    };
+  } catch (error) {
+    console.error("Error fetching sales details:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 //.....Loading Dashboard.....//
 const loadIndex = async (req, res) => {
   try {
     if (req?.session?.admin_id) {
-      return res.render("admin/indexhome");
-    } else res.redirect("/admin/login");
+      const salesDetails = await salesdetails();
+      if (!salesDetails || !salesDetails.weeklySalesData) {
+        console.error("Sales details not available or missing necessary data");
+        return res.status(500).json({ error: "Sales details not available" });
+      }
+      const {
+        weekSales,
+        weeklySalesData,
+        totalSales,
+        totalSalesData,
+        totalOrdersData,
+        totalCustomersData,
+        lastWeekTotalOrders,
+        lastMonthTotalSales,
+        orders,
+        totalOrders,
+        totalCustomers,
+        totalCategories,
+        totalProducts,
+        averageOrder,
+        // totalAmountLastWeek,
+      } = salesDetails;
+      return res.render("admin/indexhome", {
+        weeklySalesData: weeklySalesData,
+        totalSales: totalSales,
+        totalSalesData: totalSalesData,
+        totalOrdersData: totalOrdersData,
+        totalCustomersData: totalCustomersData,
+        weekSales: weekSales,
+        lastWeekTotalOrders: lastWeekTotalOrders,
+        lastMonthTotalSales: lastMonthTotalSales,
+        orders: orders,
+        totalCustomers: totalCustomers,
+        totalOrders: totalOrders,
+        totalCategories: totalCategories,
+        totalProducts: totalProducts,
+        averageOrder: averageOrder,
+        // totalAmountLastWeek: totalAmountLastWeek,
+      });
+    } else {
+      res.redirect("/admin/login");
+    }
   } catch (error) {
-    console.log(error.message);
+    console.error("Error fetching sales details:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -157,4 +282,5 @@ module.exports = {
   adminLogout,
   deleteUser,
   searchUser,
+  salesdetails,
 };

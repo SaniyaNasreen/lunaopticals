@@ -229,20 +229,15 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                          <form action="/admin/products/add-Product" id="addProductForm" class="form1-editp needs-validation" method="post"
-        enctype="multipart/form-data" novalidate>
-        <div class="mb-3">
-          <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
-          >Upload Image</label
-        >
-            <label for="file-upload" class="custom-file-upload" style="padding-top: 8px;">
-                choose file
-            </label>
-            <div id="image-preview-container"></div>
-            <input type="file" id="file-upload" accept="image/*" class="form-control2-addp" name="images" multiple
-                style="display: none;">
-            <button type="button" style="background-color: rgb(212, 46, 5); border-style:none; color: white; border-radius: 6px; height: 30px;" id="clear-image" onclick="clearImage()">Deselect all images</button>
-        </div>
+                                          <form action="/admin/products/add-Product" id="addProductForm" class="form1-editp needs-validation" method="post" enctype="multipart/form-data" novalidate>
+        
+                                            <div class="mb-3">
+                                              <label for="file-upload" class="form-label" style="color: rgb(158, 154, 154)">Upload Image</label>
+                                              <label for="file-upload" class="custom-file-upload" style="padding-top: 8px;">Choose file</label>
+                                              <div id="image-preview-container"></div>
+                                              <input type="file" id="file-upload" accept="image/*" class="form-control2-addp" name="images" multiple style="display: none;">
+                                              <button type="button" style="background-color: rgb(212, 46, 5); border-style:none; color: white; border-radius: 6px; height: 30px;" id="clear-image" onclick="clearImage()">Deselect all images</button>
+                                          </div>
         <div class="mb-3">
           <label for="validationCustom03" class="form-label" style="color: rgb(158, 154, 154)"
           >Name</label

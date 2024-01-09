@@ -23,12 +23,10 @@ const loadOrder = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 8;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-
     const paginatedOrders = sortedOrders.slice(startIndex, endIndex);
     const totalPages = Math.ceil(totalOrders / limit);
     const currentPage = page;
     const selectedSort = sortQuery;
-
     res.render("admin/orders", {
       orders,
       selectedSort,
@@ -121,6 +119,7 @@ const loadOrderDetails = async (req, res, next) => {
     next(error);
   }
 };
+
 const loadAdminOrderDetails = async (req, res, next) => {
   try {
     console.log(req.params);
@@ -132,16 +131,16 @@ const loadAdminOrderDetails = async (req, res, next) => {
         .json({ error: "Order ID not found in the request" });
     }
 
-    const orders = await Order.findById(orderId)
+    const order = await Order.findById(orderId)
       .populate("purchasedItems.product")
       .exec();
-    console.log(orders);
-    if (!orders) {
+    console.log(order);
+    if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
     res.render("admin/orderInfo", {
-      orders,
+      order,
     });
   } catch (error) {
     next(error);

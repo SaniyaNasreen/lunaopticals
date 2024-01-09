@@ -66,7 +66,7 @@ const addCategory = async (req, res, next) => {
         message: "Category with this name already exists",
         categories,
       });
-      error.statusCode = 409; // Conflict status code
+      error.statusCode = 409;
       throw error;
     }
 

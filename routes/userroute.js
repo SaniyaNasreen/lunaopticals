@@ -53,14 +53,13 @@ user_route.post("/forgetPassword", usercontroller.resetPassword);
 
 //Product Related
 user_route.get("/search-product", usercontroller.searchProduct);
-// user_route.get("/product-pagination", usercontroller.productPagination);
 
 // Cart Related
 user_route.get("/add-to-cart/:id", auth.isUser, usercontroller.addCart);
 user_route.get("/shop-cart", auth.isUser, usercontroller.loginCart);
 user_route.get("/remove-from-cart/:id", auth.isUser, usercontroller.removeCart);
 user_route.post("/update-cart", auth.isUser, usercontroller.updateCart);
-
+user_route.post("/checkoutCart", auth.isUser, usercontroller.checkoutCart);
 //order
 user_route.get("/order", auth.isUser, usercontroller.orderInfo);
 user_route.post(
@@ -74,7 +73,7 @@ user_route.get(
   ordercontroller.loadOrderDetails
 );
 //Checkout
-user_route.get("/checkout", auth.isUser, usercontroller.checkoutCart);
+user_route.get("/checkout", auth.isUser, usercontroller.loadCheckout);
 user_route.post("/saveAddress", auth.isUser, usercontroller.saveOrder);
 user_route.post("/saveOrder", auth.isUser, usercontroller.saveOrder);
 
