@@ -12,11 +12,6 @@ const easyinvoice = require("easyinvoice");
 const puppeteer = require("puppeteer");
 const Order = require("./models/ordermodel");
 const fs = require("fs");
-const Razorpay = require("razorpay");
-const instance = new Razorpay({
-  key_id: process.env.KEY_ID,
-  key_secret: process.env.KEY_SECRET,
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

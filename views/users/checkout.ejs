@@ -187,15 +187,11 @@
                
               <div class="payment-method mt-55">
                 <div class="direct-bank position-relative pl-25">
-                  <input type="radio" id="rad" name="payment" />
+                  <input type="radio" id="rad" name="paymentMethod" value="Razorpay"  />
                   <span class="check-mark"></span>
-                  <label for="rad">Direct bank transfer</label>
+                  <label for="rad">Razorpay</label>
                 </div>
-                <div class="Cheque position-relative pl-25 mt-20">
-                  <input type="radio" id="Chequ" name="payment" />
-                  <span class="check-mark"></span>
-                  <label for="Chequ">Cheque Payment </label>
-                </div>
+                
                 <div class="COD position-relative pl-25 mt-20">
                   <input type="radio" id="Cod" name="paymentMethod" value="Cash on delivery" />
                   <span class="check-mark"></span>
@@ -205,7 +201,7 @@
                 <button type="submit" class="p-btn border-0 mt-45"  id="placeOrderBtn">PLACE ORDER</button>
                 <% } %>   
                 
-          </form>
+          </form> 
           <div id="success_tic" class="modal fade" role="dialog">
             <div class="modal-dialog">
               <!-- Modal content -->

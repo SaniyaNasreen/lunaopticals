@@ -74,6 +74,7 @@ user_route.get(
 );
 //Checkout
 user_route.get("/checkout", auth.isUser, usercontroller.loadCheckout);
+user_route.get("/payment", auth.isUser, ordercontroller.razorPayment);
 user_route.post("/saveAddress", auth.isUser, usercontroller.saveOrder);
 user_route.post("/saveOrder", auth.isUser, usercontroller.saveOrder);
 

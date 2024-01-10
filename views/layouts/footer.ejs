@@ -8,6 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/medium-zoom/dist/medium-zoom.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- prettier-ignore -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
  <script>
@@ -34,7 +35,7 @@ if (percentageChange > 0) {
   let totalSales = JSON.parse(document.getElementById('totalSales').value);
 
   var totalChart = new Chart(ctxLabel, {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: Array.from({ length: totalSales.length }, (_, i) => ` ${i + 1}`),
       datasets: [{
@@ -54,21 +55,22 @@ if (percentageChange > 0) {
     }
   });
    
-  var ctxAverage = document.getElementById("averageOrderChart").getContext('2d');
-  let totalAverageOrders = JSON.parse(document.getElementById('totalAverageOrders').value);
+  var ctx= document.getElementById("averageOrderChart").getContext('2d');
+  let averageOrders= JSON.parse(document.getElementById('totalAverageOrders').value);
 
-  var averageOrderChart = new Chart(ctxAverage, {
-    type: 'line',
-    data: {
-      labels: Array.from({ length: totalAverageOrders.length }, (_, i) => ` ${i + 1}`),
-      datasets: [{
-        label: 'Average Order',
-        data: totalAverageOrders,
-        borderColor: 'blue',
-        borderWidth: 1,
-        fill: false
-      }]
-    },
+  var myChart  =  new Chart(ctx, {
+    type: 'bar',
+  data: {
+    labels: Array.from({ length: averageOrders.length }, (_, i) => `Order ${i + 1}`),
+    datasets: [{
+      label: 'Average Order',
+      data: averageOrders,
+      backgroundColor: 'blue',
+      borderColor: 'blue',
+      borderWidth: 1
+    }]
+  },
+
     options: {
       scales: {
         y: {
@@ -83,7 +85,7 @@ if (percentageChange > 0) {
   let totalOrders = JSON.parse(document.getElementById('totalOrders').value);
 
   var orderChart = new Chart(ctxOrder, {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: Array.from({ length: totalOrders.length }, (_, i) => ` ${i + 1}`),
       datasets: [{
@@ -109,7 +111,7 @@ if (percentageChange > 0) {
   let totalCustomers = JSON.parse(document.getElementById('totalCustomers').value);
 
   var customerChart = new Chart(ctxCustomer, {
-    type: 'line',
+    type: 'bar',
     data: {
       labels: Array.from({ length: totalCustomers.length }, (_, i) => ` ${i  }`),
       datasets: [{
@@ -130,9 +132,8 @@ if (percentageChange > 0) {
   });
 </script>
  
- 
  <script>
-  function countdown() {
+    function countdown() {
     let seconds = 59;
     function tick() {
       let counter = document.getElementById("counter");
@@ -154,14 +155,101 @@ if (percentageChange > 0) {
   countdown();
  </script>  
   
+  
+<!-- <script>
+  $(document).ready(function () {
+  $('#placeOrderBtn').prop('disabled', true); 
+
+  $('input[name="paymentMethod"]').change(function () {
+    const selectedPayment = $('input[name="paymentMethod"]:checked').val();
+
+    if (selectedPayment === 'Cash on delivery') {
+      $('#placeOrderBtn').prop('disabled', false);
+    } else {
+      $('#placeOrderBtn').prop('disabled', true);
+    }
+  });
+
+  $('#orderForm').submit(function (event) {
+    event.preventDefault();
+    if (!validateCheckoutForm()) {
+      return;
+    }
+
+    const selectedPayment = $('input[name="payment"]:checked').val();
+
+    if (selectedPayment === 'Cash on delivery') {
+      $('#success_tic').modal('show');
+    } else {
+      initiateRazorpayPayment(); // Function to initiate Razorpay payment
+    }
+  });
+})
+ </script> -->
+ <!-- <script>
+ 
+  const payBtn = document.getElementById('payBtn');
+  payBtn.addEventListener('click', async () => {
+    console.log("hooi");
+    
+  })
+
+</script> -->
+
  <script>
   $(document).ready(function () {
-    $('#orderForm').submit(function (event) {
-      event.preventDefault();
-      if (!validateCheckoutForm()) {
-        return;
-      }
-      $.ajax({
+  $('#orderForm').submit(async function (event) {
+    event.preventDefault();
+    console.log("hello");
+    if (!validateCheckoutForm()) {
+      return;
+    }
+
+    const selectedPaymentMethod = $('input[name="paymentMethod"]:checked').val();
+
+    if (selectedPaymentMethod === "Razorpay") {
+      const response = await fetch('/payment');
+      const order = await response.json();
+      const options = {
+        key: "rzp_test_zjUM3EiMBvJ2Q1",
+        amount: order.amount,
+        name: 'Your Company Name',
+        description: 'Test Payment',
+        order_id: order.id,
+        handler: async function (response) {
+          // 1. Send a separate AJAX request to confirm payment
+          await $.ajax({
+            type: 'POST',
+            url: '/saveOrder', // Assuming this endpoint verifies payment
+            data: {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            },
+            success: function (paymentResponse) {
+              // 2. Display the success modal if payment is confirmed
+              $('#success_tic').modal('show');
+            },
+            error: function (xhr, status, error) {
+              // Handle payment confirmation errors
+              console.error('Error confirming payment:', error);
+              // ...display error message to user
+            },
+          });
+        },
+      };
+
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+
+    
+    } else {
+        // Handle other payment methods (if needed)
+        console.log('Selected payment method is not Razorpay');
+        // You can place the logic for handling other payment methods here
+        // For example, triggering the form submission for Cash on Delivery
+        $('#orderForm').unbind('submit').submit();
+          $.ajax({
         type: 'POST',
         url: '/saveOrder',
         data: $(this).serialize(),
@@ -176,7 +264,9 @@ if (percentageChange > 0) {
           }
         },
       });
-    }); 
+         // Uncomment this line to submit the form for other payment methods
+      }
+    });
         function displayError(fieldId, message) { 
           const field = $('#' + fieldId);
           const errorDiv = $('<div class="error-message"></div>').text(message).css('color', 'red');
@@ -224,8 +314,18 @@ if (percentageChange > 0) {
           } 
           return isValid;
         }
-      });
-    </script>
+        function validatePaymentMethod() {
+      const paymentMethod = $('input[name="paymentMethod"]:checked').val();
+      if (!paymentMethod) {
+        displayError('payment-error', 'Please choose a payment method.');
+        return false;
+      } else {
+        $('#payment-error').remove();
+        return true;
+      }
+    }
+  });
+</script>
 
 <script>
   $(document).ready(function() {

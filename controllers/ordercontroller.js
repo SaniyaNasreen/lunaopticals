@@ -3,6 +3,11 @@ const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const User = require("../models/usermodel");
 const Order = require("../models/ordermodel");
+const Razorpay = require("razorpay");
+const instance = new Razorpay({
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
+});
 const { upload, cropToSquare } = require("../utils/multer");
 const loadOrder = async (req, res, next) => {
   try {
@@ -146,9 +151,34 @@ const loadAdminOrderDetails = async (req, res, next) => {
     next(error);
   }
 };
+
+const razorPayment = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate("cart.product");
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    const cart = user.cart;
+    const options = {
+      amount: cart[0].product.price * 100,
+      currency: "INR",
+      receipt: "receipt_order_1",
+      payment_capture: 1,
+    };
+    instance.orders.create(options, function (err, order) {
+      console.log(order);
+      res.json(order);
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   loadOrder,
   updateStatus,
   loadOrderDetails,
   loadAdminOrderDetails,
+  razorPayment,
 };
