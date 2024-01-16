@@ -437,40 +437,6 @@ const verifyOtp = async (req, res, next) => {
   }
 };
 
-const resendOtp = async (req, res, next) => {
-  try {
-    const { email } = req.body;
-    const userData = await User.find({ email });
-
-    if (!userData) {
-      return res.status(400).json({ message: "User not found" });
-    }
-
-    if (userData.is_verified === 0) {
-      return res.status(400).json({ message: "User email is not verified" });
-    }
-
-    const OTPData = generateOTP();
-    const OTP = OTPData.otp;
-    const expirationTime = OTPData.timestamp;
-
-    await User.updateOne(
-      { email },
-      { $set: { token: OTP, tokenExpiration: expirationTime } }
-    );
-
-    // Send the OTP via email
-    await emailOtp(email, OTP);
-    res.render("users/enter-otp", {
-      message: "Please check your mail for OTP",
-      email,
-    });
-  } catch (error) {
-    console.error("Error sending OTP:", error.message);
-    next(error);
-  }
-};
-
 const userLogout = async (req, res, next) => {
   try {
     req.session.user_id = null;
@@ -1317,7 +1283,6 @@ module.exports = {
   verifyLogin,
   enterOtpForm,
   verifyOtp,
-  resendOtp,
   loginOtp,
   sendEmailOtp,
   emailOtp,

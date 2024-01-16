@@ -66,24 +66,69 @@ const adminLogout = async (req, res) => {
 };
 
 const salesdetails = async (req, res) => {
-  console.log("heyy");
   function getWeekNumber(date) {
     const oneJan = new Date(date.getFullYear(), 0, 1);
     const millisecondsPerWeek = 604800000;
     return Math.ceil((date - oneJan) / millisecondsPerWeek + 1);
   }
-
   try {
     const products = await Product.find({});
     const categories = await Category.find({});
     const orders = await Order.find({})
       .populate("user")
       .populate("purchasedItems.product");
+    const totalCountOfOrders = await Order.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalCountOfOrders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const totalOrders =
+      totalCountOfOrders.length > 0
+        ? totalCountOfOrders[0].totalCountOfOrders
+        : 0;
+
+    const totalCountOfUsers = await Order.aggregate([
+      {
+        $group: {
+          _id: "$user",
+          totalCountOfUsers: { $sum: 1 },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalCountOfUsers: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const totalUsers =
+      totalCountOfUsers.length > 0 ? totalCountOfUsers[0].totalCountOfUsers : 0;
+
+    const totalAmountOfProducts = await Order.aggregate([
+      {
+        $unwind: "$purchasedItems",
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmountOfProducts: { $sum: "$purchasedItems.price" },
+        },
+      },
+    ]);
+    const totalAmountProducts =
+      totalAmountOfProducts.length > 0
+        ? totalAmountOfProducts[0].totalAmountOfProducts
+        : 0;
     const totalSales = orders.reduce(
       (acc, order) => acc + order.totalAmount,
       0
     );
-    const totalOrders = orders.length;
+
     const totalProducts = products.length;
     const totalCategories = categories.length;
     const averageOrder = totalSales / totalOrders;
@@ -96,17 +141,95 @@ const salesdetails = async (req, res) => {
     );
     const lastWeekTotalOrders = totalOrdersData[totalOrdersData.length - 2];
     const lastMonthTotalSales = totalSalesData[totalSalesData.length - 2];
+    const monthsOrder = await Order.aggregate([
+      {
+        $match: {
+          date: { $exists: true },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: { $toDate: "$date" } },
+            year: { $year: { $toDate: "$date" } },
+          },
+          itemCount: { $sum: { $size: "$purchasedItems" } },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
 
-    // const totalAmountLastWeek = lastWeekTotalOrders.reduce(
-    //   (acc, order) => acc + order.totalAmount,
-    //   0
-    // );
+    const monthlyUserCount = await Order.aggregate([
+      {
+        $match: {
+          date: { $exists: true },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: { $toDate: "$date" } },
+            year: { $year: { $toDate: "$date" } },
+            user: "$payment.user",
+          },
+          uniqueUsers: { $addToSet: "$payment.user" },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: "$_id.month",
+            year: "$_id.year",
+          },
+          userCount: { $sum: { $size: "$uniqueUsers" } },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
+
+    const blockedUsersCount = await User.countDocuments({ is_blocked: true });
+    const unblockedUsersCount = await User.countDocuments({
+      is_blocked: false,
+    });
+
+    const monthsUser = await Order.aggregate([
+      {
+        $match: {
+          date: { $exists: true },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: { $toDate: "$date" } },
+            year: { $year: { $toDate: "$date" } },
+          },
+          userCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1,
+        },
+      },
+    ]);
 
     const weekSales = {};
     const monthSales = {};
 
     orders.forEach((order) => {
-      const orderDate = new Date(order.date); // Assuming there's a 'date' field in your order schema
+      const orderDate = new Date(order.date);
       const weekNumber = getWeekNumber(orderDate);
       const monthYear =
         orderDate.getMonth() + 1 + "-" + orderDate.getFullYear();
@@ -128,7 +251,6 @@ const salesdetails = async (req, res) => {
       totalSales,
       weekSales,
       averageOrder,
-      totalOrders,
       totalCategories,
       totalProducts,
       totalCustomers: uniqueCustomers,
@@ -138,7 +260,17 @@ const salesdetails = async (req, res) => {
       totalCustomersData,
       lastMonthTotalSales,
       lastWeekTotalOrders,
-      // totalAmountLastWeek,
+      monthsOrder,
+      monthsUser,
+      totalAmountOfProducts,
+      totalCountOfOrders,
+      totalCountOfUsers,
+      totalAmountProducts,
+      totalUsers,
+      totalOrders,
+      monthlyUserCount,
+      blockedUsersCount,
+      unblockedUsersCount,
     };
   } catch (error) {
     console.error("Error fetching sales details:", error);
@@ -165,11 +297,21 @@ const loadIndex = async (req, res) => {
         lastWeekTotalOrders,
         lastMonthTotalSales,
         orders,
-        totalOrders,
         totalCustomers,
         totalCategories,
         totalProducts,
         averageOrder,
+        monthsOrder,
+        monthsUser,
+        totalAmountOfProducts,
+        totalCountOfOrders,
+        totalCountOfUsers,
+        totalAmountProducts,
+        totalUsers,
+        totalOrders,
+        monthlyUserCount,
+        blockedUsersCount,
+        unblockedUsersCount,
         // totalAmountLastWeek,
       } = salesDetails;
       return res.render("admin/indexhome", {
@@ -183,11 +325,20 @@ const loadIndex = async (req, res) => {
         lastMonthTotalSales: lastMonthTotalSales,
         orders: orders,
         totalCustomers: totalCustomers,
-        totalOrders: totalOrders,
         totalCategories: totalCategories,
         totalProducts: totalProducts,
         averageOrder: averageOrder,
-        // totalAmountLastWeek: totalAmountLastWeek,
+        monthsOrder,
+        monthsUser,
+        totalAmountOfProducts,
+        totalCountOfOrders,
+        totalCountOfUsers,
+        totalAmountProducts,
+        totalUsers,
+        totalOrders,
+        monthlyUserCount,
+        blockedUsersCount,
+        unblockedUsersCount,
       });
     } else {
       res.redirect("/admin/login");
@@ -196,6 +347,58 @@ const loadIndex = async (req, res) => {
     console.error("Error fetching sales details:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
+};
+
+const loadSalesReport = async (req, res, next) => {
+  try {
+    let query = {};
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+
+    if (startDate && endDate) {
+      query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+    }
+
+    const sortOption = getSortOption(req.query.sort);
+
+    const totalOrders = await Order.countDocuments(query);
+    const sortedOrders = await Order.find(query).sort(sortOption).lean().exec();
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8;
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedOrders = sortedOrders.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalOrders / limit);
+    const currentPage = page;
+    const selectedSort = req.query.sort;
+
+    res.render("admin/sales_report", {
+      orders: paginatedOrders,
+      selectedSort,
+      currentPage,
+      totalPages,
+      totalItems: totalOrders,
+      limit,
+      req,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getSortOption = (sortQuery) => {
+  let sortOption = {};
+
+  if (sortQuery === "price_asc") {
+    sortOption = { price: 1 };
+  } else if (sortQuery === "price_desc") {
+    sortOption = { price: -1 };
+  } else {
+    sortOption = { createdAt: -1 };
+  }
+
+  return sortOption;
 };
 
 const loadCustomer = async (req, res, next) => {
@@ -235,6 +438,8 @@ const loadCustomer = async (req, res, next) => {
       totalItems: totalUser,
       users: paginatedUser,
       limit,
+      startDate: startDate.toISOString().split("T")[0],
+      endDate: endDate.toISOString().split("T")[0],
     });
   } catch (error) {
     next(error);
@@ -280,6 +485,7 @@ module.exports = {
   loadLogin,
   adminLogin,
   adminLogout,
+  loadSalesReport,
   deleteUser,
   searchUser,
   salesdetails,

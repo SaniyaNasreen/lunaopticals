@@ -107,26 +107,33 @@
     </div>
   </div>  
   <script>
-  function startTimer(expirationTime) {
-    const timerInterval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = expirationTime - now;
-
-      if (distance > 0) {
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        document.getElementById('timer').innerHTML =
-          'Resend OTP In: ' + minutes + 'm ' + seconds + 's ';
-      } else {
-        clearInterval(timerInterval);
-        document.getElementById('timer').innerHTML = 'OTP Expired'; 
-      }
-    }, 1000);
-  } 
+    function startTimer(expirationTime, email) {
+      const timerInterval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = expirationTime - now;
   
-  const expirationTime = Date.now() + 1 * 60 * 1000;
-  startTimer(expirationTime);
+        if (distance > 0) {
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+  
+          document.getElementById('timer').innerHTML =
+            'Resend OTP In: ' + minutes + 'm ' + seconds + 's ';
+        } else {
+          clearInterval(timerInterval);
+          
+          $.ajax({
+            type: 'POST',
+            url: '/forgotPassword',
+            data: { email: email },
+          });
+          document.getElementById('timer').innerHTML = 'Check your mail for OTP.';
+        }
+      }, 1000);
+    }
+    
+  
+    const expirationTime = Date.now() + 1 * 60 * 1000;
+    const userEmail = 'saniyanasreen262@gmail.com';
+    startTimer(expirationTime, userEmail);
   </script>
-  
   <%- include('../layouts/footer.ejs') %>

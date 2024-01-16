@@ -1,6 +1,4 @@
-<%- include('../layouts/header.ejs') %>
-
- <!-- < class="nk-body bg-lighter npc-general has-sidebar"> -->
+<%- include('../layouts/header.ejs') %> 
     <div class="nk-app-root">
       <div class="nk-main">
         <div
@@ -617,7 +615,7 @@
                                   <h6 class="title">Total Sales</h6>
                                 </div>
                                 <div class="card-tools">
-                                  <a href="#" class="link">View Report</a>
+                                  <a href="sales_report" class="link">View Report</a>
                                 </div>
                               </div>
                               <div class="data">
@@ -629,7 +627,7 @@
                               <div class="data">
                                 <h6 class="sub-title">This week so far</h6>
                                 <div class="data-group">
-                                  <div class="amount" id="thisWeekTotalOrders"><%= lastWeekTotalOrders %></div>
+                                  <div class="amount" id="thisWeekTotalOrders"><%= totalOrders %></div>
                                   <div class="info text-end">
                                     <span class="change up text-danger" id="ordersPercentageChange">
                                       <em class="icon ni ni-arrow-long-up"></em>4.63%
@@ -640,9 +638,9 @@
                               </div>
                             </div>
                               <div
-                              class="w-100 d-flex justify-content-around"
+                              class="w-100 d-flex justify-content-around "
                               >
-                                <div class="nk-ecwg1-ck" style="position: relative; bottom: 30px;">
+                                <div class="nk-ecwg1-ck" style="position: relative; bottom: 50px;">
                                   <input type="hidden" id="totalSales" value="<%= JSON.stringify(totalSalesData) %>">
                                   <div class="w-100 d-flex justify-content-around">
                                     <div> 
@@ -655,45 +653,21 @@
                           </div>
                         </div>
                       </div>
-                      <div class="col-xxl-4 col-md-6">
-                        <div class="card h-100">
-                          <div class="nk-ecwg nk-ecwg2">
+                      <div class="col-xxl-4 col-md-6" style="  ">
+                        <div class="card h-100" >
+                          <div class="nk-ecwg nk-ecwg2" >
                             <div class="card-inner">
-                              <div class="card-title-group mt-n1">
+                              <div class="card-title-group mt-n1" >
                                 <div class="card-title">
-                                  <h6 class="title">Averarge order</h6>
+                                  <h6 class="title" >Customers</h6>
                                 </div>
                                 <div class="card-tools me-n1">
-                                  <div class="dropdown">
-                                    <a
-                                      href="#"
-                                      class="dropdown-toggle btn btn-icon btn-trigger"
-                                      data-bs-toggle="dropdown"
-                                      ><em class="icon ni ni-more-h"></em
-                                    ></a>
-                                    <div
-                                      class="dropdown-menu dropdown-menu-sm dropdown-menu-end"
-                                    >
-                                      <ul class="link-list-opt no-bdr">
-                                        <li>
-                                          <a href="#" class="active"
-                                            ><span>15 Days</span></a
-                                          >
-                                        </li>
-                                        <li>
-                                          <a href="#"><span>30 Days</span></a>
-                                        </li>
-                                        <li>
-                                          <a href="#"><span>3 Months</span></a>
-                                        </li>
-                                      </ul>
-                                    </div>
-                                  </div>
+                                  
                                 </div>
                               </div>
                               <div class="data">
                                 <div class="data-group">
-                                  <div class="amount">$463.35</div>
+                                  <div class="amount"><%- totalUsers %></div>
                                   <div class="info text-end">
                                     <span class="change up text-danger"
                                       ><em class="icon ni ni-arrow-long-up"></em
@@ -702,17 +676,17 @@
                                   </div>
                                 </div>
                               </div>
-                              <h6 class="sub-title">Orders over time</h6>
+                              <h6 class="sub-title">Blocked and Unblocked</h6>
                             </div>
-                            <div class="nk-ecwg1-ck" style="position: relative;  ">
-                              <input type="hidden" id="totalAverageOrders" value="<%= JSON.stringify(averageOrder) %>">
+                            <div class="nk-ecwg1-ck" style="position: relative;">
+                              <input type="hidden" id="userCounts" value="<%= JSON.stringify({ blocked: blockedUsersCount, unblocked: unblockedUsersCount, total: blockedUsersCount + unblockedUsersCount }) %>">
                               <div class="w-100 d-flex justify-content-around">
                                 <div> 
-                                  <canvas id="averageOrderChart" width="500" height="auto" style="width: 512px; height: 400px"></canvas><br>
+                                  <canvas id="userCountChart" width="100" height="1400" style="width: 570px; height: 1400px;background-color: white; position: relative; top: 50px;" ></canvas><br>
                                 </div>
                               </div>
-                            
                             </div>
+                            
                           </div>
                         </div>
                       </div>
@@ -729,7 +703,7 @@
                                   </div>
                                   <div class="data">
                                     <div class="data-group">
-                                      <div class="amount"><%= lastWeekTotalOrders %></div>
+                                      <div class="amount"><%= totalOrders %></div>
                                       <div class="info text-end">
                                         <span class="change up text-danger"
                                           ><em
@@ -742,62 +716,25 @@
                                   </div>
                                 </div>
                                 <div
-                                  class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom"
+                                  class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom" style="    position: relative;
+                                   
+                                  left: 100px;
+                                  height: 300px;width: 300px;"
                                 >
-                                <div class="nk-ecwg1-ck" style="position: relative; bottom: 40px;">
-                                  <input type="hidden" id="totalOrders" value="<%= JSON.stringify(totalOrdersData) %>">
+                                <div class="nk-ecwg1-ck" style="position: relative;  width: 300px;">
+                                  <input type="hidden" id="totalOrders" value="<%= JSON.stringify(monthsOrder) %>">
                                   <div class="w-100 d-flex justify-content-around">
                                     <div> 
-                                      <canvas id="orderChart" width="500" height="auto" style="width: 512px; height: 400px"></canvas><br>
+                                      <canvas id="orderChart" width="800" height="400" ></canvas><br>
                                     </div>
                                   </div>
-                                
                                 </div>
+                                
                                 </div>
                               </div>
                             </div>
                           </div>
-                          <div class="col-xxl-12 col-md-6">
-                            <div class="card">
-                              <div class="nk-ecwg nk-ecwg3">
-                                <div class="card-inner pb-2">
-                                  <div class="card-title-group">
-                                    <div class="card-title">
-                                      <h6 class="title">Customers</h6>
-                                    </div>
-                                  </div>
-                                  <div class="data">
-                                    <div class="data-group">
-                                      <div class="amount">194</div>
-                                      <div class="info text-end">
-                                        <span class="change up text-danger"
-                                          ><em
-                                            class="icon ni ni-arrow-long-up"
-                                          ></em
-                                          >4.63%</span
-                                        ><br /><span>vs. last week</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom"
-                                >
-                                <div class="nk-ecwg1-ck" style="position: relative; bottom: 40px;">
-                                  <input type="hidden" id="totalCustomers" value="<%= JSON.stringify(totalCustomersData) %>">
-                                  <div class="w-100 d-flex justify-content-around">
-                                    <div> 
-                                      <canvas id="customerChart" width="500" height="auto" style="width: 512px; height: 400px"></canvas><br>
-                                    </div>
-                                  </div>
-                                
-                                </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                         
                       <div class="col-xxl-8">
                         <div class="card card-full">
                           <div class="card-inner">
@@ -1422,696 +1359,177 @@
         </div>
       </div>
     </div>
-    <ul class="nk-sticky-toolbar">
-      <li class="demo-layout">
-        <a
-          class="toggle tipinfo"
-          data-target="demoML"
-          href="#"
-          title="Main Demo Preview"
-          ><em class="icon ni ni-dashlite"></em
-        ></a>
-      </li>
-      <li class="demo-thumb">
-        <a
-          class="toggle tipinfo"
-          data-target="demoUC"
-          href="#"
-          title="Use Case Concept"
-          ><em class="icon ni ni-menu-squared"></em
-        ></a>
-      </li>
-      <li class="demo-settings">
-        <a
-          class="toggle tipinfo"
-          data-target="settingPanel"
-          href="#"
-          title="Demo Settings"
-          ><em class="icon ni ni-setting-alt"></em
-        ></a>
-      </li>
-      <li class="demo-purchase">
-        <a
-          class="tipinfo"
-          target="_blank"
-          href="https://1.envato.market/e0y3g"
-          title="Purchase"
-          ><em class="icon ni ni-cart"></em
-        ></a>
-      </li>
-    </ul>
-    <div
-      class="nk-demo-panel nk-demo-panel-2x toggle-slide toggle-slide-right"
-      data-content="demoML"
-      data-toggle-overlay="true"
-      data-toggle-body="true"
-      data-toggle-screen="any"
-    >
-      <div class="nk-demo-head">
-        <h6 class="mb-0">Switch Demo Layout</h6>
-        <a
-          class="nk-demo-close toggle btn btn-icon btn-trigger revarse mr-n2"
-          data-target="demoML"
-          href="#"
-          ><em class="icon ni ni-cross"></em
-        ></a>
-      </div>
-      <div class="nk-demo-list" data-simplebar>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo1/index.html"
-            ><div class="nk-demo-image bg-blue">
-              <img
-                class="bg-purple"
-                src="../../images/landing/layout-1d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-1d2x.jpg 2x"
-                alt="Demo Layout 1"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 1</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="../index.html"
-            ><div class="nk-demo-image bg-purple">
-              <img
-                src="../../images/landing/layout-2d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-2d2x.jpg 2x"
-                alt="Demo Layout 2"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 2</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo3/index.html"
-            ><div class="nk-demo-image bg-success">
-              <img
-                src="../../images/landing/layout-3d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-3d2x.jpg 2x"
-                alt="Demo Layout 3"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 3</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo4/index.html"
-            ><div class="nk-demo-image bg-indigo">
-              <img
-                src="../../images/landing/layout-4d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-4d2x.jpg 2x"
-                alt="Demo Layout 4"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 4</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo5/index.html"
-            ><div class="nk-demo-image bg-orange">
-              <img
-                src="../../images/landing/layout-5d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-5d2x.jpg 2x"
-                alt="Demo Layout 5"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 5</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo6/index.html"
-            ><div class="nk-demo-image bg-purple">
-              <img
-                src="../../images/landing/layout-6d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-6d2x.jpg 2x"
-                alt="Demo Layout 6"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 6</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo7/index.html"
-            ><div class="nk-demo-image bg-teal">
-              <img
-                src="../../images/landing/layout-7d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-7d2x.jpg 2x"
-                alt="Demo Layout 7"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 7</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo8/index.html"
-            ><div class="nk-demo-image bg-azure">
-              <img
-                src="../../images/landing/layout-8d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-8d2x.jpg 2x"
-                alt="Demo Layout 8"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 8</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo9/index.html"
-            ><div class="nk-demo-image bg-pink">
-              <img
-                src="../../images/landing/layout-9d.jpg"
-                srcset="https://dashlite.net/images/landing/layout-9d2x.jpg 2x"
-                alt="Demo Layout 9"
-              />
-            </div>
-            <span class="nk-demo-title"><strong>Demo Layout 9</strong></span></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/landing/index.html"
-            ><div class="nk-demo-image bg-red">
-              <img
-                src="../../images/landing/main-landing.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/main-landing2x.jpg 2x
-                "
-                alt="Landing Page"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><strong>Landing Page</strong>
-              <span class="badge badge-danger ml-1">Free</span></span
-            ></a
-          >
-        </div>
-      </div>
-    </div>
-    <div
-      class="nk-demo-panel nk-demo-panel-2x toggle-slide toggle-slide-right"
-      data-content="demoUC"
-      data-toggle-overlay="true"
-      data-toggle-body="true"
-      data-toggle-screen="any"
-    >
-      <div class="nk-demo-head">
-        <h6 class="mb-0">Use Case Concept</h6>
-        <a
-          class="nk-demo-close toggle btn btn-icon btn-trigger revarse mr-n2"
-          data-target="demoUC"
-          href="#"
-          ><em class="icon ni ni-cross"></em
-        ></a>
-      </div>
-      <div class="nk-demo-list" data-simplebar>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo9/copywriter/index.html"
-            ><div class="nk-demo-image bg-indigo">
-              <img
-                src="../../images/landing/demo-ai-copywriter.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-ai-copywriter2x.jpg 2x
-                "
-                alt="ai-copywriter"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo9</em><br /><strong
-                >Ai Copywriter Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo7/pharmacy/index.html"
-            ><div class="nk-demo-image bg-warning">
-              <img
-                src="../../images/landing/demo-pharmacy.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-pharmacy2x.jpg 2x
-                "
-                alt="pharmacy"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo7</em><br /><strong
-                >Pharmacy Management Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo5/loan/index.html"
-            ><div class="nk-demo-image bg-purple">
-              <img
-                src="../../images/landing/demo-loan.jpg"
-                srcset="https://dashlite.net/images/landing/demo-loan2x.jpg 2x"
-                alt="loan"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo5</em><br /><strong
-                >Loan Management Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="index.html"
-            ><div class="nk-demo-image bg-dark">
-              <img
-                src="../../images/landing/demo-ecommerce.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-ecommerce2x.jpg 2x
-                "
-                alt="Ecommerce"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo2</em><br /><strong
-                >E-Commerce Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="../lms/index.html"
-            ><div class="nk-demo-image bg-danger">
-              <img
-                src="../../images/landing/demo-lms.jpg"
-                srcset="https://dashlite.net/images/landing/demo-lms2x.jpg 2x"
-                alt="LMS"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo2</em><br /><strong
-                >LMS / Learning Management System</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo1/crm/index.html"
-            ><div class="nk-demo-image bg-info">
-              <img
-                src="../../images/landing/demo-crm.jpg"
-                srcset="https://dashlite.net/images/landing/demo-crm2x.jpg 2x"
-                alt="CRM / Customer Relationship"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo1</em><br /><strong
-                >CRM / Customer Relationship Management</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo7/hospital/index.html"
-            ><div class="nk-demo-image bg-indigo">
-              <img
-                src="../../images/landing/demo-hospital.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-hospital2x.jpg 2x
-                "
-                alt="Hospital Managemen"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo7</em><br /><strong
-                >Hospital Management</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo1/hotel/index.html"
-            ><div class="nk-demo-image bg-pink">
-              <img
-                src="../../images/landing/demo-hotel.jpg"
-                srcset="https://dashlite.net/images/landing/demo-hotel2x.jpg 2x"
-                alt="Hotel Managemen"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo1</em><br /><strong
-                >Hotel Management</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo3/cms/index.html"
-            ><div class="nk-demo-image bg-dark">
-              <img
-                src="../../images/landing/demo-cms.jpg"
-                srcset="https://dashlite.net/images/landing/demo-cms2x.jpg 2x"
-                alt="cms"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo3</em><br /><strong
-                >CMS Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo5/crypto/index.html"
-            ><div class="nk-demo-image bg-warning">
-              <img
-                src="../../images/landing/demo-buysell.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-buysell2x.jpg 2x
-                "
-                alt="Crypto BuySell / Wallet"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo5</em><br /><strong
-                >Crypto BuySell Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo6/invest/index.html"
-            ><div class="nk-demo-image bg-indigo">
-              <img
-                src="../../images/landing/demo-invest.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-invest2x.jpg 2x
-                "
-                alt="HYIP / Investment"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo6</em><br /><strong
-                >HYIP / Investment Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo3/apps/file-manager.html"
-            ><div class="nk-demo-image bg-purple">
-              <img
-                src="../../images/landing/demo-file-manager.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-file-manager2x.jpg 2x
-                "
-                alt="File Manager"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo3</em><br /><strong
-                >Apps - File Manager</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo4/subscription/index.html"
-            ><div class="nk-demo-image bg-primary">
-              <img
-                src="../../images/landing/demo-subscription.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-subscription2x.jpg 2x
-                "
-                alt="SAAS / Subscription"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo4</em><br /><strong
-                >SAAS / Subscription Panel</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/covid/index.html"
-            ><div class="nk-demo-image bg-danger">
-              <img
-                src="../../images/landing/demo-covid19.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-covid192x.jpg 2x
-                "
-                alt="Covid Situation"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Covid</em><br /><strong
-                >Coronavirus Situation</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo3/apps/messages.html"
-            ><div class="nk-demo-image bg-success">
-              <img
-                src="../../images/landing/demo-messages.jpg"
-                srcset="
-                  https://dashlite.net/images/landing/demo-messages2x.jpg 2x
-                "
-                alt="Messages"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo3</em><br /><strong
-                >Apps - Messages</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo3/apps/mailbox.html"
-            ><div class="nk-demo-image bg-purple">
-              <img
-                src="../../images/landing/demo-inbox.jpg"
-                srcset="https://dashlite.net/images/landing/demo-inbox2x.jpg 2x"
-                alt="Inbox"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo3</em><br /><strong
-                >Apps - Mailbox</strong
-              ></span
-            ></a
-          >
-        </div>
-        <div class="nk-demo-item">
-          <a href="https://dashlite.net/demo3/apps/chats.html"
-            ><div class="nk-demo-image bg-purple">
-              <img
-                src="../../images/landing/demo-chats.jpg"
-                srcset="https://dashlite.net/images/landing/demo-chats2x.jpg 2x"
-                alt="Chats / Messenger"
-              />
-            </div>
-            <span class="nk-demo-title"
-              ><em class="text-primary">Demo3</em><br /><strong
-                >Apps - Chats</strong
-              ></span
-            ></a
-          >
-        </div>
-      </div>
-    </div>
-    <div
-      class="nk-demo-panel toggle-slide toggle-slide-right"
-      data-content="settingPanel"
-      data-toggle-overlay="true"
-      data-toggle-body="true"
-      data-toggle-screen="any"
-    >
-      <div class="nk-demo-head">
-        <h6 class="mb-0">Preview Settings</h6>
-        <a
-          class="nk-demo-close toggle btn btn-icon btn-trigger revarse mr-n2"
-          data-target="settingPanel"
-          href="#"
-          ><em class="icon ni ni-cross"></em
-        ></a>
-      </div>
-      <div class="nk-opt-panel" data-simplebar>
-        <div class="nk-opt-set">
-          <div class="nk-opt-set-title">Direction Change</div>
-          <div class="nk-opt-list col-2x">
-            <div
-              class="nk-opt-item only-text active"
-              data-key="dir"
-              data-update="ltr"
-            >
-              <span class="nk-opt-item-bg"
-                ><span class="nk-opt-item-name">LTR Mode</span></span
-              >
-            </div>
-            <div class="nk-opt-item only-text" data-key="dir" data-update="rtl">
-              <span class="nk-opt-item-bg"
-                ><span class="nk-opt-item-name">RTL Mode</span></span
-              >
-            </div>
-          </div>
-        </div>
-        <div class="nk-opt-set">
-          <div class="nk-opt-set-title">Main UI Style</div>
-          <div class="nk-opt-list col-2x">
-            <div
-              class="nk-opt-item only-text active"
-              data-key="style"
-              data-update="ui-default"
-            >
-              <span class="nk-opt-item-bg"
-                ><span class="nk-opt-item-name">Default</span></span
-              >
-            </div>
-            <div
-              class="nk-opt-item only-text"
-              data-key="style"
-              data-update="ui-bordered"
-            >
-              <span class="nk-opt-item-bg"
-                ><span class="nk-opt-item-name">Bordered</span></span
-              >
-            </div>
-          </div>
-        </div>
-        <div class="nk-opt-set nk-opt-set-aside">
-          <div class="nk-opt-set-title">Sidebar Style</div>
-          <div class="nk-opt-list col-4x">
-            <div class="nk-opt-item" data-key="aside" data-update="is-light">
-              <span class="nk-opt-item-bg is-light"
-                ><span class="bg-lighter"></span></span
-              ><span class="nk-opt-item-name">White</span>
-            </div>
-            <div class="nk-opt-item" data-key="aside" data-update="is-default">
-              <span class="nk-opt-item-bg is-light"
-                ><span class="bg-light"></span></span
-              ><span class="nk-opt-item-name">Light</span>
-            </div>
-            <div
-              class="nk-opt-item active"
-              data-key="aside"
-              data-update="is-dark"
-            >
-              <span class="nk-opt-item-bg"><span class="bg-dark"></span></span
-              ><span class="nk-opt-item-name">Dark</span>
-            </div>
-            <div class="nk-opt-item" data-key="aside" data-update="is-theme">
-              <span class="nk-opt-item-bg"><span class="bg-theme"></span></span
-              ><span class="nk-opt-item-name">Theme</span>
-            </div>
-          </div>
-        </div>
-        <div class="nk-opt-set nk-opt-set-header">
-          <div class="nk-opt-set-title">Header Style</div>
-          <div class="nk-opt-list col-4x">
-            <div
-              class="nk-opt-item active"
-              data-key="header"
-              data-update="is-light"
-            >
-              <span class="nk-opt-item-bg is-light"
-                ><span class="bg-lighter"></span></span
-              ><span class="nk-opt-item-name">White</span>
-            </div>
-            <div class="nk-opt-item" data-key="header" data-update="is-default">
-              <span class="nk-opt-item-bg is-light"
-                ><span class="bg-light"></span></span
-              ><span class="nk-opt-item-name">Light</span>
-            </div>
-            <div class="nk-opt-item" data-key="header" data-update="is-dark">
-              <span class="nk-opt-item-bg"><span class="bg-dark"></span></span
-              ><span class="nk-opt-item-name">Dark</span>
-            </div>
-            <div class="nk-opt-item" data-key="header" data-update="is-theme">
-              <span class="nk-opt-item-bg"><span class="bg-theme"></span></span
-              ><span class="nk-opt-item-name">Theme</span>
-            </div>
-          </div>
-        </div>
-        <div class="nk-opt-set nk-opt-set-skin">
-          <div class="nk-opt-set-title">Primary Skin</div>
-          <div class="nk-opt-list">
-            <div
-              class="nk-opt-item active"
-              data-key="skin"
-              data-update="default"
-            >
-              <span class="nk-opt-item-bg"
-                ><span class="skin-default"></span></span
-              ><span class="nk-opt-item-name">Default</span>
-            </div>
-            <div class="nk-opt-item" data-key="skin" data-update="blue">
-              <span class="nk-opt-item-bg"><span class="skin-blue"></span></span
-              ><span class="nk-opt-item-name">Blue</span>
-            </div>
-            <div class="nk-opt-item" data-key="skin" data-update="egyptian">
-              <span class="nk-opt-item-bg"
-                ><span class="skin-egyptian"></span></span
-              ><span class="nk-opt-item-name">Egyptian</span>
-            </div>
-            <div class="nk-opt-item" data-key="skin" data-update="bluelite">
-              <span class="nk-opt-item-bg"
-                ><span class="skin-bluelite"></span></span
-              ><span class="nk-opt-item-name">Blue Light</span>
-            </div>
-            <div class="nk-opt-item" data-key="skin" data-update="green">
-              <span class="nk-opt-item-bg"
-                ><span class="skin-green"></span></span
-              ><span class="nk-opt-item-name">Green</span>
-            </div>
-            <div class="nk-opt-item" data-key="skin" data-update="red">
-              <span class="nk-opt-item-bg"><span class="skin-red"></span></span
-              ><span class="nk-opt-item-name">Red</span>
-            </div>
-          </div>
-        </div>
-        <div class="nk-opt-set">
-          <div class="nk-opt-set-title">Skin Mode</div>
-          <div class="nk-opt-list col-2x">
-            <div
-              class="nk-opt-item active"
-              data-key="mode"
-              data-update="light-mode"
-            >
-              <span class="nk-opt-item-bg is-light"
-                ><span class="theme-light"></span></span
-              ><span class="nk-opt-item-name">Light Skin</span>
-            </div>
-            <div class="nk-opt-item" data-key="mode" data-update="dark-mode">
-              <span class="nk-opt-item-bg"
-                ><span class="theme-dark"></span></span
-              ><span class="nk-opt-item-name">Dark Skin</span>
-            </div>
-          </div>
-        </div>
-        <div class="nk-opt-reset">
-          <a href="#" class="reset-opt-setting">Reset Setting</a>
-        </div>
-      </div>
-    </div>
-    <div class="pmo-lv pmo-dark">
-      <a class="pmo-close" href="#"><em class="ni ni-cross"></em></a
-      ><a
-        class="pmo-wrap"
-        target="_blank"
-        href="https://softnio.com/get-early-access/"
-        ><div class="pmo-text text-white">
-          Looking for functional script for Investment Platform? Check out
-          <em class="ni ni-arrow-long-right"></em></div
-      ></a>
-    </div>
-    <a
-      class="pmo-st pmo-dark"
-      target="_blank"
-      href="https://softnio.com/get-early-access/"
-      ><div class="pmo-st-img">
-        <img src="../../images/landing/promo-investorm.png" alt="Investorm" />
-      </div>
-      <div class="pmo-st-text">
-        Looking for Advanced <br />
-        Investment Platform?
-      </div></a
-    > 
+    
+    
+      
      
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script>
+  const thisWeekOrders = totalOrdersData[totalOrdersData.length - 1];
+const lastWeekOrders = totalOrdersData[totalOrdersData.length - 2];
+
+// Calculate percentage change
+const percentageChange = ((thisWeekOrders - lastWeekOrders) / lastWeekOrders) * 100;
+
+// Update the HTML elements
+document.getElementById('thisWeekTotalOrders').innerText = `$${thisWeekOrders.toFixed(2)}`;
+document.getElementById('ordersPercentageChange').innerText = `${percentageChange.toFixed(2)}%`;
+
+// Change color based on positive/negative percentage
+if (percentageChange > 0) {
+  document.getElementById('ordersPercentageChange').classList.add('text-danger');
+} else {
+  document.getElementById('ordersPercentageChange').classList.add('text-success');
+}
+ </script>
+<script>
+  // Retrieve monthly sales data and create a line chart
+  var ctxLabel = document.getElementById("labelChart").getContext('2d');
+  let totalSales = JSON.parse(document.getElementById('totalSales').value);
+
+  var totalChart = new Chart(ctxLabel, {
+    type: 'bar',
+    data: {
+      labels: Array.from({ length: totalSales.length }, (_, i) => ` ${i + 1}`),
+      datasets: [{
+        label: 'Total Sales',
+        data: totalSales,
+        borderColor: 'violet',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+   
+  var ctx = document.getElementById("userCountChart").getContext('2d');
+let userCounts = JSON.parse(document.getElementById('userCounts').value);
+
+var myChart = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Blocked Users', 'Unblocked Users', 'Total Users'],
+    datasets: [{
+      label: 'User Count',
+      data: [userCounts.blocked, userCounts.unblocked, userCounts.total],
+      backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+      borderColor: 'black',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    scales: {
+      x: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+
+   
+  var ctxOrder = document.getElementById("orderChart").getContext('2d');
+let totalOrders = JSON.parse(document.getElementById('totalOrders').value);
+
+// Process totalOrders to extract month labels and sales data
+let monthlyLabels = [];
+let monthlySales = [];
+let backgroundColors = []; // Array to hold colors for each month
+
+// Array of 12 different colors for months
+const colors = [
+  'lightgreen', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow',
+  'lightgray', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue',
+  'lightslategray', 'lightsteelblue'
+];
+
+totalOrders.forEach((item, index) => {
+  const { month, year } = item._id;
+  const monthLabel = `${month}/${year}`;
+  
+  monthlyLabels.push(monthLabel);
+  monthlySales.push(item.itemCount);
+
+  // Assign a color to each month
+  backgroundColors.push(colors[index % colors.length]);
+});
+
+var orderChart = new Chart(ctxOrder, {
+  type: 'pie',
+  data: {
+    labels: monthlyLabels,
+    datasets: [{
+      label: 'Monthly Sales',
+      data: monthlySales,
+      backgroundColor: backgroundColors,
+      borderWidth: 1,
+      fill: false
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+
+   
+
+
+  var ctxCustomer = document.getElementById("customerChart").getContext('2d');
+  let totalCustomers = JSON.parse(document.getElementById('totalCustomers').value);
+
+  var customerChart = new Chart(ctxCustomer, {
+    type: 'bar',
+    data: {
+      labels: Array.from({ length: totalCustomers.length }, (_, i) => ` ${i  }`),
+      datasets: [{
+        label: 'Total Customer',
+        data: totalCustomers,
+        borderColor: 'lightgreen',
+        borderWidth: 1,
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+ 
+ <script>
+    function countdown() {
+    let seconds = 59;
+    function tick() {
+      let counter = document.getElementById("counter");
+      seconds--;
+      counter.innerHTML =
+        "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+      if (seconds > 0) {
+        setTimeout(tick, 1000);
+      } else { 
+          const resendBtn = document.getElementById("verifiBtn");
+        resendBtn.innerHTML = `
+          <button type="submit" class="btn btn-primary btn-block border-dark curved" onclick="location.reload()" style="width: 40%;">Resend OTP</button>
+        `;
+        document.getElementById("counter").innerHTML = "";
+      }
+    }
+    tick();
+  }
+  countdown();
+ </script>  
+  
 <%- include('../layouts/footer.ejs') %>

@@ -8,10 +8,8 @@ const instance = new Razorpay({
   key_id: process.env.KEY_ID,
   key_secret: process.env.KEY_SECRET,
 });
-const { upload, cropToSquare } = require("../utils/multer");
 const loadOrder = async (req, res, next) => {
   try {
-    const orders = await Order.find().populate("purchasedItems.product");
     let sortOption = {};
     const sortQuery = req.query.sort;
     if (sortQuery === "price_asc") {
@@ -23,7 +21,9 @@ const loadOrder = async (req, res, next) => {
     }
 
     const totalOrders = await Order.countDocuments();
-    const sortedOrders = await Order.find().sort(sortOption).lean().exec();
+    const sortedOrders = await Order.find()
+      .sort(sortOption)
+      .populate("purchasedItems.product");
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 8;
     const startIndex = (page - 1) * limit;
@@ -33,7 +33,6 @@ const loadOrder = async (req, res, next) => {
     const currentPage = page;
     const selectedSort = sortQuery;
     res.render("admin/orders", {
-      orders,
       selectedSort,
       currentPage,
       totalPages,

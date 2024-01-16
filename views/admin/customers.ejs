@@ -358,6 +358,30 @@
                       }
                     </script>
                      
+
+                     <script>
+                      function blockUser(userId) {
+                        fetch('/admin/users/block/' + userId, { method: 'POST' })
+                          .then(response => response.json())
+                          .then(data => {
+                            if (data.message === 'User blocked successfully') { 
+                            } else { 
+                            }
+                          })
+                          .catch(error => console.error(error));
+                      } 
+                      function unblockUser(userId) {
+                        fetch('/admin/users/unblock/' + userId, { method: 'POST' })
+                          .then(response => response.json())
+                          .then(data => {
+                            if (data.message === 'User unblocked successfully') {   
+                            } else {
+                            }
+                          })
+                          .catch(error => console.error(error));
+                      } 
+                      </script>
+                      
                      <%- include('../layouts/footer.ejs') %>
  
        

@@ -1,0 +1,177 @@
+<div class="nk-app-root">
+  <div class="nk-main">
+    <%- include('../admin/layouts/sidebar.ejs') %>
+    <%-include('../admin/layouts/navbar.ejs') %>
+
+    <div class="nk-content">
+      <div
+        class="container-fluid"
+        style="
+          width: 100%;
+          max-width: 1570px;
+          box-sizing: border-box;
+          padding-left: 300px;
+          padding-top: 60px;
+        "
+      >
+        <div class="nk-content-inner">
+          <div class="nk-content-body">
+            <div class="nk-block-head nk-block-head-sm">
+              <div class="nk-block-between">
+                <div class="nk-block-head-content">
+                  <h3 class="nk-block-title page-title">Sales Report</h3>
+                </div>
+                <li>
+                    <div class="drodown">
+                       
+                          
+                          
+                          
+                </li>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+     <form action="sales_report" >
+            <div class="form-row mb-2"style="font-size: 14px; position: relative; left: 300px; max-width: 600px; ">
+        <div class="col-md-3">
+            <label for="from">From Date:</label>
+            <input type="date" class="form-control" id="from" name="startDate" value="" required style="font-size: 12px;">
+        </div>
+        <div class="col-md-3">
+            <label for="to">To Date:</label>
+            <input type="date" class="form-control" id="to" name="endDate" value="" required min="" style="font-size: 12px;">
+            <div id="ending-error" class="error-message"></div>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary" style="position: relative; top: 30px;">Show Report</button>
+        </div>
+    </div>
+        
+      <div class="nk-block">
+        <div class="nk-tb-list is-separate is-medium mb-3" style="font-size: 14px; position: relative; left: 300px; max-width: 1170px; ">
+          <div class="nk-tb-item nk-tb-head">
+            <div class="nk-tb-col nk-tb-col-check">
+              <div
+                class="custom-control custom-control-sm custom-checkbox notext"
+              >
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="oid"
+                /><label class="custom-control-label" for="oid"></label>
+              </div>
+            </div>
+            
+            <div class="nk-tb-col tb-col-md"><span>Date</span></div>
+            <div class="nk-tb-col"><span></span>Item No:</div>
+            <div class="nk-tb-col tb-col-md">
+                <span>Item Name</span>
+              </div>
+              <div class="nk-tb-col tb-col-md">
+                <span>Price</span>
+              </div> 
+              <div class="nk-tb-col tb-col-md">
+                <span>Qty</span>
+              </div> 
+              
+            <div class="nk-tb-col"><span>Total</span></div>
+            <div class="nk-tb-col nk-tb-col-tools">
+             
+            </div>
+          </div>
+          
+            <% orders.forEach((order) => { %>
+                <div class="nk-tb-item">
+                
+                  <div class="nk-tb-col">
+                    
+                  
+                  </div>
+                  <div class="nk-tb-col tb-col-md">
+                    
+                    <span class="tb-sub" style="font-weight: 500;font-size: 12px;"><%- order.date instanceof Date ? order.date.toDateString() : '' %></span>
+                  </div>
+                  <div class="nk-tb-col tb-col-md">
+                    
+                    <span class="tb-sub" style="color: blue; font-weight: 500;">#<%- order.orderNumber %></span>
+                  </div>
+                  <div class="nk-tb-col tb-col-md">
+                    <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                      <% order.purchasedItems.forEach((item) => { %>
+                        <span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;"><%- item.product ? item.product : 'Product Name Not Available' %></span>
+                        
+                      <% }); %>
+                    <% } else { %>
+                      <span class="tb-sub">No purchased items</span>
+                    <% } %>
+                  </div>
+                  <div class="nk-tb-col tb-col-md">
+                    <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                      <% order.purchasedItems.forEach((item) => { %>
+                        <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%-  item.price ? item.price : 'Product quantity Not Available' %></span>
+                      <% }); %>
+                    <% } else { %>
+                      <span class="tb-sub">No purchased items</span>
+                    <% } %>
+                  </div>
+                
+                  <div class="nk-tb-col tb-col-md">
+                    <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                      <% order.purchasedItems.forEach((item) => { %>
+                        <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%-  item.quantity ? item.quantity : 'Product quantity Not Available' %></span>
+                      <% }); %>
+                    <% } else { %>
+                      <span class="tb-sub">No purchased items</span>
+                    <% } %>
+                  </div>
+                
+                  <div class="nk-tb-col">
+                    <span class="tb-lead" style="font-size: 12px;">₹<%- order.totalAmount %></span>
+                  </div>
+                  <div class="nk-tb-col nk-tb-col-tools">
+                    <ul class="nk-tb-actions gx-1">
+                     
+                      
+                        <li>
+          <div class="drodown me-n1">
+            <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown">
+              <em class="icon ni ni-more-h"></em>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+              <ul class="link-list-opt no-bdr"> 
+                <li>
+                  <a href="/admin/orderInfo/<%= encodeURIComponent(order._id) %>">
+                    <em class="icon ni ni-eye"></em>
+                    <span>Order Details</span>
+                  </a>
+                </li>
+                
+                      
+            </ul>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+</div>
+<% }); %>
+          </div>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+</div>
+<div style="position: relative; top: 110px;left: 320px; width: 1170px;">
+
+<%- include('../admin/layouts/footer.ejs')%>
+</div>
+      </div>
+    </div>
+<%- include('../layouts/footer.ejs') %>
+
+    </div>
+  </div>
+</div>

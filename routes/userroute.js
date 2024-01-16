@@ -44,7 +44,7 @@ user_route.post("/forgotPassword", usercontroller.loginOtp);
 user_route.get("/send-email-otp", usercontroller.sendEmailOtp);
 user_route.get("/enter-otp", usercontroller.enterOtpForm);
 user_route.post("/verify-otp", usercontroller.verifyOtp);
-user_route.post("/resend-otp", usercontroller.resendOtp);
+
 //get forgetpassword page
 user_route.get("/forget-password", usercontroller.loadForget);
 user_route.post("/forget-password", usercontroller.verifyForgetPassword);
@@ -77,7 +77,6 @@ user_route.get("/checkout", auth.isUser, usercontroller.loadCheckout);
 user_route.get("/payment", auth.isUser, ordercontroller.razorPayment);
 user_route.post("/saveAddress", auth.isUser, usercontroller.saveOrder);
 user_route.post("/saveOrder", auth.isUser, usercontroller.saveOrder);
-
 user_route.post(
   "/checkout/applyCoupon",
   auth.isUser,

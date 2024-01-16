@@ -369,4 +369,68 @@
                 alert(successMessage);
             }
         </script>
+
+        
+<script>
+  async function fetchAndRenderCategories() {
+    try {
+      const response = await fetch('/categories'); 
+      const categories = await response.json();
+      <ul id="categoryList"></ul>
+      const categoryList = document.getElementById('categoryList');
+      categoryList.innerHTML = '';  
+      categories.forEach(category => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+          <span>${category.name}</span>
+          <button onclick="unlistCategory('${category._id}')">Unlist</button>
+        `;
+        categoryList.appendChild(listItem);
+      });
+    } catch (error) {
+      console.error('Error fetching categories:', error.message);
+    }
+  }
+  async function unlistCategory(categoryId) {
+    try {
+      const response = await fetch(`/admin/categories/${categoryId}/unlist`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }); 
+      if (response.ok) {
+        alert('Category unlisted successfully!');
+        fetchAndRenderCategories(); 
+      } else {
+        throw new Error('Failed to unlist the category.');
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+      alert(error.message);
+    }
+  }
+  window.onload = fetchAndRenderCategories;
+</script>
+
+
+<script>
+  document.getElementById('category-file-upload').addEventListener('change', function () {
+      const file = this.files[0];
+      const categoryImagePreviewContainer = document.getElementById('category-image-preview-container');
+      categoryImagePreviewContainer.innerHTML = ''; // Clear previous image
+  
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+              const imgElement = document.createElement('img');
+              imgElement.setAttribute('src', e.target.result);
+              imgElement.setAttribute('class', 'preview-category-image');
+              imgElement.setAttribute('alt', 'Category Image Preview');
+              categoryImagePreviewContainer.appendChild(imgElement);
+          };
+          reader.readAsDataURL(file);
+      }
+  });
+  </script>
       <%- include('../layouts/footer.ejs') %>

@@ -232,41 +232,129 @@
   
     <%- include('../users/layouts/footer.ejs') %>
      
-    <!-- prettier-ignore
+    <!-- prettier-ignore-->
  <script>
-  //  Address changing
-const selectAddressForm = document.querySelector('#selectAddressForm'); 
-if (user && user.address) {
-  selectAddressForm.addEventListener('change', (event) => {
-    const selectedIndex = event.target.value;
-    const selectedAddress = user.address[selectedIndex]; 
+  $(document).ready(function () {
+  $('#orderForm').submit(async function (event) {
+    event.preventDefault();
+    console.log("hello");
+    if (!validateCheckoutForm()) {
+      return;
+    }
 
-    const firstNameField = document.getElementById('first-name');
-    const lastNameField = document.getElementById('last-name');
-    const addressField = document.getElementById('address');  
-    const countryField = document.getElementById('country');
-    const cityField = document.getElementById('city');
-    const pincodeField = document.getElementById('pincode');
-    const emailField = document.getElementById('email');
-    const mobField = document.getElementById('mob');
+    const selectedPaymentMethod = $('input[name="paymentMethod"]:checked').val();
 
-    if (firstNameField && lastNameField && addressField && countryField && cityField && pincodeField && emailField && mobField) {
-      firstNameField.value = selectedAddress.firstName;
-      lastNameField.value = selectedAddress.lastName;
-      addressField.value = selectedAddress.address;
-      countryField.value = selectedAddress.country;
-      cityField.value = selectedAddress.city;
-      pincodeField.value = selectedAddress.pincode;
-      emailField.value = selectedAddress.email;
-      mobField.value = selectedAddress.phone;
-    } else {
-      console.error('One or more element IDs not found in the HTML.')
+    if (selectedPaymentMethod === "Razorpay") {
+      const response = await fetch('/payment');
+      const order = await response.json();
+      const options = {
+        key: "rzp_test_zjUM3EiMBvJ2Q1",
+        amount: order.amount,
+        name: 'Your Company Name',
+        description: 'Test Payment',
+        order_id: order.id,
+        handler: async function (response) { 
+          await $.ajax({
+            type: 'POST',
+            url: '/saveOrder', 
+            data: {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            },
+            success: function (paymentResponse) { 
+              $('#success_tic').modal('show');
+            },
+            error: function (xhr, status, error) { 
+              console.error('Error confirming payment:', error); 
+            },
+          });
+        },
+      };
+
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+
+    
+    } else if(selectedPaymentMethod === "Cash on delivery") { 
+        console.log('Selected payment method is not Razorpay'); 
+       
+          $.ajax({
+        type: 'POST',
+        url: '/saveOrder',
+        data: $(this).serialize(),
+        success: function (response) {
+          $('#success_tic').modal('show');
+        },
+        error: function (xhr, status, error) {
+          console.error('Error placing order:', error);
+          if (xhr.status === 400) {
+            console.log('Toast will be shown.');  
+            $('#toast').toast('show');
+          }
+        },
+      }); 
+      }
+    });
+        function displayError(fieldId, message) { 
+          const field = $('#' + fieldId);
+          const errorDiv = $('<div class="error-message"></div>').text(message).css('color', 'red');
+          const existingError = field.parent().find('.error-message');
+
+          if (existingError.length) {
+            existingError.remove();
+          }
+
+          field.parent().append(errorDiv);
+        }
+
+        function validateCheckoutForm() {
+          const requiredFields = [
+            'first-nem',
+            'last-nam',
+            'addres',
+            'country',
+            'city',
+            'pincode',
+            'email',
+            'mob',
+          ]; 
+          let isValid = true; 
+          requiredFields.forEach(function (fieldId) {
+            const fieldValue = $('#' + fieldId).val().trim(); 
+            if (fieldValue === '') {
+              displayError(fieldId, 'Please enter the required information.');
+              isValid = false;
+            } else {
+              $('#' + fieldId).parent().find('.error-message').remove();
+            }
+          }); 
+          const email = $('#email').val().trim();
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            displayError('email', 'Please enter a valid email address.');
+            isValid = false;
+          } 
+          const mobile = $('#mob').val().trim();
+          const mobileRegex = /^\d{10}$/;
+          if (!mobileRegex.test(mobile)) {
+            displayError('mob', 'Please enter a valid 10-digit mobile number.');
+            isValid = false;
+          } 
+          return isValid;
+        }
+        function validatePaymentMethod() {
+      const paymentMethod = $('input[name="paymentMethod"]:checked').val();
+      if (!paymentMethod) {
+        displayError('payment-error', 'Please choose a payment method.');
+        return false;
+      } else {
+        $('#payment-error').remove();
+        return true;
+      }
     }
   });
-} else {
-  console.error('user or user.address not defined.');
-}
- </script> -->
+</script>
  
     <%-include('../layouts/footer')%>
   </div>

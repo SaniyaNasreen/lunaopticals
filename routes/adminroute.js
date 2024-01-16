@@ -12,7 +12,7 @@ const upload = multer({ dest: "public/uploads" });
 // loading pages and admin verify
 admin_route.get("/indexhome", auth.isAdmin, admincontroller.loadIndex);
 admin_route.post("/salesdetails", auth.isAdmin, admincontroller.salesdetails);
-
+admin_route.get("/sales_report", auth.isAdmin, admincontroller.loadSalesReport);
 admin_route.get("/", admincontroller.loadLogin);
 admin_route.post("/login", admincontroller.adminLogin);
 admin_route.get("/logout", auth.isAdmin, admincontroller.adminLogout);

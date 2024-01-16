@@ -321,6 +321,34 @@
   </div>
 </footer>
 
+
+<script>
+  document.querySelectorAll('.remove-item-btn').forEach(button => {
+    button.addEventListener('click', async (event) => { 
+      const productId = event.target.dataset.productId;
+          console.log(productId);
+      try {
+        const response = await fetch('http://localhost:4000/remove-from-cart', {
+          method: 'POST',
+          headers: {   
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+          body: JSON.stringify({ productId: productId })
+        }); 
+        if (response.ok) { 
+          event.target.parentElement.parentElement.remove();  
+        } else {
+          const errorData = await response.json();
+          console.error('Error:', errorData.message); 
+        }
+      } catch (error) {
+        console.error('Error:', error); 
+      }
+    });
+  });
+</script>
+
 <!-- Footer Area Ends -->
 
 <%-include('../layouts/footer')%>

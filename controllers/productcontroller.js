@@ -89,12 +89,12 @@ const addProduct = async (req, res, next) => {
           "public/uploads",
           `cropped_${file.filename}`
         );
-
+        console.log("startedcropping");
         const cropPromise = new Promise((resolve, reject) => {
           cropToSquare(filePath, outputCroppedPath, 600, 600);
           resolve();
         });
-
+        console.log("cropped");
         filePromises.push(cropPromise);
 
         const fileUrl = `http://localhost:4000/public/uploads/cropped_${file.filename}`;

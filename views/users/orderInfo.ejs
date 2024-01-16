@@ -182,3 +182,31 @@
       });
     });
     </script>
+
+    
+<script>
+  document.querySelectorAll('.cancel-item-btn').forEach(button => {
+    button.addEventListener('click', async (event) => { 
+      const _id = event.target.dataset._id;
+         console.log(_id);
+      try {
+        const response = await fetch('http://localhost:4000/cancel-order', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+          body: JSON.stringify({ _id: _id})
+        }); 
+        if (response.ok) { 
+          event.target.parentElement.parentElement.cancel();  
+        } else {
+          const errorData = await response.json();
+          console.error('Error:', errorData.message); 
+        }
+      } catch (error) {
+        console.error('Error:', error); 
+      }
+    });
+  });
+</script>

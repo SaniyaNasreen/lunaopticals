@@ -574,4 +574,59 @@
       imagePreviewContainer.innerHTML = '';  
   }
 </script>
-<%- include('../layouts/footer.ejs') %>
+
+
+<script defer>
+  document.getElementById('file-upload').addEventListener('change', function () {
+      const files = this.files;
+      const imagePreviewContainer = document.getElementById('image-preview-container');
+      console.log(imagePreviewContainer);
+      imagePreviewContainer.innerHTML = ''; // Clear previous images
+  console.log(files);
+  
+      for (let i = 0; i < files.length; i++) {
+        console.log("hello" ,i);
+          const file = files[i];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                  const imgElement = document.createElement('img');
+                  imgElement.setAttribute('src', e.target.result);
+                  imgElement.setAttribute('class', 'preview-image');
+                  imgElement.setAttribute('alt', 'Image Preview');
+                  imagePreviewContainer.appendChild(imgElement);
+              }
+              reader.readAsDataURL(file);
+          }
+      }
+  });
+  </script>
+
+<script> 
+  function previewImages(event) {
+    const files = event.target.files;
+    const newlyAddedImagesContainer = document.querySelector('.newly-added-images');
+    newlyAddedImagesContainer.innerHTML = ''; 
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      const imageContainer = document.createElement('div');
+      const imageElement = document.createElement('img');
+      const deleteLabel = document.createElement('label');
+      const deleteCheckbox = document.createElement('input'); 
+      reader.onload = function (e) {
+        imageElement.src = e.target.result;
+      }; 
+      reader.readAsDataURL(files[i]); 
+      deleteLabel.textContent = 'Delete Image';
+      deleteCheckbox.type = 'checkbox';
+      deleteCheckbox.name = 'deleteImages'; 
+      deleteCheckbox.value = i;  
+      imageContainer.classList.add('existing-image');
+      imageContainer.appendChild(imageElement);
+      imageContainer.appendChild(deleteLabel);
+      imageContainer.appendChild(deleteCheckbox); 
+      newlyAddedImagesContainer.appendChild(imageContainer);
+    }
+  }
+</script>
+ 

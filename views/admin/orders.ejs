@@ -104,6 +104,9 @@ height: 100vh;">
               <div class="nk-tb-col tb-col-md">
                 <span>Purchased</span>
               </div>
+              <div class="nk-tb-col tb-col-md">
+                <span>Qty</span>
+              </div>
               <div class="nk-tb-col"><span>Total</span></div>
               <div class="nk-tb-col nk-tb-col-tools">
                 <ul class="nk-tb-actions gx-1 my-n1">
@@ -178,7 +181,7 @@ height: 100vh;">
                     <div class="nk-tb-col tb-col-md">
                       <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
                         <% order.purchasedItems.forEach((item) => { %>
-                          <span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;"><%- item.product && item.product.name ? item.product.name : 'Product Name Not Available' %></span>
+                          <span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;"><%- item.product.name && item.product.name  ? item.product.name  : 'Product Name Not Available' %></span>
                           
                         <% }); %>
                       <% } else { %>
@@ -188,7 +191,7 @@ height: 100vh;">
                     <div class="nk-tb-col tb-col-md">
                       <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
                         <% order.purchasedItems.forEach((item) => { %>
-                          <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%-  item.product.quantity ? item.product.quantity : 'Product quantity Not Available' %></span>
+                          <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%-  item.quantity ? item.quantity : 'Product quantity Not Available' %></span>
                         <% }); %>
                       <% } else { %>
                         <span class="tb-sub">No purchased items</span>

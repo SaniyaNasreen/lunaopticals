@@ -3,7 +3,6 @@ const multer = require("multer");
 const sharp = require("sharp");
 const fs = require("fs");
 
-// File type map for validating uploaded images
 const FILE_TYPE_MAP = {
   "image/png": "png",
   "image/jpeg": "jpeg",
@@ -11,7 +10,6 @@ const FILE_TYPE_MAP = {
   "image/webp": "webp",
 };
 
-// Multer storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/uploads");
@@ -28,7 +26,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Add console logs to check the mimetype of the uploaded file
 const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
@@ -45,28 +42,35 @@ const upload = multer({
     }
   },
 });
-
 function cropToSquare(filePath, outputPath, width, height) {
-  sharp(filePath)
-    .resize({
-      width: width,
-      height: height,
-      fit: "cover",
-      position: "center",
-    })
-    .toFormat("webp")
-    .toBuffer((err, buffer) => {
-      if (err) {
-        console.error("Error occurred while cropping the image:", err);
-      } else {
-        fs.writeFile(outputPath, buffer, (writeErr) => {
-          if (writeErr) {
-            console.error("Error writing cropped image:", writeErr);
-          } else {
-            console.log("Image cropped successfully and saved as:", outputPath);
-          }
-        });
-      }
-    });
+  return new Promise((resolve, reject) => {
+    sharp(filePath)
+      .resize({
+        width: width,
+        height: height,
+        fit: "cover",
+        position: "center",
+      })
+      .toFormat("webp")
+      .toBuffer((err, buffer) => {
+        if (err) {
+          console.error("Error occurred while cropping the image:", err);
+          reject(err);
+        } else {
+          fs.writeFile(outputPath, buffer, (writeErr) => {
+            if (writeErr) {
+              console.error("Error writing cropped image:", writeErr);
+              reject(writeErr);
+            } else {
+              console.log(
+                "Image cropped successfully and saved as:",
+                outputPath
+              );
+              resolve();
+            }
+          });
+        }
+      });
+  });
 }
 module.exports = { upload, cropToSquare };
