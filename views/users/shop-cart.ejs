@@ -154,7 +154,7 @@
                       
                       <td>
                         <div class="cart-button">
-                          <form action="/update-cart" method="POST" class="quantity-form">
+                          <form action="/update-cart" method="POST" class="quantity-form" onsubmit="updateCart(event)">
                             <input type="hidden" name="product_id" value="<%= item.product._id %>">
                             <div class="quantity-controls">
                               <button type="submit" name="updateQuantity" value="decrease">-</button>
@@ -348,6 +348,40 @@
     });
   });
 </script>
+<script>
+function updateCart(event) {
+  console.log("hello");
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const productId = form.querySelector('input[name="product_id"]').value;
+  const updateQuantity = event.submitter.value;
+
+  fetch('/update-cart', {
+    method: 'POST',
+    body: JSON.stringify({ product_id: productId, updateQuantity }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.insufficientStock) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Insufficient Stock',
+          text: 'There is not enough stock for this item',
+        });
+      } else {
+        const updatedQuantity = data.updatedQuantity;
+form.querySelector('input[name="quantity"]').value = updatedQuantity;
+      }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+  </script>
 
 <!-- Footer Area Ends -->
 

@@ -579,14 +579,12 @@ const loadSingleProduct = async (req, res, next) => {
 };
 
 const searchProduct = async (req, res, next) => {
-  console.log("hey");
   try {
     let isUserLoggedIn = false;
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
     const searchquery = req.query.search || "";
-    console.log(searchquery);
     const filterByCategory = req.query.category || "";
     let sortOption = {};
     const sortQuery = req.query.sort;
@@ -751,7 +749,6 @@ const updateCart = async (req, res, next) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
-    console.log("hello cart", user.cart);
 
     const productInCart = user.cart.find(
       (item) => item.product.toString() === product_id
@@ -773,15 +770,20 @@ const updateCart = async (req, res, next) => {
         productInCart.quantity = newQuantity;
         await user.save();
       } else {
-        // SweetAlert for insufficient stock
-        return res.status(400).send("Insufficient stock for this item");
+        return res.status(400).json({
+          success: false,
+          message: "Insufficient stock for this item",
+          insufficientStock: true,
+        });
       }
     } else if (updateQuantity === "decrease" && newQuantity > 1) {
       newQuantity--;
       productInCart.quantity = newQuantity;
       await user.save();
     } else {
-      return res.status(400).send("Invalid quantity update");
+      return res
+        .status(400)
+        .json({ status: "error", message: "Invalid quantity update" });
     }
 
     {
@@ -904,7 +906,6 @@ const updateUser = async (req, res, next) => {
     if (req.body.changePassword && req.body.changePassword.trim() !== "") {
       user.password = req.body.changePassword;
     }
-    console.log("Request Body:", req.body);
 
     // Validate if user input meets required criteria
     const validationResult = user.validateSync();
@@ -944,10 +945,8 @@ const loadAddAddress = async (req, res, next) => {
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
-
     const userId = req.user._id;
     const user = await User.findById(userId);
-
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
@@ -983,26 +982,17 @@ const addAddress = async (req, res, next) => {
       pincode,
       mobile,
     };
-
     const user = await User.findById(userId);
-
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
-
     user.address.push(newAddress);
     await user.save();
-
-    console.log("Address added successfully:", newAddress);
     res.redirect("/address"); // Redirect to the address page or wherever appropriate
   } catch (error) {
     next(error);
   }
-};
-
-module.exports = {
-  addAddress,
 };
 
 const loadEditAddress = async (req, res, next) => {
@@ -1011,14 +1001,12 @@ const loadEditAddress = async (req, res, next) => {
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
-
     if (!req?.user?._id) {
       console.error("User ID not found");
       return res.status(404).send("User ID not found");
     }
     const userId = req.user._id;
     const user = await User.findById(userId);
-    console.log(user);
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
@@ -1043,7 +1031,6 @@ const updateAddress = async (req, res, next) => {
       pincode,
       mobile,
     } = req.body;
-
     const updatedAddress = {
       firstname,
       lastname,
@@ -1054,30 +1041,23 @@ const updateAddress = async (req, res, next) => {
       pincode,
       mobile,
     };
-
     const user = await User.findById(userId);
-
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
-
     let addressFound = false;
-
     for (let i = 0; i < user.address.length; i++) {
       if (user.address[i]._id == req.params.addressId) {
-        // Update the found address directly
         Object.assign(user.address[i], updatedAddress);
         addressFound = true;
         break;
       }
     }
-
     if (!addressFound) {
       console.error("Address not found");
       return res.status(404).send("Address not found");
     }
-
     await user.save();
     console.log("Address updated successfully:", updatedAddress);
     res.redirect("/address");
@@ -1093,16 +1073,13 @@ const orderInfo = async (req, res, next) => {
       console.error("User ID not found in the request");
       return res.status(404).send("User ID not found");
     }
-
     const orders = await Order.find({ user: userId }).populate(
       "purchasedItems.product"
     );
-
     if (!orders) {
       console.error("Order not found");
       return res.status(404).send("Order not found");
     }
-
     res.render("users/order", {
       isUserLoggedIn,
       user: req.user,
@@ -1114,21 +1091,17 @@ const generateOrderNumber = function () {
   return Math.floor(Math.random() * 1000000);
 };
 const saveOrder = async (req, res, next) => {
-  console.log("hello");
   try {
     let isUserLoggedIn = !!req.session.user_id;
-
     const userId = req.user._id;
     const user = await User.findById(userId).populate({
       path: "cart.product",
       model: "Product",
     });
-
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
-
     const cartItems = user.cart;
 
     if (!cartItems || cartItems.length === 0) {
@@ -1137,7 +1110,6 @@ const saveOrder = async (req, res, next) => {
     const insufficientStockItems = cartItems.filter(
       (cartItem) => cartItem.product.countInStock < cartItem.quantity
     );
-
     if (insufficientStockItems.length > 0) {
       console.log("out of stock");
       return res.status(400).send("Insufficient stock for some items");
@@ -1160,7 +1132,6 @@ const saveOrder = async (req, res, next) => {
     let totalAmount = 0;
     let discountAmount = 0;
     const couponDetails = await Coupon.findOne({ code: couponCode });
-
     if (couponDetails) {
       const discountPercentage = couponDetails.discount
         ? parseFloat(couponDetails.discount) / 100
@@ -1174,7 +1145,6 @@ const saveOrder = async (req, res, next) => {
     for (const cartItem of cartItems) {
       totalAmount += cartItem.price * cartItem.quantity;
     }
-
     let updatedSubtotal = 0;
     for (const cartItem of updatedUser.cart) {
       updatedSubtotal += cartItem.product.price * cartItem.quantity;
@@ -1223,9 +1193,6 @@ const saveOrder = async (req, res, next) => {
         images,
       });
     }
-    // couponDetails.couponApplied = true;
-    // order.couponApplied = true;
-
     const orderInstance = new Order(newOrder);
     await orderInstance.save();
     if (couponDetails) {
