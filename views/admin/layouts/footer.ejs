@@ -7,15 +7,17 @@
         &copy; 2023 DashLite. Template by
         <a href="https://softnio.com/" target="_blank">Softnio</a>
       </div>
-      <% if ('products') { %>
+      <% if (section === 'products') { %>
       <!-- prettier-ignore -->
       <%- include('./pagination.ejs', { section: 'products'}) %>
-      <% } else if ('orders') { %>
+      <% } else if (section === 'orders') { %>
         <%- include('./pagination.ejs', { section: 'orders'}) %>
-        <% } else if ('categories') { %>
-          <%- include('./pagination.ejs', { section: 'categories'}) %>
-          <% } else if ('customers') { %>
-            <%- include('./pagination.ejs', { section: 'customers'}) %>
+      <% } else if (section === 'categories') { %>
+        <%- include('./pagination.ejs', { section: 'categories'}) %>
+      <% } else if (section === 'customers') { %>
+        <%- include('./pagination.ejs', { section: 'customers'}) %>
+        <% } else if (section === 'page') { %>
+          <%- include('./pagination.ejs', { section: 'sales_report'}) %>
       <% } %>
     </div>
   </div>

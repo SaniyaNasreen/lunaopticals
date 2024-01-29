@@ -47,9 +47,7 @@
                               
                                 <% if (orders && orders.length > 0) { %>
                                       <% orders.forEach(order => { %> 
-                                                  <button style="float: right; position: relative; bottom: 40px; font-weight: 500; width: 200px; height: 50px; color: rgb(250, 249, 249); font-size: 17px; background-color: blue; border-style: none;">
-                                                    <%= order.status %>
-                                                  </button> 
+                                                   
                                           <h4>View order details</h4>
                                           <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
                                               <p>Order Date: <%= order.date %></p>
@@ -70,17 +68,55 @@
                                               <!-- Payment Details (Assuming this applies to the entire order) -->
                                               <h4>Payment Details</h4>
                                               <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                  <p>Cash on delivery</p>
+                                                  <p><%= order.payment.type %></p>
                                               </div>
                                   
                                               <!-- Ordered Items -->
                                               <h4>Ordered</h4>
                                               <% order.purchasedItems.forEach(item => { %>
                                                   <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                      <p><%= item.product.name %></p>
+                                                    <img style="width: 100px; float: left;" src="<%= item.product.images[0] %>" alt="<%= item.product.name %> Image">
+                                                    <div style="position: relative; left: 30px;">
+                                                    <p><%= item.product.name %></p> 
                                                       <p><%= item.price %></p>
                                                       <p>Qty: <%= item.quantity %></p>
-                                                      
+                                                    </div> 
+                                                  </div>
+                                                  <div class="cancel">
+                                                    <% const currentDate = new Date(); %>
+                                                    <% const orderDate = new Date(order.date); %>
+                                                    <% const timeDifference = currentDate.getTime() - orderDate.getTime(); %>
+                                                    <% const daysDifference = timeDifference / (1000 * 3600 * 24); %>
+                                                  
+                                                    <% if (item.status === 'Processing') { %>
+                                                      <% if (daysDifference <= 7) { %>
+                                                        <form id="cancelOrderForm"  action="/users/orderInfo/cancel-order/<%= order._id %>/<%= item._id %>" method="POST">
+                                                          <button type="button" id="cancelButton" class="cancelbutton" style="background-color: red; border-style: none; color: white;">
+                                                            Cancel Item
+                                                          </button>
+                                                        </form>
+                                                        
+                                                        
+                                                      <% } else { %>
+                                                        <!-- Show a disabled button if the order date is above 7 days -->
+                                                        <button type="button" class="cancelbutton" style="background-color: lightgrey; border-style: none; color: black;" disabled>
+                                                          Cannot Cancel (Order older than 7 days)
+                                                        </button>
+                                                      <% } %>
+                                                    <% } else if (item.status === 'Delivered') { %> 
+                                                
+                                                      <!-- Show a disabled button if the order status is 'Delivered' -->
+                                                      <button type="button" class="cancelbutton" style="background-color:rgb(22, 152, 22); border-style: none; color: rgb(253, 251, 251);" disabled>
+                                                        Item Delivered
+                                                      </button> 
+                                                      <% if (daysDifference <= 7) { %>
+                                                        <form id="returnOrderForm"  action="/users/orderInfo/return-order/<%= order._id %>/<%= item._id %>" method="POST">
+                                                          <button type="button" id="returnButton" class="returnbutton" style="background-color: red; border-style: none; color: white;">
+                                                            Return
+                                                          </button>
+                                                        </form>
+                                                    <% } %>
+                                                    <% } %>
                                                   </div>
                                               <% }) %>
                                               <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
@@ -100,32 +136,7 @@
                                                   </div>
                                                 </div>        
                                               </div>
-                                              <div class="cancel">
-                                                <% const currentDate = new Date(); %>
-                                                <% const orderDate = new Date(order.date); %>
-                                                <% const timeDifference = currentDate.getTime() - orderDate.getTime(); %>
-                                                <% const daysDifference = timeDifference / (1000 * 3600 * 24); %>
-                                              
-                                                <% if (order.status === 'Processing') { %>
-                                                  <% if (daysDifference <= 7) { %>
-                                                    <form id="cancelOrderForm" action="/users/orderInfo/cancel-order/<%= order._id %>" method="POST">
-                                                      <button type="button" id="cancelButton" class="cancelbutton" style="background-color: red; border-style: none; color: white;">
-                                                        Cancel Order
-                                                      </button>
-                                                    </form>
-                                                  <% } else { %>
-                                                    <!-- Show a disabled button if the order date is above 7 days -->
-                                                    <button type="button" class="cancelbutton" style="background-color: lightgrey; border-style: none; color: black;" disabled>
-                                                      Cannot Cancel (Order older than 7 days)
-                                                    </button>
-                                                  <% } %>
-                                                <% } else if (order.status === 'Delivered') { %>
-                                                  <!-- Show a disabled button if the order status is 'Delivered' -->
-                                                  <button type="button" class="cancelbutton" style="background-color:rgb(22, 152, 22); border-style: none; color: rgb(253, 251, 251);" disabled>
-                                                    Order Delivered
-                                                  </button>
-                                                <% } %>
-                                              </div>
+                                            
                                                 
                                       <% }) %>
                                   <% } else { %>
@@ -182,6 +193,30 @@
       });
     });
     </script>
+     <script>
+      document.getElementById('returnButton').addEventListener('click', function() {
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You will not be able to recover this order!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Yes, return it!",
+          cancelButtonText: "No, keep it"
+        }).then((result) => {
+          if (result.isConfirmed) {
+           
+            // If user confirms, submit the form
+            document.getElementById('returnOrderForm').submit(); 
+   
+          } else {
+            // If user cancels, do nothing or provide feedback
+            Swal.fire("Cancel", "Your order is safe :)", "info");
+          }
+        });
+      });
+      </script>
 
     
 <script>

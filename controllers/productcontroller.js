@@ -5,7 +5,10 @@ const { upload, cropToSquare } = require("../utils/multer");
 const loadProducts = async (req, res) => {
   try {
     const categories = await Category.find();
-    const products = await Product.find().populate("category");
+    const products = await Product.find().populate({
+      path: "category",
+      select: "name",
+    });
     let sortOption = {};
     const sortQuery = req.query.sort;
     if (sortQuery === "price_asc") {
@@ -16,7 +19,7 @@ const loadProducts = async (req, res) => {
       sortOption = { createdAt: -1 };
     }
     const totalProducts = await Product.countDocuments();
-    const sortedProducts = await Product.find().sort(sortOption).lean().exec();
+    const sortedProducts = await Product.find().sort(sortOption).exec();
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 8;
     const startIndex = (page - 1) * limit;
@@ -28,7 +31,7 @@ const loadProducts = async (req, res) => {
     const selectedSort = sortQuery;
 
     return res.render("admin/products", {
-      products,
+      section: "products",
       categories,
       selectedSort,
       currentPage,

@@ -6,6 +6,35 @@
  <div id="scrollToTop" class="scrollTop" >
     <i class="las la-arrow-up"></i>
   </div>
+  <div id="close-button" class="position-absolute">
+    <button class="bg-transparent">X</button>
+  </div>
+ 
+  <% 
+  var lastOffer = offers.length > 0 ? offers[offers.length - 1] : null;
+  if (lastOffer && lastOffer.status === "Active") { 
+%>
+    <div id="autopopup-option" class="auto_popup position-fixed pt-100 pb-115">
+      <div id="close-button" class="position-absolute">
+        <button class="bg-transparent" onclick="closeModal()">X</button>
+      </div>
+      <h3 class="pb-15"><%= lastOffer.name %></h3>
+      <p><%= lastOffer.description %></p>
+      <a style="position: relative; left: 270px;" href="/offers">View Offers</a>
+      <div class="checkbox text-center pt-35 position-relative">
+        <label for="checkbox">
+          <input type="checkbox" id="checkbox">Don’t show this popup again
+        </label>
+      </div>
+    </div>
+<% } %>
+
+<script>
+  function closeModal() {
+    var modal = document.getElementById('autopopup-option');
+    modal.style.display = 'none';
+  }
+</script>
 
    <!-- popup  -->
   <div id="blockedPopup" class="popup">
@@ -13,8 +42,7 @@
     <div class="popup-content">
       <p>Your account has been blocked due to some reasons.</p>
     </div>
-  </div>
-
+  </div> 
   <!-- header area starts -->
   <header>
     <div class="header-1 pt-35">
@@ -107,7 +135,7 @@
   <div class="slider-spacer" style="height: 50px; margin-bottom: 150px;"></div>
   <!-- slider area starts -->
    
-    <% products.forEach(product => { %>
+  <% products.slice(0, 3).forEach(product => { %>
       <div class="single-slide slider-height position-relative">
         <div class="container">
           <div class="row">

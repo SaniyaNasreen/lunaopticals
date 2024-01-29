@@ -1,0 +1,85 @@
+<%- include('../users/layouts/navbar.ejs') %>
+
+<div class="page-title-area pt-150 pb-55">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="page-titel-detalis">
+          <div class="section-title">
+            <h2>User Profile</h2>
+          </div>
+          <div class="page-bc">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+               
+                <li
+                  class="breadcrumb-item position-relative active"
+                  aria-current="page"
+                >
+                  <a href="/edituser">profile</a>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="shop-grid-s pt-120" style="background-color: white; height:auto">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="d-flex">
+            <div class="col-xl-3 col-lg-4 col-md-12">
+              <div class="sidebar">
+                <!-- Include sidebar content -->
+                <%- include('../users/layouts/sidebar.ejs') %>
+              </div>
+            </div>
+            <div class="col-xl-9 col-lg-8 col-md-12">
+                <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
+                  <div style="margin-bottom: 20px;">
+                    <div style="padding: 10px; width: 990px;">
+                      <% if (wallets && wallets.length > 0) { %>
+                        <div  >
+                            <h5>Total Balance:<%= wallets.amount %></h5>
+                        </div>
+                        <% wallets.forEach(wallet => { %> 
+                          <div style="position: relative; top: 100px; border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold; overflow: hidden;">
+                            <div style="width: 50%; float: left;"> 
+                                <p style="font-weight: bold; color: black; font-size: 14px;">Amount through: <%= wallet.method ? wallet.method : '' %></p>
+                              </div>
+                            <div style="width: 50%; float: right;">
+                              <p style="font-weight: bold; color: black; font-size: 14px;">Amount: <%= wallet.amount ? wallet.amount : '' %></p> 
+                            </div>
+                            <div style="width: 50%; float: right; position: relative; left: 200px; bottom: 30px;">
+                              <p style="font-weight: bold; color: black; font-size: 14px;">Date: <%= wallet.date instanceof Date ? wallet.date.toDateString() : '' %></p>
+                            </div>
+                          </div>
+                        <% }) %>
+                      <% } else { %>
+                        <p>No orders found</p>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <%- include('../users/layouts/footer.ejs') %>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+   
+
+ 
+  

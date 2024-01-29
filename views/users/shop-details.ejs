@@ -178,9 +178,22 @@
               <li><i class="las la-star"></i></li>
             </ul>
             <span>03 Customer Review</span>
+            
             <div class="price pt-15 pb-10">
-              <span>₹<%= product.price %></span>
+              <span>   ₹<%= product.price.toFixed(2) %></span>
             </div>
+            
+            <% if (hasOffer) { %> 
+              
+              <div class="price pt-15 pb-10"> 
+                <span class="final-price">  ₹<%= (product.price - discountAmount).toFixed(2) %></span>
+              </div>
+            <% } else { %>
+              <div class="price pt-15 pb-10"> 
+                <span class="final-price">  ₹<%= product.price.toFixed(2) %></span>
+              </div>
+            <% } %>
+            
             <p class="pr-110">
               <%= product.richDescription %>
             </p>

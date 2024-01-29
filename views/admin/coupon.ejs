@@ -24,11 +24,12 @@
                     data-target="addProduct"
                     class="toggle btn btn-icon btn-primary d-md-none"
                     ><em class="icon ni ni-plus"></em></a
-                  ><a href="#" data-bs-toggle="modal" data-bs-target="#addCouponModal" class="toggle btn btn-primary d-none d-md-inline-flex">
+                  >
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#addCouponModal" class="toggle btn btn-primary d-none d-md-inline-flex">
                     <em class="icon ni ni-plus"></em>
                     <span>Add Coupon</span>
                 </a>
-
+                
 
                 <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
@@ -274,6 +275,8 @@
   </div>  
  </div>
  </div>
+
+ 
  <script>
   const form = document.getElementById('addCouponForm');
 
@@ -374,3 +377,6 @@ function submitForm() {
   });
 
 </script>
+
+
+<%- include('../admin/layouts/footer.ejs')%>

@@ -356,7 +356,8 @@ const loadSalesReport = async (req, res, next) => {
     const endDate = req.query.endDate;
 
     if (startDate && endDate) {
-      query.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
+      const endOfDay = new Date(endDate + "T23:59:59.999Z");
+      query.date = { $gte: new Date(startDate), $lte: endOfDay };
     }
 
     const sortOption = getSortOption(req.query.sort);
@@ -369,6 +370,7 @@ const loadSalesReport = async (req, res, next) => {
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedOrders = sortedOrders.slice(startIndex, endIndex);
+
     const totalPages = Math.ceil(totalOrders / limit);
     const currentPage = page;
     const selectedSort = req.query.sort;
@@ -381,6 +383,8 @@ const loadSalesReport = async (req, res, next) => {
       totalItems: totalOrders,
       limit,
       req,
+      section: "page",
+      download: false,
     });
   } catch (error) {
     next(error);
@@ -432,14 +436,13 @@ const loadCustomer = async (req, res, next) => {
     const selectedSort = sortQuery;
     return res.render("admin/customers", {
       users: users,
+      section: "users",
       selectedSort,
       currentPage,
       totalPages,
       totalItems: totalUser,
       users: paginatedUser,
       limit,
-      startDate: startDate.toISOString().split("T")[0],
-      endDate: endDate.toISOString().split("T")[0],
     });
   } catch (error) {
     next(error);

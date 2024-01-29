@@ -2,12 +2,15 @@ const User = require("../models/usermodel");
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const Order = require("../models/ordermodel");
+const Wallet = require("../models/walletmodel");
 const Coupon = require("../models/couponmodel");
+const Offer = require("../models/offermodel");
 const config = require("../config/config");
 const nodemailer = require("nodemailer");
 const randomstring = require("randomstring");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 
 const securePassword = async (password) => {
   try {
@@ -49,6 +52,19 @@ const sendVerifyMail = async (name, email, user_id) => {
     next(error);
   }
 };
+
+function generateReferralCode() {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const codeLength = 6;
+
+  let referralCode = "";
+  for (let i = 0; i < codeLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    referralCode += characters.charAt(randomIndex);
+  }
+
+  return referralCode;
+}
 
 const loadRegister = async (req, res) => {
   try {
@@ -94,7 +110,7 @@ const insertUser = async (req, res, next) => {
         errorMessage: "Email and Mobile already exist together",
       });
     }
-
+    const userReferral = req.body.userReferral;
     const spassword = await securePassword(req.body.password);
     const user = new User({
       name: req.body.name,
@@ -103,9 +119,25 @@ const insertUser = async (req, res, next) => {
       password: spassword,
       cpassword: spassword,
       country: req.body.country,
+      referralCode: generateReferralCode(),
       is_admin: 0,
     });
+    const referredByUser = await User.findOne({ referralCode: userReferral });
 
+    if (referredByUser) {
+      const walletAmount = 100;
+
+      const walletDate = Date.now();
+      const walletEntry = new Wallet({
+        user: referredByUser,
+        amount: walletAmount,
+        date: walletDate,
+        method: "Referral",
+      });
+      await walletEntry.save();
+      referredByUser.wallets.push(walletEntry._id);
+      await referredByUser.save();
+    }
     const userData = await user.save();
     if (!userData) {
       res.render("/registration", {
@@ -113,7 +145,20 @@ const insertUser = async (req, res, next) => {
         message: "Your registration has been failed",
       });
     }
+    const oneDayFromNow = new Date();
+    oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
 
+    const newOffer = new Offer({
+      name: "New User Offer",
+      description: "Get 20% off on your first purchase!",
+      status: "Active",
+      discount: 20,
+      validity: oneDayFromNow,
+      category: req.body.category,
+      product: req.body.product,
+      referral: userData._id,
+    });
+    await newOffer.save();
     sendVerifyMail(req.body.name, req.body.email, userData._id);
     res.render("users/login", {
       message:
@@ -450,9 +495,17 @@ const userLogout = async (req, res, next) => {
 const loadIndex = async (req, res, next) => {
   try {
     if (!req.session.user_id) {
+      const userId = req.session.user_id;
       const categories = await Category.find({ listed: true }).limit(2);
       const products = await Product.find({ listed: true });
-
+      const offers = await Offer.find({
+        $or: [{ referral: null }, { referral: userId }],
+      })
+        .populate("category")
+        .populate("product")
+        .populate("referral")
+        .exec();
+      console.log(offers);
       let isUserLoggedIn = false;
       if (req?.session?.user_id) {
         isUserLoggedIn = true;
@@ -461,12 +514,24 @@ const loadIndex = async (req, res, next) => {
       res.render("users/indexhome", {
         categories,
         products,
+        offers,
         is_blocked: false,
         isUserLoggedIn,
       });
     } else if (req.session.user_id) {
+      const userId = req.session.user_id;
       const categories = await Category.find({ listed: true }).limit(2);
       const products = await Product.find({ listed: true });
+      const offers = await Offer.find({
+        $or: [
+          { referral: null }, // Include offers with null referral
+          { referral: userId }, // Include offers with matching referral ID
+        ],
+      })
+        .populate("category")
+        .populate("product")
+        .populate("referral")
+        .exec();
       let isUserLoggedIn = false;
       if (req?.session?.user_id) {
         isUserLoggedIn = true;
@@ -475,9 +540,21 @@ const loadIndex = async (req, res, next) => {
       const userData = await User.findOne({ _id: email });
       if (userData) {
         if (userData.is_blocked === false) {
+          const userId = req.session.user_id;
+          const offers = await Offer.find({
+            $or: [
+              { referral: null }, // Include offers with null referral
+              { referral: userId }, // Include offers with matching referral ID
+            ],
+          })
+            .populate("category")
+            .populate("product")
+            .populate("referral")
+            .exec();
           res.render("users/indexhome", {
             categories,
             products,
+            offers,
             is_blocked: false,
             isUserLoggedIn,
           });
@@ -571,8 +648,42 @@ const loadSingleProduct = async (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
+    const userId = req?.session?.user_id;
+    const offer = await Offer.findOne({
+      $or: [
+        {
+          category: product.category,
+          status: "Active",
+          validity: { $gte: new Date() },
+        },
+        {
+          product: productId,
+          status: "Active",
+          validity: { $gte: new Date() },
+        },
+        { referral: userId, status: "Active", validity: { $gte: new Date() } },
+      ],
+    }).populate("category", "referral", "product");
+    console.log("Product Category:", product.category);
+    console.log("Found Offer:", offer);
 
-    return res.render("users/shop-details", { product, isUserLoggedIn });
+    let discountAmount = 0;
+
+    if (offer) {
+      if (offer.referral && req?.session?.userId == offer.referral.toString()) {
+        discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+      } else {
+        discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+      }
+    }
+
+    return res.render("users/shop-details", {
+      product,
+      isUserLoggedIn,
+      hasOffer: discountAmount > 0,
+      offer,
+      discountAmount,
+    });
   } catch (error) {
     next(error);
   }
@@ -712,6 +823,26 @@ const loginCart = async (req, res, next) => {
       });
       return;
     }
+
+    // Check for active offers for each product category in the cart
+    for (const cartItem of user.cart) {
+      const product = cartItem.product;
+      const activeOffer = await Offer.findOne({
+        category: product.category,
+        status: "Active",
+        validity: { $gte: new Date() },
+      });
+
+      if (activeOffer) {
+        const offerPercentage = activeOffer.discount;
+        const offerAmount = (offerPercentage / 100) * product.price;
+        const discountedPrice = product.price - offerAmount;
+
+        // Update the product price in the cart with the discounted price
+        cartItem.product.price = discountedPrice;
+      }
+    }
+
     res.render("users/shop-cart", {
       user,
       isUserLoggedIn: true,
@@ -797,7 +928,9 @@ const updateCart = async (req, res, next) => {
 
 const loadCheckout = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).populate("cart.product");
+    const userId = req.session.user_id;
+    const user = await User.findById(userId).populate("cart.product");
+
     const isUserLoggedIn = !!req.session?.user_id;
 
     if (!user) {
@@ -819,9 +952,25 @@ const loadCheckout = async (req, res, next) => {
       );
     }
 
-    const order = await Order.findOne({ _id: user._id }); // Fetch existing order or create a new one
+    const cart = user.cart || [];
 
-    // Render the checkout page
+    for (const cartItem of cart) {
+      const product = cartItem.product;
+      const activeOffer = await Offer.findOne({
+        category: product.category,
+        status: "Active",
+        validity: { $gte: new Date() },
+      });
+
+      if (activeOffer) {
+        const offerPercentage = activeOffer.discount;
+        const offerAmount = (offerPercentage / 100) * product.price;
+        const discountedPrice = product.price - offerAmount;
+        product.discountedPrice = discountedPrice;
+      }
+    }
+
+    const order = await Order.findOne({ _id: user._id });
     return res.render("users/checkout", {
       user,
       userCart: user.cart,
@@ -831,12 +980,40 @@ const loadCheckout = async (req, res, next) => {
       categoryMatched,
       couponAlreadyApplied,
       req,
+      userAddresses: user.address,
+      selectedAddress: req.body.selectedAddress || user.address[0],
+      order,
     });
   } catch (error) {
     next(error);
   }
 };
 
+const fetchAddress = async (req, res, next) => {
+  console.log("fetched");
+  try {
+    const addressId = req.params.id;
+    console.log(addressId);
+    const user = await User.findById(req.session.user_id);
+    console.log(user);
+    const userAddress = user.address;
+
+    // Convert addressId to Mongoose ObjectId
+    const mongooseAddressId = new mongoose.Types.ObjectId(addressId);
+
+    const selectedAddress = userAddress.find((address) =>
+      address._id.equals(mongooseAddressId)
+    );
+    console.log("selectedAddress", selectedAddress);
+    if (!selectedAddress) {
+      return res.status(404).send("Address not found");
+    }
+
+    res.json(selectedAddress);
+  } catch (error) {
+    next(error);
+  }
+};
 const checkoutCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).populate("cart.product");
@@ -1073,9 +1250,9 @@ const orderInfo = async (req, res, next) => {
       console.error("User ID not found in the request");
       return res.status(404).send("User ID not found");
     }
-    const orders = await Order.find({ user: userId }).populate(
-      "purchasedItems.product"
-    );
+    const orders = await Order.find({ user: userId })
+      .populate("purchasedItems.product")
+      .sort({ date: -1 });
     if (!orders) {
       console.error("Order not found");
       return res.status(404).send("Order not found");
@@ -1210,26 +1387,47 @@ const removeOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
     const userId = req.user._id;
-    const user = await User.findOneAndUpdate(
-      { _id: userId, "order._id": orderId },
-      { $set: { "order.$.status": "cancelled" } },
-      { new: true }
-    );
     const cancelledOrder = await Order.findByIdAndUpdate(
       orderId,
-      { $set: { status: "cancelled" } },
-      { new: true }
+      { $set: { "purchasedItems.$[item].status": "cancelled" } },
+      { new: true, arrayFilters: [{ "item._id": req.params.itemId }] }
     ).populate("purchasedItems.product");
+    console.log("cancelled");
 
     if (Array.isArray(cancelledOrder.purchasedItems)) {
       for (const purchasedItem of cancelledOrder.purchasedItems) {
         const productId = purchasedItem.product._id;
         const quantity = purchasedItem.quantity;
+
         const updatedProduct = await Product.findById(productId);
+
         if (updatedProduct) {
           updatedProduct.countInStock += quantity;
           await updatedProduct.save();
         }
+      }
+    }
+    const user = await User.findById(userId);
+
+    if (user) {
+      const cancelledItem = cancelledOrder.purchasedItems.find(
+        (item) => item._id.toString() === req.params.itemId
+      );
+
+      if (cancelledItem) {
+        const walletAmount = cancelledItem.price * cancelledItem.quantity;
+        const walletDate = Date.now();
+        const walletProduct = cancelledItem.product;
+
+        const walletEntry = new Wallet({
+          user: user,
+          amount: walletAmount,
+          date: walletDate,
+          method: "Refund",
+        });
+        await walletEntry.save();
+        user.wallets = walletEntry._id;
+        await user.save();
       }
     }
     res.redirect("/order");
@@ -1239,6 +1437,67 @@ const removeOrder = async (req, res) => {
   }
 };
 
+const userWallet = async (req, res, next) => {
+  try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+
+    const userId = req.user._id;
+    const user = await User.findById(userId).populate({
+      path: "wallets",
+      model: "Wallet",
+    });
+    if (!user) {
+      console.error("User not found");
+      return res.status(404).send("User not found");
+    }
+    const wallets = user.wallets;
+    console.log("walleting", wallets);
+    res.render("users/wallet", {
+      wallets,
+      isUserLoggedIn,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const loadReferral = async (req, res, next) => {
+  try {
+    let isUserLoggedIn = false;
+    if (req?.session?.user_id) {
+      isUserLoggedIn = true;
+    }
+    const userId = req.user._id;
+    const users = await User.findById(userId);
+    const totalReferralWallets = await Wallet.aggregate([
+      {
+        $match: {
+          method: "Referral",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: 1,
+          },
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    res.render("users/referral", {
+      users,
+      isUserLoggedIn,
+      totalReferralWallets: totalReferralWallets,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   loadIndex,
   loadProductList,
@@ -1265,6 +1524,7 @@ module.exports = {
   updateCart,
   checkoutCart,
   loadCheckout,
+  fetchAddress,
   userProfile,
   updateUser,
   userAddress,
@@ -1275,4 +1535,6 @@ module.exports = {
   orderInfo,
   saveOrder,
   removeOrder,
+  userWallet,
+  loadReferral,
 };

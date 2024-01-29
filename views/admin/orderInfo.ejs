@@ -27,9 +27,7 @@
                       
                                 <div style="  background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
                                    
-                                                <button style="float: right; position: relative; bottom: 130px; font-weight: 500; width: 200px; height: 50px; color: rgb(250, 249, 249); font-size: 17px; background-color: blue; border-style: none;">
-                                                  <%= order.status %>
-                                                </button> 
+                                               
                                         <h4>View order details</h4>
                                         <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
                                             <p>Order Date: <%= order.date %></p>
@@ -59,10 +57,48 @@
                                                 <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
                                                     <p><%= item.product.name %></p>
                                                     <p><%= item.price %></p>
-                                                    <p>Qty: <%= item.quantity %></p>
+                                                    <p>Qty: <%= item.quantity %></p> 
                                                     
+                                                    <button style="border-radius: 20px; border-style: none; position: relative; left: 950px; bottom: 120px; background-color: blue; width: 110px; height: 40px;">
+                                                      <span class="tb-lead" style="color: white; font-size: 15px; " ><%- item.status %></span>
+                                                    </button>
+                                                    <% if (item.status !== 'cancelled'&& item.status !=='Returned'){ %>
+                                                   <ul> 
+                                                    <% if (item.status !== 'Processing') { %>
+                                                      <li>
+                                                        <a href="/admin/orderInfo/updateOrderStatus/<%= order._id.toString() %>/markProcessing/<%= item._id.toString() %>">
+
+                                                          <em class="icon ni ni-money"></em>
+                                                          <span>Mark as Processing</span>
+                                                        </a>
+                                                      </li> 
+                                                      <% } %>
+                                                      <% if (item.status === 'Processing') { %>
+                                                      <li>
+                                                        <a href="/admin/orderInfo/updateOrderStatus/<%= order._id.toString() %>/markShipped/<%= item._id.toString() %>">
+
+                                                          <em class="icon ni ni-money"></em>
+                                                          <span>Mark as Shipped</span>
+                                                        </a>
+                                                      </li>
+                                                      <% } %>
+                                                      <% if (item.status === 'Shipped') { %>
+                                                      <li>
+                                                        <a href="/admin/orderInfo/updateOrderStatus/<%= order._id.toString() %>/markDelivered/<%= item._id.toString() %>"> 
+                                                            <em class="icon ni ni-truck"></em>
+                                                            <span>Mark as Delivered</span>
+                                                          </a>
+                                                        </li>
+                                                        <% } %>
+                                                       
+                                                    
+                                                   </ul> 
+                                                   <% } %>
                                                 </div>
+                                                
+                                                  
                                             <% }) %>
+                                            
                                             <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
                                               <div class="modal-dialog">
                                                 <div class="modal-content">

@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const ejs = require("ejs");
 const session = require("express-session");
 const path = require("path");
 require("dotenv").config();
@@ -186,7 +187,134 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+app.get("/download-sales-report/:orderNumber", async (req, res) => {
+  try {
+    const orders = await Order.find({}).populate("user");
 
+    // Check if no orders were found
+    if (!orders || orders.length === 0) {
+      return res
+        .status(404)
+        .send("No orders found for the specified date range");
+    }
+
+    const htmlContent = `
+    <style>
+  .nk-tb-list {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .nk-tb-list th, .nk-tb-list td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+
+  .nk-tb-list th {
+    background-color: #f2f2f2;
+  }
+
+  .nk-tb-item {
+    background-color: #fff;
+  }
+</style>
+<h1>Sales Report</h1>
+    <table class="nk-tb-list">
+      <thead style=" font-size:14px;">
+        <tr>
+          
+          <th>Date</th>
+          <th>Order Number</th>
+          <th>Product Name</th>
+          <th>Product Price</th>
+          <th>Product Quantity</th>
+          <th>Total Amount</th> 
+        </tr>
+      </thead>
+      <tbody>
+
+        ${orders
+          .map(
+            (order) => `
+          <tr class="nk-tb-item">
+            
+            <td style=" font-size:10px;">${
+              order.date instanceof Date ? order.date.toDateString() : ""
+            }</td>
+            <td><span style="color: blue; font-weight: 500; font-size:10px;">#${
+              order.orderNumber
+            }</span></td>
+            <td>${
+              order.purchasedItems && order.purchasedItems.length > 0
+                ? order.purchasedItems
+                    .map(
+                      (item) =>
+                        `<span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;">${
+                          item.product
+                            ? item.product
+                            : "Product Name Not Available"
+                        }</span>`
+                    )
+                    .join("")
+                : '<span class="tb-sub">No purchased items</span>'
+            }</td>
+            <td>${
+              order.purchasedItems && order.purchasedItems.length > 0
+                ? order.purchasedItems
+                    .map(
+                      (item) =>
+                        `<span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;">${
+                          item.price
+                            ? item.price
+                            : "Product price Not Available"
+                        }</span>`
+                    )
+                    .join("")
+                : '<span class="tb-sub">No purchased items</span>'
+            }</td>
+            <td>${
+              order.purchasedItems && order.purchasedItems.length > 0
+                ? order.purchasedItems
+                    .map(
+                      (item) =>
+                        `<span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;">${
+                          item.quantity
+                            ? item.quantity
+                            : "Product quantity Not Available"
+                        }</span>`
+                    )
+                    .join("")
+                : '<span class="tb-sub">No purchased items</span>'
+            }</td>
+            <td><span class="tb-lead" style="font-size: 12px;">₹${
+              order.totalAmount
+            }</span></td>
+          
+          </tr>
+        `
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setContent(htmlContent);
+
+    const pdfBuffer = await page.pdf({ format: "A4" });
+    await browser.close();
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `inline; filename="sales_report.pdf"`);
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
 function checkEnvVariables() {
   const requiredEnvVariables = [
     "PORT",

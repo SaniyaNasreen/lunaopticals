@@ -34,6 +34,7 @@ const loadCategory = async (req, res, next) => {
       totalItems: totalCategory,
       categories: paginatedCategory,
       limit,
+      section: "categories",
     });
   } catch (error) {
     next(error);

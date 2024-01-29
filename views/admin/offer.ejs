@@ -1,0 +1,364 @@
+   <!-- prettier-ignore -->
+
+   <div class="nk-app-root">
+    <div class="nk-main">
+<%- include('../admin/layouts/sidebar.ejs') %>
+
+<%-include('../admin/layouts/navbar.ejs') %>
+
+<div class="nk-content">
+    <div class="container-fluid"  style="  width: 100%;
+    max-width: 1570px;  
+    box-sizing: border-box;
+    padding-left: 300px; padding-top: 60px; ">
+      <div class="nk-content-inner">
+        <div class="nk-content-body">
+          <div class="nk-block-head nk-block-head-sm">
+            <div class="nk-block-between">
+              <div class="nk-block-head-content">
+                <h3 class="nk-block-title page-title">Offers</h3>
+              </div> 
+              <li class="nk-block-tools-opt">
+                <a
+                  href="#"
+                  data-target="addProduct"
+                  class="toggle btn btn-icon btn-primary d-md-none"
+                  ><em class="icon ni ni-plus"></em></a
+                >
+                <a href="#" data-bs-toggle="modal" data-bs-target="#addCouponModal" class="toggle btn btn-primary d-none d-md-inline-flex">
+                  <em class="icon ni ni-plus"></em>
+                  <span>Add Offer</span>
+              </a>
+              
+
+              <div class="modal fade" id="addCouponModal" tabindex="-1" aria-labelledby="addCouponModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="adCouponModalLabel">Add Coupon</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form action="/admin/offer/add-offer" id="addProductForm" class="form1-addp needs-validation" method="post" novalidate>
+                            <div class="mb-3">
+                              <label for="category" class="form-label" style="color: rgb(109, 103, 103);">Name</label>
+                              <input type="text" class="form-control1-addp form-control" name="name" required>
+                              <div  id="errorContainer" class="invalid-feedback">  Name is required </div>
+                            </div> 
+                            <div class="mb-3">
+                              <label for="description" class="form-label" style="color: rgb(109, 103, 103);">Description</label>
+                              <input type="text" class="form-control1-addp form-control" name="description" required>
+                              <div  id="errorContainer" class="invalid-feedback">  Description is required </div>
+                            </div> 
+                                <div class="mb-3">
+                                  <label for="category" class="form-label" style="color: rgb(109, 103, 103);">Discount</label>
+                                  <input type="number" class="form-control1-addp form-control" name="discount" min="0" max="100" required>
+                                  <div id="errorContainer" class="invalid-feedback"> Discount is required. </div>
+                                </div>
+                              
+                                <div class="mb-3">
+                                  <label for="category" class="form-label" style="color: rgb(109, 103, 103);">Status</label>
+                                  <select class="form-control1-editp form-control" name="status" style="width: 430px;" required>
+                                    <option value="" disabled selected>Select status</option>
+                                    <option value="Active">Active</option>
+                                    <option value="In Active">In Active</option>
+                                  </select>
+                                  <div id="errorContainer" class="invalid-feedback"> Status is required. </div>
+                                </div>
+                              
+                                <div class="mb-3">
+
+                                  <label for="validity" class="form-label"   style="color: rgb(158, 154, 154)">Date</label> 
+                                  <input type="date" class="form-control1-addp form-control <%- (typeof errorWith != 'undefined' && errorWith ==='DATE') ? 'is-invalid' : '' %>" name="validity" required>
+                                  <div id="errorContainer" class="invalid-feedback"> <%- (typeof errorWith != 'undefined') ? message : "Validity date is required" %></div>
+                                </div>
+                                
+                              
+                                <div class="mb-3">
+                                  <label for="category" class="form-label" style="color: rgb(109, 103, 103);">Category</label>
+                                  <select class="form-control1-editp form-control" name="category" style="width: 430px;" required>
+                                    <option value="" disabled selected>Select a Category</option>
+                                    <% categories.forEach(category => { %>
+                                      <option value="<%= category._id %>"><%= category.name %></option>
+                                    <% }); %>
+                                  </select>
+                                  <div id="errorContainer" class="invalid-feedback">Category is required </div>
+                                </div> 
+                                
+                              
+                                <div class="mb-3">
+                                  <label for="product" class="form-label" style="color: rgb(109, 103, 103);">Product</label>
+                                  <select class="form-control1-editp form-control" name="product" style="width: 430px;" required>
+                                    <option value="" disabled selected>Select a Category</option>
+                                    <% products.forEach(product => { %>
+                                      <option value="<%= product._id %>"><%= product.name %></option>
+                                    <% }); %>
+                                  </select>
+                                  <div id="errorContainer" class="invalid-feedback">Product is required </div>
+                                </div> 
+                                <div class="mb-3">
+                                  <input type="submit" class="form-control4-addp" value="Add product" id="addCouponButton" style="width: 430px; position: relative; right: 80px; margin-top: 15px; border-radius: 10px; color: white; height: 40px; font-weight: 500; background-color: rgb(33, 78, 225); border-style: hidden;">
+                                </div>
+                              </form>
+                         </div>
+                    </div>
+                </div>
+            </div>
+              </li>
+            </div>
+          </div>
+          <div class="nk-block">
+            <div class="nk-tb-list is-separate mb-3">
+              <div class="nk-tb-item nk-tb-head">
+                <div class="nk-tb-col nk-tb-col-check">
+                  
+                </div>
+                <div class="nk-tb-col tb-col-sm"><span>Name</span></div>
+                <div class="nk-tb-col"><span>Discount</span></div>
+                <div class="nk-tb-col"><span>Status</span></div>
+                <div class="nk-tb-col"><span>Category</span></div> 
+                <div class="nk-tb-col"><span>Product</span></div> 
+                <div class="nk-tb-col"><span>Action</span></div> 
+                <div class="nk-tb-col"><span> </span></div> 
+                <div class="nk-tb-col nk-tb-col-tools">
+                  <ul class="nk-tb-actions gx-1 my-n1"> 
+                  </ul>
+                </div> 
+              </div>    
+              <% offers.forEach(offer => { %>
+                <div class="nk-tb-item">
+                  <div class="nk-tb-col tb-col-sm">
+                  </div>
+                  <div class="nk-tb-col tb-col-sm">
+                    <span class="tb-product">
+                      <span class="title"><%= offer.name %></span>
+                    </span>
+                  </div>
+                  <div class="nk-tb-col tb-col-sm"> 
+                      <span class="title"><%= offer.discount %></span> 
+                  </div>  
+                  <div class="nk-tb-col tb-col-md"> 
+                  <button style=" border-style: none; color: white; font-size: 12px;  "><span class="title btn btn-danger;"><%= offer.status %></span></button> 
+                  </div>
+                  <div class="nk-tb-col tb-col-sm"> 
+                    <span class="title"><%= offer.category %></span>  
+                </div>  
+                <div class="nk-tb-col tb-col-sm"> 
+                  <span class="title"><%= offer.product %></span>   
+              </div>  
+              <div class="nk-tb-col tb-col-sm">
+              </div>
+              <div class="nk-tb-col tb-col-sm">
+              </div>
+                        <div class="nk-tb-col nk-tb-col-tools">
+                          <ul class="nk-tb-actions gx-1 my-n1">
+                            <li class="me-n1">
+                              <div class="nk-tb-col tb-col-md">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#editCouponModal<%=offer._id%>" class="toggle btn btn-danger d-none d-md-inline-flex">
+                              
+                                  <span>Edit Offer</span>
+                              </a>
+                              </div>
+                              <div class="modal fade" id="editCouponModal<%=offer._id%>" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addProductModalLabel">edit Product</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <form action="/admin/offer/edit-offer/<%= offer._id %>" id="editCouponForm" class="form1-editp needs-validation" method="post" novalidate>
+                                            
+                                            <div class="mb-3">
+                                              <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Name</label>
+                                              <input type="text" class="form-control1-editp form-control" name="name" placeholder="Enter name" value="<%= offer.name %>" required>
+                                                <div class="invalid-feedback">
+                                                    Name is required.
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                              <label for="description" class="form-label" style="color: rgb(109, 103, 103);">Description</label>
+                                              <input type="text" class="form-control1-editp form-control" name="description" placeholder="Enter description" value="<%= offer.description %>" required>
+                                                <div class="invalid-feedback">
+                                                  Description is required.
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                              <label for="discount" class="form-label" style="color: rgb(109, 103, 103);">Discount</label>
+                                              <input type="number" class="form-control1-addp form-control" name="discount" min="0" max="100"  value="<%= offer.discount %>"  required>
+                                              <div class="invalid-feedback">
+                                                  Discount is required.
+                                              </div>
+                                          </div>
+                                            
+                                            <div class="mb-3">
+                                              <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Status</label>
+                                              <select class="form-control1-editp form-control" name="status" value="<%= offer.status %>" required>
+                                                <option value="">Select status</option>
+                                            
+                                                <option value="Active"    <%= offer.status === "Active" ? "selected" : "" %>>Active</option>
+                                                <option value="In Active"    <%= offer.status === "In Active" ? "selected" : "" %>>In Active</option>
+                                              </select>
+                                              <div class="invalid-feedback">Status is required.</div>
+                                            </div>
+                                            <div class="mb-3" <% if (offer.product && !offer.category) { %>style="display: none;"<% } %>>
+                                              <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Category</label>
+                                              <select class="form-control1-editp form-control" name="category" required>
+                                                  <% categories.forEach(category => { %>
+                                                      <option value="<%= category._id %>" <%= offer.category && !offer.product && offer.category._id == category._id ? "selected" : "" %>>
+                                                          <%= category.name %>
+                                                      </option>
+                                                  <% }); %>
+                                              </select>
+                                              <div class="invalid-feedback">
+                                                  Category is required.
+                                              </div>
+                                          </div>
+                                          
+                                          <div class="mb-3" <% if (offer.category && !offer.product) { %>style="display: none;"<% } %>>
+                                              <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Product</label>
+                                              <select class="form-control1-editp form-control" name="product" required>
+                                                  <% products.forEach(product => { %>
+                                                      <option value="<%= product._id %>" <%= offer.product && !offer.category && offer.product._id == product._id ? "selected" : "" %>>
+                                                          <%= product.name %>
+                                                      </option>
+                                                  <% }); %>
+                                              </select>
+                                              <div class="invalid-feedback">
+                                                  Product is required.
+                                              </div>
+                                          </div>
+                                          
+
+                                          
+                                            <input type="hidden" name="id" value="<%= offer._id %>">
+                                            <input type="hidden" name="_method" value="PUT">
+                                            <input type="hidden" name="_delete" value="true">
+                                        
+                                            <div class="mb-3">
+                                                <input type="submit" class="form-control4-editp" value="Update product" style="width: 550px; position: relative;  margin-top: 15px; border-radius: 10px; color: white; height: 40px; font-weight: 500; background-color: rgb(22, 92, 197); border-style: hidden;">
+                                            </div>
+                                        </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </li>
+                          </ul>
+                        </div>
+                      </div> 
+                    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure you want to <span id="actionText"></span> this user?
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+</div>  
+</div>
+</div>
+
+
+<script>
+const form = document.getElementById('addCouponForm');
+
+form.addEventListener('submit', function(event) {
+event.preventDefault();
+event.stopPropagation();
+
+form.classList.add('was-validated');
+  // Validate each input field
+  const nameInput = form.querySelector('input[name="name"]'); 
+  const discountInput = form.querySelector('input[name="discount"]');
+  const statusInput = form.querySelector('select[name="status"]');
+  const validityInput = form.querySelector('input[name="validity"]');
+  const categoryInput = form.querySelector('select[name="category"]'); 
+
+
+  if (!nameInput.checkValidity()) {
+    nameInput.nextElementSibling.style.display = 'block';
+  } else {
+    nameInput.nextElementSibling.style.display = 'none';
+  } 
+  if (!discountInput.checkValidity()) {
+    discountInput.nextElementSibling.style.display = 'block';
+  } else {
+    discountInput.nextElementSibling.style.display = 'none';
+  }
+
+  if (!statusInput.checkValidity()) {
+    statusInput.nextElementSibling.style.display = 'block';
+  } else {
+    statusInput.nextElementSibling.style.display = 'none';
+  }
+
+  if (!validityInput.checkValidity()) {
+    validityInput.nextElementSibling.style.display = 'block';
+  } else {
+    validityInput.nextElementSibling.style.display = 'none';
+  }
+
+  if (!categoryInput.checkValidity()) {
+    categoryInput.nextElementSibling.style.display = 'block';
+  } else {
+    categoryInput.nextElementSibling.style.display = 'none';
+  } 
+  const isFormValid = form.checkValidity();
+if (isFormValid) {
+  submitForm(); // Call the function to submit the form data
+}
+});
+function submitForm() {
+const formData = new FormData(form);
+
+fetch('/admin/offer/add-offer', {
+  method: 'POST',
+  body: formData
+})
+  .then(response => {
+    if (response.ok) {
+      console.log('Coupon added successfully');
+      // Optionally, redirect or perform other actions upon successful addition
+    } else {
+      console.error('Failed to add coupon');
+      // Handle errors or show an error message
+    }
+  })
+  .catch(error => {
+    console.error('Error adding coupon:', error);
+  });
+}
+
+// Enable/disable submit button on input change
+form.addEventListener('input', function() {
+  const isFormValid = form.checkValidity();
+
+  if (isFormValid) {
+    submitButton.removeAttribute('disabled');
+  } else {
+    submitButton.setAttribute('disabled', 'disabled');
+  }
+});
+
+</script>
+
+
+<%- include('../admin/layouts/footer.ejs')%>

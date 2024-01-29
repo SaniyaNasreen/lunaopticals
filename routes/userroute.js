@@ -5,6 +5,7 @@ const usercontroller = require("../controllers/usercontroller");
 const User = require("../models/usermodel");
 const ordercontroller = require("../controllers/ordercontroller");
 const couponcontroller = require("../controllers/couponcontroller");
+const offercontroller = require("../controllers/offercontroller");
 const PDFDocument = require("pdfkit");
 
 user_route.get("/", auth.isUserBlocked, usercontroller.loadIndex);
@@ -37,6 +38,8 @@ user_route.post(
 );
 user_route.post("/saveUserProfile", auth.isUser, usercontroller.updateUser);
 user_route.get("/address", auth.isUser, usercontroller.userAddress);
+user_route.get("/wallet", auth.isUser, usercontroller.userWallet);
+user_route.get("/referral", auth.isUser, usercontroller.loadReferral);
 
 // Route for sending OTP via email
 user_route.get("/forgotpassword", usercontroller.sendEmailOtp);
@@ -63,9 +66,14 @@ user_route.post("/checkoutCart", auth.isUser, usercontroller.checkoutCart);
 //order
 user_route.get("/order", auth.isUser, usercontroller.orderInfo);
 user_route.post(
-  "/users/orderInfo/cancel-order/:id",
+  "/users/orderInfo/cancel-order/:id/:itemId",
   auth.isUser,
   usercontroller.removeOrder
+);
+user_route.post(
+  "/users/orderInfo/return-order/:id/:itemId",
+  auth.isUser,
+  ordercontroller.returnOrder
 );
 user_route.get(
   "/users/orderInfo/:id",
@@ -74,6 +82,11 @@ user_route.get(
 );
 //Checkout
 user_route.get("/checkout", auth.isUser, usercontroller.loadCheckout);
+user_route.get(
+  "/checkout/address/:id",
+  auth.isUser,
+  usercontroller.fetchAddress
+);
 user_route.get("/payment", auth.isUser, ordercontroller.razorPayment);
 user_route.post("/saveAddress", auth.isUser, usercontroller.saveOrder);
 user_route.post("/saveOrder", auth.isUser, usercontroller.saveOrder);
@@ -81,6 +94,14 @@ user_route.post(
   "/checkout/applyCoupon",
   auth.isUser,
   couponcontroller.applyCoupon
+);
+
+//Offer
+user_route.get("/offers", auth.isUser, offercontroller.loadUserOffer);
+user_route.get(
+  "/shop-list/offers/:offerCategory",
+  auth.isUser,
+  offercontroller.offerShopList
 );
 
 module.exports = user_route;

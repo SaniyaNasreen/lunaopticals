@@ -3,6 +3,7 @@ const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const User = require("../models/usermodel");
 const Order = require("../models/ordermodel");
+const Wallet = require("../models/walletmodel");
 const Razorpay = require("razorpay");
 const instance = new Razorpay({
   key_id: process.env.KEY_ID,
@@ -36,9 +37,11 @@ const loadOrder = async (req, res, next) => {
       selectedSort,
       currentPage,
       totalPages,
+
       totalItems: totalOrders,
       orders: paginatedOrders,
       limit,
+      section: "orders",
     });
   } catch (error) {
     next(error);
@@ -46,34 +49,49 @@ const loadOrder = async (req, res, next) => {
 };
 const updateStatus = async (req, res, next) => {
   try {
-    const { orderId, action } = req.params;
+    const { orderId, action, itemId } = req.params;
+    console.log("Params:", req.params);
+    console.log("Extracted values:", orderId, action, itemId);
     const order = await Order.findById(orderId);
+    console.log("hey", order);
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
+    const purchasedItem = order.purchasedItems.find(
+      (item) => item._id.toString() === itemId
+    );
+    console.log(purchasedItem);
+    console.log("0order", order.purchasedItems);
+    if (!purchasedItem) {
+      return res.status(404).json({ error: "Purchased item not found" });
+    }
+
     switch (action) {
       case "markDelivered":
-        order.status = "Delivered";
+        purchasedItem.status = "Delivered";
         break;
-      case "markPaid":
-        order.status = "Received";
-        break;
-      case "markonHold":
-        order.status = "On Hold";
-        break;
-      case "markRejected":
-        order.status = "Rejected";
+      case "markReturned":
+        purchasedItem.status = "Returned";
         break;
       case "markPlaced":
-        order.status = "Order Placed";
+        purchasedItem.status = "Order Placed";
         break;
       case "markProcessing":
-        order.status = "Processing";
+        purchasedItem.status = "Processing";
+        break;
+      case "markShipped":
+        purchasedItem.status = "Shipped";
         break;
       default:
         return res.status(400).json({ error: "Invalid action" });
     }
+    if (purchasedItem.status === "Delivered") {
+      const paymentstatus = await Order.findByIdAndUpdate(orderId, {
+        $set: { "payment.status": "Received" },
+      }).populate("purchasedItems.product");
+    }
     const updatedOrder = await order.save();
+    console.log("hello", updatedOrder);
     const user = await User.findOne({ "order._id": orderId });
     if (user) {
       const userOrder = user.order.find(
@@ -151,6 +169,49 @@ const loadAdminOrderDetails = async (req, res, next) => {
   }
 };
 
+const returnOrder = async (req, res, next) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user._id;
+    const returnedOrder = await Order.findById(orderId).populate(
+      "purchasedItems.product"
+    );
+    const returnedItem = returnedOrder.purchasedItems.find(
+      (item) => item._id.toString() === req.params.itemId
+    );
+
+    if (!returnedOrder || !returnedItem) {
+      return res.status(404).json({ message: "Order or item not found" });
+    }
+    if (returnedOrder.payment.status !== "Received") {
+      return res
+        .status(400)
+        .json({ error: "Payment not received for the order" });
+    }
+    returnedItem.status = "Returned";
+    await returnedOrder.save();
+    const user = await User.findById(userId);
+    if (user) {
+      const walletAmount = returnedItem.price * returnedItem.quantity;
+
+      const walletDate = Date.now();
+      const walletEntry = new Wallet({
+        user: user,
+        amount: walletAmount,
+        date: walletDate,
+        method: "Refund",
+      });
+      await walletEntry.save();
+      user.wallets = walletEntry._id;
+      await user.save();
+    }
+
+    res.redirect("/order");
+  } catch (error) {
+    next(error);
+  }
+};
+
 const razorPayment = async (req, res, next) => {
   try {
     const userId = req.user._id;
@@ -179,5 +240,6 @@ module.exports = {
   updateStatus,
   loadOrderDetails,
   loadAdminOrderDetails,
+  returnOrder,
   razorPayment,
 };

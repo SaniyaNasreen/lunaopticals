@@ -10,11 +10,7 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  status: {
-    type: String,
-    enum: ["On Hold", "Delivered", "Rejected", "Processing", "Order Placed"],
-    default: "On Hold",
-  },
+
   couponApplied: {
     type: Boolean,
     default: false,
@@ -51,6 +47,18 @@ const orderSchema = new mongoose.Schema({
       price: {
         type: Number,
         required: true,
+      },
+      status: {
+        type: String,
+        enum: [
+          "Delivered",
+          "Shipped",
+          "Processing",
+          "Returned",
+          "Placed",
+          "cancelled",
+        ],
+        default: "Placed",
       },
     },
   ],

@@ -12,6 +12,7 @@ const loadCoupon = async (req, res, next) => {
     res.render("admin/coupon", {
       categories,
       status,
+      section: "coupons",
       coupons,
     });
   } catch (error) {
@@ -118,12 +119,13 @@ const applyCoupon = async (req, res, next) => {
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
-    const userId = req.user._id;
+    const userId = req.session.user_id;
     const user = await User.findById(userId).populate("cart.product");
     if (!user) {
       console.log("User not found");
       return res.status(404).json({ message: "User not found" });
     }
+    console.log("hai", user);
     const usercart = user.cart;
     const { code } = req.body;
     const coupon = await Coupon.findOne({ code: code });
@@ -215,6 +217,7 @@ const applyCoupon = async (req, res, next) => {
       isUserLoggedIn,
       userCart: updatedUser.cart,
       req,
+      userAddresses: user.address,
     });
   } catch (error) {
     console.error(error);

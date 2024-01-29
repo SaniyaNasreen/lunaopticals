@@ -95,14 +95,19 @@ height: 100vh;">
               </div>
               <div class="nk-tb-col"><span>Order</span></div>
               <div class="nk-tb-col tb-col-md"><span>Date</span></div>
-              <div class="nk-tb-col">
-                <span class="d-none d-sm-block">Status</span>
-              </div>
+              
               <div class="nk-tb-col tb-col-sm">
                 <span>Customer</span>
               </div>
+             
               <div class="nk-tb-col tb-col-md">
                 <span>Purchased</span>
+              </div>
+              <div class="nk-tb-col">
+                <span class="d-none d-sm-block">Status</span>
+              </div>
+              <div class="nk-tb-col tb-col-md">
+                <span>Price</span>
               </div>
               <div class="nk-tb-col tb-col-md">
                 <span>Qty</span>
@@ -157,53 +162,71 @@ height: 100vh;">
                 </ul>
               </div>
             </div>
-              <% orders.forEach((order) => { %>
-                  <div class="nk-tb-item">
-                  
-                    <div class="nk-tb-col">
-                      
-                    
-                    </div>
-                    <div class="nk-tb-col tb-col-md">
-                      
-                      <span class="tb-sub" style="color: blue; font-weight: 500;">#<%- order.orderNumber %></span>
-                    </div>
-                    <div class="nk-tb-col tb-col-md">
-                      
-                      <span class="tb-sub" style="font-weight: 500;font-size: 12px;"><%- order.date instanceof Date ? order.date.toDateString() : '' %></span>
-                    </div>
-                    <div class="nk-tb-col">
-                      <button style="border-radius: 20px; border-style: none; background-color: blue; width: 80px;height:30px;"><span class="tb-lead" style="color: white;font-size: 11px;"><%- order.status %></span></button>
-                    </div>
-                    <div class="nk-tb-col">
-                      <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%- order.address.firstname %></span>
-                    </div>
-                    <div class="nk-tb-col tb-col-md">
-                      <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
-                        <% order.purchasedItems.forEach((item) => { %>
-                          <span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;"><%- item.product.name && item.product.name  ? item.product.name  : 'Product Name Not Available' %></span>
-                          
-                        <% }); %>
-                      <% } else { %>
-                        <span class="tb-sub">No purchased items</span>
-                      <% } %>
-                    </div>
-                    <div class="nk-tb-col tb-col-md">
-                      <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
-                        <% order.purchasedItems.forEach((item) => { %>
-                          <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%-  item.quantity ? item.quantity : 'Product quantity Not Available' %></span>
-                        <% }); %>
-                      <% } else { %>
-                        <span class="tb-sub">No purchased items</span>
-                      <% } %>
-                    </div>
+            <% orders.forEach((order) => { %>
+              <div class="nk-tb-item">
+                <div class="nk-tb-col nk-tb-col-check">
+                  <div class="custom-control custom-control-sm custom-checkbox notext">
+                    <input type="checkbox" class="custom-control-input" id="oid" />
+                    <label class="custom-control-label" for="oid"></label>
+                  </div>
+                </div>
+                <div class="nk-tb-col tb-col-md">
+                  <span class="tb-sub" style="color: blue; font-weight: 500;">#<%- order.orderNumber %></span>
+                </div>
+                <div class="nk-tb-col tb-col-md">
+                  <span class="tb-sub" style="font-weight: 500; font-size: 12px;"><%- order.date instanceof Date ? order.date.toDateString() : '' %></span>
+                </div>
+                <div class="nk-tb-col">
+                  <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%- order.address.firstname %></span>
+                </div>
+                <div class="nk-tb-col tb-col-md">
+                  <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                    <% order.purchasedItems.forEach((item) => { %>
+                      <span class="tb-sub text-primary" style="font-size: 11px; font-weight: 500;"><%- item.product.name && item.product.name ? item.product.name : 'Product Name Not Available' %></span><br>
                      
+                    
+                    <% }); %>
+                  <% } else { %>
+                    <span class="tb-sub">No purchased items</span>
+                  <% } %>
+                </div>
+                <div class="nk-tb-col tb-col-md">
+                  <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                    <% order.purchasedItems.forEach((item) => { %>
+                      <button style="border-radius: 20px; border-style: none; background-color: blue; width: 70px; height: 20px;">
+                        <span class="tb-lead" style="color: white; font-size: 9px; " ><%- item.status %></span>
+                      </button><br>
+                    <% }); %>
+                  <% } else { %>
+                    <span class="tb-sub">No purchased items</span>
+                  <% } %>
+                </div>
+                <div class="nk-tb-col tb-col-md">
+                  <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                    <% order.purchasedItems.forEach((item) => { %> 
+                       
+                        <span class="tb-lead" style="font-size: 12px;">₹<%- item.price %></span>
+                     
+                    <% }); %>
+                  <% } else { %>
+                    <span class="tb-sub">No purchased items</span>
+                  <% } %>
+                </div>
+                <div class="nk-tb-col tb-col-md">
+                  <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                    <% order.purchasedItems.forEach((item) => { %>
+                      <span class="tb-lead" style="color: rgb(127, 166, 166); font-size: 12px;"><%-  item.quantity ? item.quantity : 'Product quantity Not Available' %></span>
                       
-                  
-                    <div class="nk-tb-col">
-                      <span class="tb-lead" style="font-size: 12px;">₹<%- order.totalAmount %></span>
-                    </div>
-                    <div class="nk-tb-col nk-tb-col-tools">
+                    <% }); %>
+                  <% } else { %>
+                    <span class="tb-sub">No purchased items</span>
+                  <% } %>
+                </div>
+                <div class="nk-tb-col">
+                  <span class="tb-lead" style="font-size: 12px;">₹<%- order.totalAmount %></span>
+                </div>
+               
+           <div class="nk-tb-col nk-tb-col-tools">
                       <ul class="nk-tb-actions gx-1">
                         <li class="nk-tb-action-hidden">
                           <a href="#" class="btn btn-icon btn-trigger btn-tooltip" title="Mark as Delivered">
@@ -212,60 +235,20 @@ height: 100vh;">
                         </li>
                         <li class="nk-tb-action-hidden">
                           <a
-                            href="#"
+                            href="/admin/orderInfo/<%= encodeURIComponent(order._id) %>"
                             class="btn btn-icon btn-trigger btn-tooltip"
                             title="View Order"
                             ><em class="icon ni ni-eye"></em
                           ></a>
                         </li>
                           <li>
-            <div class="drodown me-n1">
-              <a href="#" class="dropdown-toggle btn btn-icon btn-trigger" data-bs-toggle="dropdown">
-                <em class="icon ni ni-more-h"></em>
-              </a>
-              <div class="dropdown-menu dropdown-menu-end">
-                <ul class="link-list-opt no-bdr"> 
-                  <li>
-                    <a href="/admin/orderInfo/<%= encodeURIComponent(order._id) %>">
-                      <em class="icon ni ni-eye"></em>
-                      <span>Order Details</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/orders/updateOrderStatus/<%= order._id %>/markDelivered">
-                        <em class="icon ni ni-truck"></em>
-                        <span>Mark as Delivered</span>
-                      </a>
-                    </li>
-                     
-                    <li>
-                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markProcessing">
-                        <em class="icon ni ni-money"></em>
-                        <span>Mark as Processing</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markOnHold">
-                        <em class="icon ni ni-money"></em>
-                        <span>Mark as On Hold</span>
-                      </a>
-                    </li> 
-                    <li>
-                      <a href="/admin/orders/updateOrderStatus/<%- order._id %>/markPlaced">
-                        <em class="icon ni ni-money"></em>
-                        <span>Mark as Placed</span>
-                      </a>
-                    </li>
-                        
-              </ul>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
-  </div>
+           
+                   </li>
+                   </ul>
+                </div>
+                </div>
   <% }); %>
-            </div>
+                      </div>
         </div>
       </div>
     </div>

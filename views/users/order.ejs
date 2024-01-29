@@ -41,33 +41,44 @@
             <div class="col-xl-9 col-lg-8 col-md-12">
               <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
                 <div style="margin-bottom: 20px;">
-                  <div style="  padding: 10px; width: 1000px;">
+                  <div style="padding: 10px; width: 1000px;">
                     <% if (orders && orders.length > 0) { %>
                       <% orders.forEach(order => { %>
-                        <% order.purchasedItems.forEach(purchasedItem => { %>
-                          <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                            <p style="font-weight: bold; color: black; font-size:14px;">  <%= purchasedItem.product.name %></p>
-                            <% if (order.status === 'cancelled') { %>
-                              <button style="float: right; position: relative; bottom: 40px; font-weight: 500; color: white; font-size: 13px; background-color: red; border-style: none;">
-                                <%= order.status %>
-                              </button>
-                            <% } else { %>
-                              <button style="float: right; position: relative; bottom: 40px; font-weight: 500; color: rgb(250, 249, 249); font-size: 13px; background-color: blue; border-style: none;">
-                                <%= order.status %>
-                              </button>
-                            <% } %>
-                            <p style="float: right; position: relative; bottom: 40px; font-weight: 500; right: 300px; color: black; font-size: 13px;">₹ <%= purchasedItem.price %></p>
-                            <p style="float:right; font-weight: bold; color: black; font-size:14px; position: relative; bottom: 40px; right: 100px;">  <%= order.date instanceof Date ? order.date.toDateString() : ''%></p>
-                            <!-- Add other order details as needed -->
-                            <a href="/users/orderInfo/<%= encodeURIComponent(order._id) %>" class="view-order-btn" style="color:orangered; font-size:medium;">View Details</a>
-                          </div>
-                        <% }) %>
+                        <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
+                         
+              
+                          <p style="float:right; font-weight: bold; color: black; font-size:14px; position: relative;top: 50px; right: 100px;">  <%= order.date instanceof Date ? order.date.toDateString() : ''%></p>
+                
+                          <!-- Display all products in one order within a single div -->
+                          <div>
+                            <% let totalAmount = 0; %>
+                            <% order.purchasedItems.forEach(purchasedItem => { %>
+                              <img src="<%= purchasedItem.product.images[0]%>" alt="<%= purchasedItem.product.name %> Image" style="width: 50px;"> 
+                              <p style="font-weight: bold; color: black; font-size:14px;">  <%= purchasedItem.product.name %></p>
+                              <% totalAmount += purchasedItem.price; %>
+                              <p style="float: right; position: relative; bottom: 40px; font-weight: 500; right: 350px; color: black; font-size: 13px;"> ₹ <%= totalAmount %></p>
+                              <% if (purchasedItem.status === 'cancelled') { %>
+                                <button style="float: right; position: relative;   font-weight: 500; color: white; font-size: 13px; background-color: red; border-style: none;">
+                                  <%= purchasedItem.status %>
+                                </button>
+                              <% } else { %>
+                                <button style="float: right; position: relative;   font-weight: 500; color: rgb(250, 249, 249); font-size: 13px; background-color: blue; border-style: none;">
+                                  <%= purchasedItem.status %>
+                                </button>
+                              <% } %>
+                            <% }) %>
+                           
+                          </div> 
+                          <!-- Add other order details as needed -->
+                          <a href="/users/orderInfo/<%= encodeURIComponent(order._id) %>" class="view-order-btn" style="color:orangered; font-size:medium;">View Details</a>
+                        </div>
                       <% }) %>
                     <% } else { %>
                       <p>No orders found</p>
                     <% } %>
                   </div>
                 </div>
+                
               </div>
             </div>
           </div>

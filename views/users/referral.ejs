@@ -1,0 +1,121 @@
+<%- include('../users/layouts/navbar.ejs') %>
+
+<div class="page-title-area pt-150 pb-55">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="page-titel-detalis">
+          <div class="section-title">
+            <h2>User Profile</h2>
+          </div>
+          <div class="page-bc">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+               
+                <li
+                  class="breadcrumb-item position-relative active"
+                  aria-current="page"
+                >
+                  <a href="/edituser">profile   </a>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="shop-grid-s pt-120" style="background-color: white; height:auto">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="d-flex">
+            <div class="col-xl-3 col-lg-4 col-md-12">
+              <div class="sidebar">
+                <!-- Include sidebar content -->
+                <%- include('../users/layouts/sidebar.ejs') %>
+              </div>
+            </div>
+            <div class="col-xl-9 col-lg-8 col-md-12">
+                <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
+                  <div style="margin-bottom: 20px;">
+                    <div style="padding: 10px; width: 1000px; "> 
+                          <div style=" height: 120px; border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold; overflow: hidden;">
+                            <div style="position: relative; top: 20px;">
+                            <div style="width: 50%; float: left;"> 
+                                <p style="font-weight: bold; color: rgb(90, 89, 89);  font-size: 15px; position: relative; top: 20px;">Referral: <%= users.referralCode ? users.referralCode : '' %></p>
+                              </div>
+                              <div style="width: 50%; float: left;"> 
+                                <p style="font-weight: bold; color: rgb(90, 89, 89); font-size: 15px;position: relative; top: 20px; right: 200px;">Referrals: <%= totalReferralWallets.length > 0 ? totalReferralWallets[0].total : 0 %></p> 
+                              </div> 
+                              <div style="width: 50%; float: right;">   
+                                <p style="font-weight: bold; color: rgb(90, 89, 89); font-size: 15px; position: relative; bottom: 10px;">Total Amount : <%= totalReferralWallets.length > 0 ? totalReferralWallets[0].totalAmount : 0 %></p> 
+                              </div>
+                              <div style="position: relative; bottom: 10px; left: 800px;">
+                              <button onclick="copyReferralCode()" style="background-color: rgb(255, 82, 53); color: white; border-style: none;">Copy Referral Code</button>
+                            </div>
+                          </div> 
+                          </div> 
+                          <div style="position: relative; top: 30px;">
+                          <div style="height: 500px; background-color: white; font-size: larger; font-weight: bold; overflow: hidden;">
+                          <h4 style="position: relative; left: 250px;top: 20px;">Its easy to earn credits in few simple steps</h4>
+                          <div style="  height: 280px;width: 280px; position: relative; top: 100px;"> 
+                            <div  style="position: relative;top: 60px;text-align: center;">
+                            <h5 style="  color: rgb(255, 82, 53);">REFER A FRIEND</h5>
+                            <P style="position: relative; top: 30px; ">Share your referral code to every friends you know to purchase products from </P>
+                          </div>
+                          </div>
+                          <div style="  height: 280px;width: 280px; position: relative; bottom: 180px; left: 340px;"> 
+                            <div  style="position: relative;top: 60px;text-align: center;">
+                            <h5 style="color:rgb(255, 82, 53) ;" >MAKE SIGN UP</h5>
+                            <p style="position: relative; top: 30px; ">When your friend signup through your referral code,you will earn 100 rupees.And purchase products through your wallets.</p>
+                          </div>
+                          </div>
+                          <div style=" height: 280px;width: 280px; position: relative; bottom: 460px; left: 680px;"> 
+                            <div  style="position: relative;top: 60px;text-align: center;">
+                              <h5 style="color:rgb(255, 82, 53) ;" >20% OFFER</h5>
+                              <p style="position: relative; top: 30px; ">When your friend signup through your refferal code they will earn 20% offer for their first purchase.</p>
+                            </div>
+                          </div>
+                          </div>
+                          </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function copyReferralCode() {
+      const referralCode = "<%= users.referralCode ? users.referralCode :'' %>"; 
+      const tempInput = document.createElement('input');
+      tempInput.value = referralCode;
+      document.body.appendChild(tempInput); 
+      tempInput.select();
+      tempInput.setSelectionRange(0, 99999);   
+      document.execCommand('copy'); 
+      document.body.removeChild(tempInput); 
+      alert('Referral code copied to clipboard!');
+    }
+    function getReferralLink() {
+      const baseLink = 'http://localhost:4000';
+    const referralCode = "<%= users.referralCode ? users.referralCode : '' %>"; 
+    return `${baseLink}?referralCode=${referralCode}`;
+  }
+  </script>
+  <%- include('../users/layouts/footer.ejs') %>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+   
+
+ 
+  

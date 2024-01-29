@@ -6,6 +6,7 @@ const productcontroller = require("../controllers/productcontroller");
 const categorycontroller = require("../controllers/categorycontroller");
 const ordercontroller = require("../controllers/ordercontroller");
 const couponcontroller = require("../controllers/couponcontroller");
+const offercontroller = require("../controllers/offercontroller");
 const multer = require("multer");
 const upload = multer({ dest: "public/uploads" });
 
@@ -75,20 +76,21 @@ admin_route.get("/search-user", auth.isAdmin, admincontroller.searchUser);
 
 //Order management
 admin_route.get("/orders", auth.isAdmin, ordercontroller.loadOrder);
-admin_route.get(
-  "/orders/updateOrderStatus/:orderId/:action",
-  auth.isAdmin,
-  ordercontroller.updateStatus
-);
-admin_route.put(
-  "/orders/updateOrderStatus/:orderId/",
-  auth.isAdmin,
-  ordercontroller.updateStatus
-);
+
 admin_route.get(
   "/orderInfo/:id",
   auth.isAdmin,
   ordercontroller.loadAdminOrderDetails
+);
+admin_route.get(
+  "/orderInfo/updateOrderStatus/:orderId/:action/:itemId",
+  auth.isAdmin,
+  ordercontroller.updateStatus
+);
+admin_route.put(
+  "/orderInfo/updateOrderStatus/:orderId/:itemId",
+  auth.isAdmin,
+  ordercontroller.updateStatus
 );
 
 //Coupon management
@@ -103,4 +105,14 @@ admin_route.post(
   auth.isAdmin,
   couponcontroller.editCouponForCategory
 );
+
+//Offer management
+admin_route.get("/offer", auth.isAdmin, offercontroller.loadOffer);
+admin_route.post("/offer/add-offer", auth.isAdmin, offercontroller.addOffer);
+admin_route.post(
+  "/offer/edit-offer/:id",
+  auth.isAdmin,
+  offercontroller.editOffer
+);
+
 module.exports = admin_route;

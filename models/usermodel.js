@@ -70,7 +70,6 @@ const userSchema = new mongoose.Schema({
   },
   address: [
     {
-      _id: false,
       firstname: {
         type: String,
       },
@@ -98,6 +97,21 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+  referralCode: {
+    type: String,
+    unique: true,
+  },
+  userReferral: {
+    type: String,
+    unique: true,
+  },
+  wallets: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Wallet",
+    },
+  ],
+
   coupon: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Coupon",
