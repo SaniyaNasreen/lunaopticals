@@ -22,25 +22,33 @@
                   <h3 class="nk-block-title page-title">Sales Report</h3>
                 </div>
                 <% if (orders && orders.length > 0) { %>
-                  <form action="/download-sales-report" method="GET"> 
-                <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 20px; padding: 10px; font-size: larger; font-weight: bold; position: relative; bottom: 10px;">
-                  <a href="http://localhost:4000/download-sales-report/<%= encodeURIComponent(orders.orderNumber) %>" style="font-size: large; font-weight: 300;">Download Invoice</a>
-                </div>
-              </form>
+                  <form action="/download-sales-report" method="GET">
+                    <div class="form-row mb-2" style="font-size: 14px; position: relative; left: 365px; top: 120px; ">
+                      <div class="col-md-3" style="width: 350px;">
+                        <label for="from">From Date:</label>
+                        <input type="date" class="form-control" id="from" name="startDate" value="" required style="font-size: 12px;">
+                      </div>
+                      <div class="col-md-3">
+                        <label for="to">To Date:</label>
+                        <input type="date" class="form-control" id="to" name="endDate" value="" required min="" style="font-size: 12px;">
+                        <div id="ending-error" class="error-message"></div>
+                      </div>
+                      <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary" style="position: relative; top: 30px; width: 115px;">Download</button>
+                      </div>
+                    </div>
+                  </form>
                 <% } %>
                 <li>
 
-                    <div class="drodown">
-                       
-                          
-                          
-                          
+                    <div class="drodown"> 
                 </li>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
      <form action="sales_report">
             <div class="form-row mb-2"style="font-size: 14px; position: relative; left: 300px; max-width: 600px; ">
         <div class="col-md-3">

@@ -306,8 +306,14 @@ const loadUserOffer = async (req, res, next) => {
       isUserLoggedIn = true;
     }
     const userId = req.session.user_id;
+    const currentDate = new Date();
     const offers = await Offer.find({
-      $or: [{ referral: null }, { referral: userId }],
+      $and: [
+        {
+          $or: [{ referral: null }, { referral: userId }],
+        },
+        { validity: { $gte: currentDate } },
+      ],
     })
       .populate({
         path: "category",

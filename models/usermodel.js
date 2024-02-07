@@ -142,6 +142,9 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+  totalAmount: {
+    type: Number,
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

@@ -1,6 +1,7 @@
 const Coupon = require("../models/couponmodel");
 const Category = require("../models/categorymodel");
 const Order = require("../models/ordermodel");
+const Offer = require("../models/offermodel");
 const User = require("../models/usermodel");
 const loadCoupon = async (req, res, next) => {
   try {
@@ -113,7 +114,6 @@ const editCouponForCategory = async (req, res, next) => {
 };
 
 const applyCoupon = async (req, res, next) => {
-  console.log("applyCoupon function triggered");
   try {
     let isUserLoggedIn = false;
     if (req?.session?.user_id) {
@@ -125,24 +125,20 @@ const applyCoupon = async (req, res, next) => {
       console.log("User not found");
       return res.status(404).json({ message: "User not found" });
     }
-    console.log("hai", user);
+
     const usercart = user.cart;
+
+    let hasOffer;
     const { code } = req.body;
     const coupon = await Coupon.findOne({ code: code });
+    console.log("coup", coupon.category);
     if (!coupon) {
       console.log("Coupon not found");
-      return res.render("users/checkout", {
-        isUserLoggedIn,
-        coupon,
-        req,
-        userCart: usercart,
-        errorWith: "COUPON",
-        message: "Coupon not found",
-        showModal: true,
-      });
+      res.redirect("/users/checkout");
     }
-    const categoryMatched = user.cart.filter((cartItem) => {
+    const categoryMatched = usercart.filter((cartItem) => {
       if (cartItem.product.category === coupon.category) {
+        console.log(cartItem.product.category);
         console.log(`Category matched for product: ${cartItem.product.name}`);
         return true;
       }
@@ -155,69 +151,123 @@ const applyCoupon = async (req, res, next) => {
         .status(400)
         .json({ message: "Coupon not applicable to items in the cart" });
     }
-
-    if (coupon.status !== "Active") {
-      console.log("Coupon not found");
-      return res.render("users/checkout", {
-        isUserLoggedIn,
-        req,
-        coupon,
-        categoryMatched,
-        userCart: usercart,
-        errorWith: "COUPON",
-        message: "Coupon not found",
-        showModal: true,
-      });
-    }
     const currentDate = new Date();
     if (currentDate > coupon.validity) {
       console.log("Coupon has expired");
       return res.status(400).json({ message: "Coupon has expired" });
     }
-    const cartItems = user.cart;
-
-    if (!cartItems || cartItems.length === 0) {
-      console.log("Cart is empty");
-      return res.status(400).json({ message: "Cart is empty" });
-    }
     const order = await Order.find({ _id: userId });
-    if (user?.cart?.length <= 0) {
-      res.render("users/shop-cart", {
-        user,
-        isUserLoggedIn,
-        emptyCart: true,
-        listed: true,
-      });
-    }
-    const updatedUser = await User.findById(userId).populate("cart.product");
+
     const discountPercentage = coupon.discount
       ? parseFloat(coupon.discount) / 100
       : 0;
-    let subtotal = 0;
-    let updatedSubtotal = 0;
-    for (const cartItem of updatedUser.cart) {
-      updatedSubtotal += cartItem.product.price * cartItem.quantity;
+    const cartItems = user.cart;
+    let subtotal = user.cart.reduce((sum, cartItem) => {
+      return sum + cartItem.total;
+    }, 0);
+    console.log("copsub", subtotal);
+    let discountAmount = 0;
+    const cart = user.cart;
+    let offer;
+    for (const cartItem of user.cart) {
+      const product = cartItem.product;
+      const quantity = cartItem.quantity;
+      const currentDate = new Date();
+      const offer = await Offer.findOne({
+        $and: [
+          {
+            $or: [
+              {
+                category: product.category,
+                status: "Active",
+                validity: { $gte: new Date() },
+              },
+              {
+                product: product,
+                status: "Active",
+                validity: { $gte: new Date() },
+              },
+              {
+                referral: userId,
+                status: "Active",
+                validity: { $gte: new Date() },
+              },
+            ],
+          },
+          { validity: { $gte: currentDate } },
+        ],
+      }).populate("category", "referral");
+
+      if (offer) {
+        if (
+          offer.referral &&
+          req?.session?.userId == offer.referral.toString()
+        ) {
+          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+        } else {
+          console.log("heyy", product.price);
+          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+          console.log("discountAmount", discountAmount);
+          subtotal = subtotal - discountAmount;
+
+          console.log("copsub1", subtotal);
+        }
+      }
+      cartItem.discountAmount = discountAmount;
+
+      let totalPrice = 0;
+      if (req.body.code && coupon.status === "Active") {
+        totalPrice = subtotal - cartItem.discountAmount;
+        user.totalAmount = user.totalAmount - totalPrice;
+      } else {
+        totalPrice = hasOffer ? subtotal : subtotal + Shipping;
+        user.totalAmount = totalPrice;
+      }
+
+      await user.save();
     }
-    const discountAmount = updatedSubtotal * discountPercentage;
-    const total = updatedSubtotal - discountAmount;
+
+    let Shipping = 0;
+    if (subtotal < 2000) {
+      Shipping = 100;
+    } else {
+      Shipping = 0;
+    }
+    const discountPrice = subtotal * discountPercentage;
+    totalPrice = subtotal - discountPrice + Shipping;
+    user.totalAmount = totalPrice;
+    console.log("discountPrice", discountPrice);
+    console.log("discountAmount", discountAmount);
+    console.log("total", totalPrice);
     const couponAlreadyApplied = user.couponApplied;
+
+    if (coupon.status !== "Active") {
+      console.log("Coupon not found");
+      res.redirect("users/checkout");
+    }
+
     await user.save();
     console.log("Coupon applied successfully");
     res.render("users/checkout", {
       coupon,
       discountPercentage,
       categoryMatched,
-      subtotal: updatedSubtotal,
-      discountAmount,
+      subtotal,
+      discountPrice,
       couponAlreadyApplied,
-      total,
       order,
       listed: true,
-      user: updatedUser,
+      user,
       isUserLoggedIn,
-      userCart: updatedUser.cart,
+      userCart: user.cart,
       req,
       userAddresses: user.address,
+      selectedAddress: req.body.selectedAddress || user.address[0],
+      Shipping,
+      discountAmount,
+      hasOffer: discountAmount > 0,
+      totalPrice,
+      offer,
     });
   } catch (error) {
     console.error(error);

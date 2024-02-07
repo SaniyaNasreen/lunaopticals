@@ -1,176 +1,163 @@
-  <%- include('../users/layouts/navbar.ejs') %>
+<%- include('../users/layouts/navbar.ejs') %>
 
-  <div class="page-title-area pt-150 pb-55">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="page-titel-detalis">
-            <div class="section-title">
-              <h2>User Profile</h2>
-            </div>
-            <div class="page-bc">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="/">Home</a></li>
-
-                  <li
-                    class="breadcrumb-item position-relative active"
-                    aria-current="page"
+<div class="page-title-area pt-5 pb-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="page-titel-detalis">
+          <div class="section-title">
+            <h2>User Profile</h2>
+          </div>
+          <div class="page-bc">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">
+                  <a href="/edituser">Profile</a>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="shop-grid-s pt-3 pb-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <!-- Include sidebar content -->
+          <%- include('../users/layouts/sidebar.ejs') %>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="useraddress">
+          <div class="container-fluid">
+            <% if (orders && orders.length > 0) { %> <% orders.forEach(order =>
+            { %>
+            <div class="row mb-4">
+              <div class="col-md-12">
+                <h4>View order details</h4>
+                <div class="card p-3">
+                  <p>Order Date: <%= order.date %></p>
+                  <p>Order ID: <%= order.orderNumber %></p>
+                  <p>Total Price: ₹<%= Math.round(user.totalAmount) %></p>
+                  <a
+                    href="http://localhost:4000/download-invoice/<%= order.orderNumber %>"
+                    style="
+                      font-weight: 500;
+                      color: white;
+                      font-size: 20px;
+                      background-color: #854fff;
+                      border-style: none;
+                      height: 40px;
+                      padding-left: 30px;
+                      padding-top: 7px;
+                    "
+                    >Download Invoice</a
                   >
-                    <a href="/edituser">profile</a>
-                  </li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="shop-grid-s pt-120" style="background-color: white; height: auto">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="d-flex">
-            <div class="col-xl-3 col-lg-4 col-md-12">
-              <div class="sidebar">
-                <!-- Include sidebar content -->
-                <%- include('../users/layouts/sidebar.ejs') %>
+                </div>
               </div>
-            </div>
-            <div class="col-xl-9 col-lg-8 col-md-12">
-              <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
-                <div style="margin-bottom: 20px;">
-                  <div style="background-color:white; padding: 10px; width: 1000px; height: auto;">
-                    
-                              <div style="  background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                              
-                                <% if (orders && orders.length > 0) { %>
-                                      <% orders.forEach(order => { %> 
-                                                   
-                                          <h4>View order details</h4>
-                                          <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                                              <p>Order Date: <%= order.date %></p>
-                                              <p>Order ID: <%= order.orderNumber %></p>
-                                              <p>Total Price: $<%= order.totalAmount %></p>
-                                          </div>
-                                          <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 20px; padding: 10px; font-size: larger; font-weight: bold; position: relative; bottom: 10px;">
-                                            <a href="http://localhost:4000/download-invoice/<%= order.orderNumber %>" style="font-size: large; font-weight: 300;">Download Invoice</a>
-                                          </div>
-                                              <!-- Shipping Address -->
-                                              <h4>Shipping Address</h4>
-                                              <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                  <p><%= order.address.firstname %></p>
-                                                  <p><%= order.address.lastname %>, <%= order.address.address %>, <%= order.address.country %> <%= order.address.city %> <%= order.address.pincode %>,</p>
-                                                  <p><%= order.address.email %>, <%= order.address.mobile %></p>
-                                              </div>
-                                  
-                                              <!-- Payment Details (Assuming this applies to the entire order) -->
-                                              <h4>Payment Details</h4>
-                                              <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                  <p><%= order.payment.type %></p>
-                                              </div>
-                                  
-                                              <!-- Ordered Items -->
-                                              <h4>Ordered</h4>
-                                              <% order.purchasedItems.forEach(item => { %>
-                                                  <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
-                                                    <img style="width: 100px; float: left;" src="<%= item.product.images[0] %>" alt="<%= item.product.name %> Image">
-                                                    <div style="position: relative; left: 30px;">
-                                                    <p><%= item.product.name %></p> 
-                                                      <p><%= item.price %></p>
-                                                      <p>Qty: <%= item.quantity %></p>
-                                                    </div> 
-                                                  </div>
-                                                  <div class="cancel">
-                                                    <% const currentDate = new Date(); %>
-                                                    <% const orderDate = new Date(order.date); %>
-                                                    <% const timeDifference = currentDate.getTime() - orderDate.getTime(); %>
-                                                    <% const daysDifference = timeDifference / (1000 * 3600 * 24); %>
-                                                  
-                                                    <% if (item.status === 'Processing') { %>
-                                                      <% if (daysDifference <= 7) { %>
-                                                        <form id="cancelOrderForm"  action="/users/orderInfo/cancel-order/<%= order._id %>/<%= item._id %>" method="POST">
-                                                          <button type="button" id="cancelButton" class="cancelbutton" style="background-color: red; border-style: none; color: white;">
-                                                            Cancel Item
-                                                          </button>
-                                                        </form>
-                                                        
-                                                        
-                                                      <% } else { %>
-                                                        <!-- Show a disabled button if the order date is above 7 days -->
-                                                        <button type="button" class="cancelbutton" style="background-color: lightgrey; border-style: none; color: black;" disabled>
-                                                          Cannot Cancel (Order older than 7 days)
-                                                        </button>
-                                                      <% } %>
-                                                    <% } else if (item.status === 'Delivered') { %> 
-                                                
-                                                      <!-- Show a disabled button if the order status is 'Delivered' -->
-                                                      <button type="button" class="cancelbutton" style="background-color:rgb(22, 152, 22); border-style: none; color: rgb(253, 251, 251);" disabled>
-                                                        Item Delivered
-                                                      </button> 
-                                                      <% if (daysDifference <= 7) { %>
-                                                        <form id="returnOrderForm"  action="/users/orderInfo/return-order/<%= order._id %>/<%= item._id %>" method="POST">
-                                                          <button type="button" id="returnButton" class="returnbutton" style="background-color: red; border-style: none; color: white;">
-                                                            Return
-                                                          </button>
-                                                        </form>
-                                                    <% } %>
-                                                    <% } %>
-                                                  </div>
-                                              <% }) %>
-                                              <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                  <div class="modal-content">
-                                                    <div class="modal-header">
-                                                      <h5 class="modal-title" id="confirmationModalLabel">Confirmation</h5>
-                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                      Are you sure you want to <span id="actionText"></span> this user?
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                      <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirm</button>
-                                                    </div>
-                                                  </div>
-                                                </div>        
-                                              </div>
-                                            
-                                                
-                                      <% }) %>
-                                  <% } else { %>
-                                      <p>No orders found</p>
-                                  <% } %>
-                                      
-                              </div>
-                            
+              <div class="col-md-12 mt-4">
+                <h4>Shipping Address</h4>
+                <div class="card p-3">
+                  <p><%= order.address.firstname %></p>
+                  <p>
+                    <%= order.address.lastname %>, <%= order.address.address %>,
+                    <%= order.address.country %> <%= order.address.city %> <%=
+                    order.address.pincode %>,
+                  </p>
+                  <p><%= order.address.email %>, <%= order.address.mobile %></p>
+                </div>
+              </div>
+              <div class="col-md-12 mt-4">
+                <h4>Payment Details</h4>
+                <div class="card p-3">
+                  <p><%= order.payment.type %></p>
+                </div>
+              </div>
+              <div class="col-md-12 mt-4">
+                <h4>Ordered Items</h4>
+                <% order.purchasedItems.forEach(item => { %>
+                <div class="card p-3 mb-3">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <img
+                        src="<%= item.product.images[0] %>"
+                        class="img-fluid"
+                        alt="<%= item.product.name %> Image"
+                      />
+                    </div>
+                    <div class="col-md-9">
+                      <p><%= item.product.name %></p>
+                      <p><%= Math.round(item.price - item.discountAmount) %></p>
+                      <p>Qty: <%= item.quantity %></p>
+                      <% const currentDate = new Date(); %> <% const orderDate =
+                      new Date(order.date); %> <% const timeDifference =
+                      currentDate.getTime() - orderDate.getTime(); %> <% const
+                      daysDifference = timeDifference / (1000 * 3600 * 24); %>
+                      <% if (item.status === 'Processing') { %> <% if
+                      (daysDifference <= 7) { %>
+                      <form
+                        id="cancelOrderForm"
+                        action="/users/orderInfo/cancel-order/<%= order._id %>/<%= item._id %>"
+                        method="POST"
+                      >
+                        <button
+                          type="button"
+                          id="cancelButton"
+                          class="btn btn-danger"
+                        >
+                          Cancel Item
+                        </button>
+                      </form>
+                      <% } else { %>
+                      <button type="button" class="btn btn-secondary" disabled>
+                        Cannot Cancel (Order older than 7 days)
+                      </button>
+                      <% } %> <% } else if (item.status === 'Delivered') { %>
+                      <button type="button" class="btn btn-success" disabled>
+                        Item Delivered
+                      </button>
+                      <% if (daysDifference <= 7) { %>
+                      <form
+                        id="returnOrderForm"
+                        action="/users/orderInfo/return-order/<%= order._id %>/<%= item._id %>"
+                        method="POST"
+                      >
+                        <button
+                          type="button"
+                          id="returnButton"
+                          class="btn btn-danger"
+                        >
+                          Return
+                        </button>
+                      </form>
+                      <% } %> <% } %>
+                    </div>
                   </div>
+                </div>
+                <% }) %>
               </div>
             </div>
-          </div>
+            <% }) %> <% } else { %>
+            <p>No orders found</p>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  </div>
-  </div>
-  </div>
-  </div>
-  </div>
-  
-  
+<%- include('../users/layouts/footer.ejs') %>
 
-  <%- include('../users/layouts/footer.ejs') %>
- 
-  </div>
-  </div>
-  </div>
-  </div>
-  <script>
-    document.getElementById('cancelButton').addEventListener('click', function() {
+<script>
+  document
+    .getElementById("cancelButton")
+    .addEventListener("click", function () {
       // Show SweetAlert confirmation dialog
       Swal.fire({
         title: "Are you sure?",
@@ -179,68 +166,65 @@
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "Yes, cancel it!",
-        cancelButtonText: "No, keep it"
+        cancelButtonText: "No, keep it",
       }).then((result) => {
         if (result.isConfirmed) {
-         
           // If user confirms, submit the form
-          document.getElementById('cancelOrderForm').submit(); 
- 
+          document.getElementById("cancelOrderForm").submit();
         } else {
           // If user cancels, do nothing or provide feedback
           Swal.fire("Cancel", "Your order is safe :)", "info");
         }
       });
     });
-    </script>
-     <script>
-      document.getElementById('returnButton').addEventListener('click', function() {
-        // Show SweetAlert confirmation dialog
-        Swal.fire({
-          title: "Are you sure?",
-          text: "You will not be able to recover this order!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "Yes, return it!",
-          cancelButtonText: "No, keep it"
-        }).then((result) => {
-          if (result.isConfirmed) {
-           
-            // If user confirms, submit the form
-            document.getElementById('returnOrderForm').submit(); 
-   
-          } else {
-            // If user cancels, do nothing or provide feedback
-            Swal.fire("Cancel", "Your order is safe :)", "info");
-          }
-        });
-      });
-      </script>
-
-    
+</script>
 <script>
-  document.querySelectorAll('.cancel-item-btn').forEach(button => {
-    button.addEventListener('click', async (event) => { 
+  document
+    .getElementById("returnButton")
+    .addEventListener("click", function () {
+      // Show SweetAlert confirmation dialog
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will not be able to recover this order!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, return it!",
+        cancelButtonText: "No, keep it",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // If user confirms, submit the form
+          document.getElementById("returnOrderForm").submit();
+        } else {
+          // If user cancels, do nothing or provide feedback
+          Swal.fire("Cancel", "Your order is safe :)", "info");
+        }
+      });
+    });
+</script>
+
+<script>
+  document.querySelectorAll(".cancel-item-btn").forEach((button) => {
+    button.addEventListener("click", async (event) => {
       const _id = event.target.dataset._id;
-         console.log(_id);
+      console.log(_id);
       try {
-        const response = await fetch('http://localhost:4000/cancel-order', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json'
+        const response = await fetch("http://localhost:4000/cancel-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
           withCredentials: true,
-          body: JSON.stringify({ _id: _id})
-        }); 
-        if (response.ok) { 
-          event.target.parentElement.parentElement.cancel();  
+          body: JSON.stringify({ _id: _id }),
+        });
+        if (response.ok) {
+          event.target.parentElement.parentElement.cancel();
         } else {
           const errorData = await response.json();
-          console.error('Error:', errorData.message); 
+          console.error("Error:", errorData.message);
         }
       } catch (error) {
-        console.error('Error:', error); 
+        console.error("Error:", error);
       }
     });
   });

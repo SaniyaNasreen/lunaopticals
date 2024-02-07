@@ -135,7 +135,7 @@
   <div class="slider-spacer" style="height: 50px; margin-bottom: 150px;"></div>
   <!-- slider area starts -->
    
-  <% products.slice(0, 3).forEach(product => { %>
+   <% products.slice(0, 3).forEach(product => { %>
       <div class="single-slide slider-height position-relative">
         <div class="container">
           <div class="row">
@@ -151,7 +151,7 @@
                 <a href="/shop-details/<%= encodeURIComponent(product._id) %>">
                   <img src="<%= product.images[0] %>" alt="<%= product.name %>">
                   <span class="slider-price-badge">
-                    <span>$<%= product.price %></span>
+                    <span>₹<%= product.price %></span>
                   </span>
                 </a>
               </div>
@@ -224,7 +224,11 @@
                   <% } %>
                 </div>
                 <div class="buy-info">
-                  <a class="slider-btn add-btn float-left position-relative add-to-cart-btn" href="/add-to-cart/<%= encodeURIComponent(product._id) %>">Add To Cart</a>
+                  <% if (isUserLoggedIn===true) { %>
+                    <a class="slider-btn add-btn float-left position-relative add-to-cart-btn" href="/add-to-cart/<%= encodeURIComponent(product._id) %>">Add To Cart</a>
+                  <% } else { %>
+                    <a href="/login" class="slider-btn add-btn float-left position-relative " >Add To Cart</a>
+                  <% } %>
                   <ul class="wishlist text-right">
                     <li><a href="my_wishlist.html"><i class="lar la-heart"></i></a></li>
                     <li><button class="popbtn"><i class="fas fa-search-plus"></i></button></li>
@@ -281,7 +285,7 @@
         </ul>
         <span>03 Customer Review</span>
         <div class="price pt-15 pb-10">
-          <span>$42.00</span>
+          <span>₹42.00</span>
         </div>
         <p class="pr-110">Sed id interdum urna. Nam ac elit a ante commodo tristique. tum vehicula a
           hendrerit ac
@@ -482,7 +486,6 @@
     
   </footer>
 
-
-  <!-- Footer Area Ends -->
+ 
 
 <%- include('../layouts/footer.ejs') %>

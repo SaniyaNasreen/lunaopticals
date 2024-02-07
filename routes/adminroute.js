@@ -97,6 +97,7 @@ admin_route.put(
 admin_route.get("/coupon", auth.isAdmin, couponcontroller.loadCoupon);
 admin_route.post(
   "/coupon/add-coupon",
+  upload.single("image"),
   auth.isAdmin,
   couponcontroller.addCouponForCategory
 );

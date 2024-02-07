@@ -3,6 +3,7 @@ const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const User = require("../models/usermodel");
 const Order = require("../models/ordermodel");
+const Offer = require("../models/offermodel");
 const Wallet = require("../models/walletmodel");
 const Razorpay = require("razorpay");
 const instance = new Razorpay({
@@ -24,7 +25,8 @@ const loadOrder = async (req, res, next) => {
     const totalOrders = await Order.countDocuments();
     const sortedOrders = await Order.find()
       .sort(sortOption)
-      .populate("purchasedItems.product");
+      .populate("purchasedItems.product")
+      .sort({ date: -1 });
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 8;
     const startIndex = (page - 1) * limit;
@@ -119,6 +121,7 @@ const loadOrderDetails = async (req, res, next) => {
       console.error("User ID not found in the request");
       return res.status(404).send("User ID not found");
     }
+    const user = await User.findById(userId).populate("cart.product");
     const orderId = req.params.id;
     if (!orderId) {
       console.error("Order ID not found in the request");
@@ -128,14 +131,72 @@ const loadOrderDetails = async (req, res, next) => {
     const orders = await Order.find({ _id: orderId }).populate(
       "purchasedItems.product"
     );
-
-    if (!orders) {
+    console.log("orders", orders);
+    if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "Order not found" });
+    }
+    let discountAmount = 0;
+    for (const order of orders) {
+      const products = order.purchasedItems;
+
+      for (const item of products) {
+        const product = item.product;
+        console.log("product", product);
+        const currentDate = new Date();
+        const offer = await Offer.findOne({
+          $and: [
+            {
+              $or: [
+                {
+                  category: product.category,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+                {
+                  product: product,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+                {
+                  referral: userId,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+              ],
+            },
+            { validity: { $gte: currentDate } },
+          ],
+        }).populate("category", "referral");
+        console.log("Product Category:", product.category);
+        console.log("Found Offer:", offer);
+
+        if (offer) {
+          if (
+            offer.referral &&
+            req?.session?.userId == offer.referral.toString()
+          ) {
+            discountAmount = (product.price * (offer.discount / 100)).toFixed(
+              2
+            );
+          } else {
+            console.log("heyy", product.price);
+            discountAmount = (product.price * (offer.discount / 100)).toFixed(
+              2
+            );
+            console.log("discountAmount", discountAmount);
+          }
+        }
+        item.discountAmount = discountAmount;
+      }
+      order.purchasedItems = products;
     }
 
     res.render("users/orderInfo", {
       orders,
       isUserLoggedIn,
+      discountAmount,
+      totalAmount: 0,
+      user,
     });
   } catch (error) {
     next(error);
@@ -179,7 +240,6 @@ const returnOrder = async (req, res, next) => {
     const returnedItem = returnedOrder.purchasedItems.find(
       (item) => item._id.toString() === req.params.itemId
     );
-
     if (!returnedOrder || !returnedItem) {
       return res.status(404).json({ message: "Order or item not found" });
     }
@@ -191,6 +251,32 @@ const returnOrder = async (req, res, next) => {
     returnedItem.status = "Returned";
     await returnedOrder.save();
     const user = await User.findById(userId);
+
+    const offer = await Offer.findOne({
+      $or: [
+        {
+          category: returnedItem.category,
+          status: "Active",
+          validity: { $gte: new Date() },
+        },
+        {
+          product: returnedItem._id,
+          status: "Active",
+          validity: { $gte: new Date() },
+        },
+        {
+          referral: userId,
+          status: "Active",
+          validity: { $gte: new Date() },
+        },
+      ],
+    }).populate("category", "referral");
+    console.log("off", offer);
+    if (offer) {
+      const discountAmount = returnedItem.price * (offer.discount / 100);
+      console.log(discountAmount);
+      returnedItem.price -= discountAmount;
+    }
     if (user) {
       const walletAmount = returnedItem.price * returnedItem.quantity;
 
@@ -202,7 +288,7 @@ const returnOrder = async (req, res, next) => {
         method: "Refund",
       });
       await walletEntry.save();
-      user.wallets = walletEntry._id;
+      user.wallets.push(walletEntry._id);
       await user.save();
     }
 
@@ -216,13 +302,15 @@ const razorPayment = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const user = await User.findById(userId).populate("cart.product");
+    console.log(user.totalAmount);
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
     const cart = user.cart;
+    const totalAmount = user.totalAmount;
     const options = {
-      amount: cart[0].product.price * 100,
+      amount: totalAmount * 100,
       currency: "INR",
       receipt: "receipt_order_1",
       payment_capture: 1,
@@ -235,6 +323,35 @@ const razorPayment = async (req, res, next) => {
     next(error);
   }
 };
+
+const walletPayment = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const userWallet = await Wallet.findOne({ user: userId });
+
+    if (!userWallet) {
+      console.error("Wallet not found");
+      return res.status(404).json("Wallet not found");
+    }
+
+    const user = await User.findOne({ _id: userId });
+
+    const totalAmount = user.totalAmount;
+
+    if (userWallet.amount < totalAmount) {
+      console.error("Insufficient funds in wallet");
+      return res.status(400).json("Insufficient funds in wallet");
+    }
+
+    userWallet.amount -= totalAmount;
+    await userWallet.save();
+
+    res.json(userWallet.amount);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   loadOrder,
   updateStatus,
@@ -242,4 +359,5 @@ module.exports = {
   loadAdminOrderDetails,
   returnOrder,
   razorPayment,
+  walletPayment,
 };

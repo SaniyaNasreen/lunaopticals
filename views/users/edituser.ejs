@@ -12,12 +12,7 @@
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li
-                  class="breadcrumb-item position-relative active"
-                  aria-current="page"
-                >
-                  <a href="/edituser">profile</a>
-                </li>
+                <li class="breadcrumb-item position-relative active" aria-current="page"><a href="/edituser">profile</a></li>
               </ol>
             </nav>
           </div>
@@ -26,73 +21,59 @@
     </div>
   </div>
 </div>
-<div class="shop-grid-s pt-120" style="background-color: white; height: 850px">
+
+<div class="shop-grid-s pt-120" style="background-color: white; padding-bottom: 20px;">
   <div class="container">
     <div class="row">
-      <div class="col-xl-12">
-        <div class="d-flex">
-          <div class="col-xl-3 col-lg-4 col-md-12">
-            <div class="sidebar">
-              <!-- Include sidebar content -->
-              <%- include('../users/layouts/sidebar.ejs') %>
+      <div class="col-xl-3   ">
+        <div class="sidebar"> 
+          <%- include('../users/layouts/sidebar.ejs') %>
+        </div>
+      </div>
+      <div class="col-xl-9 col-lg-8 col-md-12">
+        <div class="bill-details pt-15" style="background-color: white;">
+          <div class="image-upload mb-4">
+            <div class="image-preview">
+              <!-- Placeholder for the image -->
+              <img src="#" alt="Preview Image" id="preview-image" style="border-radius: 50px; height: 100px; width: 100px; object-fit: cover;">
+            </div>
+            <div class="file-upload">
+              <label for="file-input" class="file-input-label" style="cursor: pointer; padding: 8px 12px; background-color: #007bff;  color: white; border-radius: 4px; float: right;position: relative; bottom: 60px;">Upload Image</label>
+              <input type="file" id="file-input" class="file-input" onchange="previewFile()" style="display: none;">
             </div>
           </div>
-          <div class="col-xl-9 col-lg-8 col-md-12">
-             
-              <div class="bill-details pt-15" style="background-color:white; position: relative; bottom: 65px; left: 100px; width: 700px;">
-                <div class="image-upload" style="width: 700px; height: 150px; position: relative; top: 50px; background-color:rgb(246, 247, 251)">
-                  <div class="image-preview" >
-                    <!-- Placeholder for the image -->
-                    <img src="#" alt="Preview Image" id="preview-image" style="border-radius: 50px; height: 100px; width: 100px;object-fit:cover; position: relative; top: 25px; left: 10px;">
-                  </div>
-                  <div class="file-upload">
-                    <label for="file-input" class="file-input-label" style="cursor: pointer;
-                    padding: 8px 12px;
-                    background-color: #007bff;
-                    color: white;
-                    border-radius: 4px;
-                    position: absolute;
-                    bottom: 40px;
-                    right: 10px;">Upload Image</label>
-                    <input type="file" id="file-input" class="file-input" onchange="previewFile()" style="display: none;">
-                  </div>
+          <form action="/saveUserProfile" class="bill-form" method="post">
+            <div class="address mb-4">
+              <label for="addres">Username</label>
+              <input type="text" name="name" value="<%= user.name %>" id="name" />
+            </div>
+            <div class="row mb-4">
+              <div class="col-xl-6 col-lg-6 col-sm-6">
+                <div class="email">
+                  <label for="emai">Email</label>
+                  <input type="text" name="email" value="<%= user.email %>" id="email" readonly />
                 </div>
-                <form action="/saveUserProfile" class="bill-form pt-5" method="post">
-                   
-                  <div class="address pt-30">
-                    <label for="addres">Username</label>
-                    <input type="text" name="name" value="<%= user.name %>" id="name" />
-                  </div>  
-                  
-                  
-                  <div class="row"> 
-                    <div class="col-xl-6 col-lg-6 col-sm-6">
-                      <div class="email pt-30">
-                        <label for="emai">Email</label>
-                        <input type="text" name="email" value="<%= user.email %>" id="email" readonly />
-                      </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-sm-6">
-                      <div class="phone pt-30">
-                        <label for="pho">Phone</label>
-                        <input type="text" name="mobile" value="<%= user.mobile %>" id="mobile" readonly  />
-                      </div>
-                    </div>
-                     
-                  <div class="address pt-30">
-                        <a href="/forget-password">Change Password</a>
-                  </div>
-                 
-                  <div class="address pt-30">
-                    <button style="width: 700px; height: 45px; border-style: none; background-color: rgb(255, 82, 53);">Save</button>
-                  </div>
-                </form>
+              </div>
+              <div class="col-xl-6 col-lg-6 col-sm-6">
+                <div class="phone">
+                  <label for="pho">Phone</label>
+                  <input type="text" name="mobile" value="<%= user.mobile %>" id="mobile" readonly />
                 </div>
+              </div>
+            </div>
+            <div class="address mb-4">
+              <a href="/forget-password">Change Password</a>
+            </div>
+            <div class="address">
+              <button style="width: 100%; height: 45px; border-style: none; background-color: rgb(255, 82, 53);">Save</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 <script>
   $(document).ready(function () {
     $('form[action="/saveUserProfile"]').submit(function (event) {

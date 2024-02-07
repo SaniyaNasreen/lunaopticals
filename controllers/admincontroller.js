@@ -33,20 +33,29 @@ const adminLogin = async (req, res) => {
     const password = req.body.password;
     const adminData = await User.findOne({ email: email });
     if (!adminData) {
-      res.render("admin/login", { message: "Email or password is incorrect" });
+      res.render("admin/login", {
+        errorWith: "ADMIN",
+        message: "No Admin Found",
+      });
+      return;
+    }
+    if (adminData.is_admin === 0) {
+      res.render("admin/login", {
+        errorWith: "ADMIN",
+        message: "This is not admin account",
+      });
       return;
     }
 
     const passwordmatch = await bcrypt.compare(password, adminData.password);
     if (!passwordmatch) {
-      res.render("admin/login", { message: "Password is incorrect" });
+      res.render("admin/login", {
+        errorWith: "Password",
+        message: "Password is incorrect",
+      });
       return;
     }
-    if (adminData.is_admin === 0) {
-      console.log("Not an admin");
-      res.redirect("/admin/login");
-      return;
-    }
+
     console.log("Setting admin_id session");
     req.session.admin_id = adminData._id;
     res.redirect("/admin/indexhome");

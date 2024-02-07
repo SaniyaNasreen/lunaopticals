@@ -1,6 +1,6 @@
 <%- include('../users/layouts/navbar.ejs') %>
 
-<div class="page-title-area pt-150 pb-55">
+<div class="page-title-area pt-4 pb-2 pb-md-4">
   <div class="container">
     <div class="row">
       <div class="col-xl-12">
@@ -12,12 +12,11 @@
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-               
                 <li
                   class="breadcrumb-item position-relative active"
                   aria-current="page"
                 >
-                  <a href="/edituser">profile</a>
+                  <a href="/edituser">Profile</a>
                 </li>
               </ol>
             </nav>
@@ -27,59 +26,63 @@
     </div>
   </div>
 </div>
-<div class="shop-grid-s pt-120" style="background-color: white; height:auto">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="d-flex">
-            <div class="col-xl-3 col-lg-4 col-md-12">
-              <div class="sidebar">
-                <!-- Include sidebar content -->
-                <%- include('../users/layouts/sidebar.ejs') %>
-              </div>
+<div class="shop-grid-s pt-4 pt-md-8">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="d-md-flex">
+          <div class="col-xl-3 col-lg-4 col-md-12 mb-3 mb-md-0">
+            <div class="sidebar">
+              <!-- Include sidebar content -->
+              <%- include('../users/layouts/sidebar.ejs') %>
             </div>
-            <div class="col-xl-9 col-lg-8 col-md-12">
-              <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
-                <div style="margin-bottom: 20px;">
-                  <div style="padding: 10px; width: 1000px;">
-                    <% if (offers && offers.length > 0) { %>
-                        <% offers.forEach(offer => { %>
-                          <% if(offer.status ==="Active") { %>
-                          <a href="">
-                          
-                            <div style="height: auto; border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                              
-                                <% if (offer.product) { %>
-                                  <% if (offer.product.images && offer.product.images.length > 0) { %>
-                                    <img style="width: 100px;position: relative; right: 35px;" src="<%= offer.product.images[0] %>" alt="<%= offer.product.name %>">
-                                  <% } %>
-                                <% } else if (offer.category) { %>
-                                  <% if (offer.category.image ) { %>
-                                    <img style="width: 100px;position: relative; right: 50px;" src="<%= offer.category.image %>" alt="<%= offer.category.name %>">
-                                  <% } %>
-                                <% } %>
-                                    
-                              <p style="float:left; font-weight: bold; color: black; font-size:14px; position: relative; top: 100px; "> <%= offer.name ? offer.name : ''%></p>
-                              
-                              <a href="<%= offer.product ? '/shop-details/' + offer.product._id : (offer.category ? '/shop-list/offers/' + offer.category.name : '#') %>">
-
-                                <p style="font-weight: bold; color: black; font-size:14px; position: relative; left: 100px; "> <%= offer.description ? offer.description : ''%></p>  
-                              </a>
-                              <!-- Display all products matching the offer category -->
-                               
-                              <p style="float: right; font-weight: bold; color: black; font-size:14px; position: relative; bottom: 30px; "> <%= offer.validity instanceof Date ? offer.validity.toDateString() : ''%></p>
-                            </div>
-                          </a>
-                           <% } %>
-                        <% }) %>
-                      <% } else { %>
-                        <p>No offers found</p>
-                      <% } %>
-                      
-                      
-                  </div>
+          </div>
+          <div class="col-xl-9 col-lg-8 col-md-12">
+            <div class="useraddress">
+              <div class="mb-3">
+                <div class="p-3">
+                  <% if (offers && offers.length > 0) { %> <%
+                  offers.forEach(offer => { %> <% if(offer.status ==="Active") {
+                  %>
+                  <a href="">
+                    <div class="border p-3 bg-white mb-3">
+                      <% if (offer.product) { %> <% if (offer.product.images &&
+                      offer.product.images.length > 0) { %>
+                      <img
+                        class="img-fluid"
+                        src="<%= offer.product.images[0] %>"
+                        alt="<%= offer.product.name %>"
+                        width="250"
+                      />
+                      <% } %> <% } else if (offer.category) { %> <% if
+                      (offer.category.image ) { %>
+                      <img
+                        class="img-fluid"
+                        src="<%= offer.category.image %>"
+                        alt="<%= offer.category.name %>"
+                        width="250"
+                      />
+                      <% } %> <% } %>
+                      <p class="font-weight-bold text-dark">
+                        <%= offer.name ? offer.name : ''%>
+                      </p>
+                      <a
+                        href="<%= offer.product ? '/shop-details/' + offer.product._id : (offer.category ? '/shop-list/offers/' + offer.category.name : '#') %>"
+                      >
+                        <p class="font-weight-bold text-dark">
+                          <%= offer.description ? offer.description : ''%>
+                        </p>
+                      </a>
+                      <p class="font-weight-bold text-dark">
+                        <%= offer.validity instanceof Date ?
+                        offer.validity.toDateString() : ''%>
+                      </p>
+                    </div>
+                  </a>
+                  <% } %> <% }) %> <% } else { %>
+                  <p>No offers found</p>
+                  <% } %>
                 </div>
-                
               </div>
             </div>
           </div>
@@ -87,11 +90,6 @@
       </div>
     </div>
   </div>
-  
-  <%- include('../users/layouts/footer.ejs') %>
-        </div>
-      </div>
-    </div>
-  </div>
-   
-   
+</div>
+
+<%- include('../users/layouts/footer.ejs') %>

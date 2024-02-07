@@ -12,7 +12,10 @@ const nocache = require("nocache");
 const easyinvoice = require("easyinvoice");
 const puppeteer = require("puppeteer");
 const Order = require("./models/ordermodel");
+const User = require("./models/usermodel");
+const Offer = require("./models/usermodel");
 const fs = require("fs");
+const Category = require("./models/categorymodel");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +33,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(errorHandler);
 app.use("/", userroute);
 app.use("/admin", adminroute);
+
 app.get("/download-invoice/:orderNumber", async (req, res) => {
   try {
     const orderNumber = req.params.orderNumber;
@@ -42,17 +46,41 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
     if (!order.address || !order.address.firstname || !order.address.email) {
       return res.status(400).send("Invalid order address");
     }
+    const userId = req.session.user_id;
+    console.log("user_id", userId);
+    const user = await User.findOne({ _id: userId });
+    console.log("user", user);
     const clientName = `${order.address.firstname} ${
       order.address.lastname || ""
     }`;
     const clientAddress = order.address.address || "N/A";
     const clientEmail = order.address.email || "N/A";
 
-    const productsData = order.purchasedItems.map((item) => ({
-      description: item.product.name || "N/A",
-      quantity: item.quantity || 0,
-      price: item.product.price || 0,
-    }));
+    const productsData = await Promise.all(
+      order.purchasedItems.map(async (item) => {
+        const product = item.product;
+        console.log(product.category._id);
+        console.log(product._id);
+        const offer = await Offer.findOne({
+          $or: [{ product: product._id }, { category: product.category }],
+        });
+        console.log("off", offer);
+        if (offer) {
+          console.log("hello");
+          if (offer.status === "Active" && offer.validity > new Date()) {
+            const discountAmount = product.price * (offer.discount / 100);
+            console.log(discountAmount);
+            product.price -= discountAmount;
+          }
+        }
+        return {
+          description: item.product.name || "N/A",
+          quantity: item.quantity || 0,
+          price: product.price || 0,
+        };
+      })
+    );
+    console.log(productsData);
     const data = {
       client: {
         name: clientName,
@@ -71,6 +99,7 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
         currency: "USD",
       },
     };
+    const totalAmount = user.totalAmount;
     const productRows = data.products.map(
       (product) => `
         <tr>
@@ -78,10 +107,11 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
           <td>${product.description}</td>
           <td>${product.quantity}</td>
           <td>$${product.price}</td>
-          <td>$${product.price * product.quantity}</td>
+          <td>$${user.totalAmount}</td>
         </tr>
       `
     );
+
     console.log(productsData);
     const invoiceHTML = `
     <!DOCTYPE html>
@@ -159,10 +189,7 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
           <div class="invoice-total"style="font-size:20px;display:flex;position:relative; top:170px;border-style:groove; border : 1px solid black;border-top:none; padding-left:600px ; border-left: none; border-right: none;  ">
             <!-- Calculate and display the total amount -->
             <div style="position:relative;left:200px">
-            <h3  style="float:left; ">Total Amount: $${data.products.reduce(
-              (total, product) => total + product.quantity * product.price,
-              0
-            )}</h3> 
+            <h3  style="float:left; ">Total Amount: $${totalAmount}</h3> 
           </div> 
         </div> 
       </body>
@@ -187,9 +214,15 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-app.get("/download-sales-report/:orderNumber", async (req, res) => {
+app.get("/download-sales-report", async (req, res) => {
   try {
-    const orders = await Order.find({}).populate("user");
+    const { startDate, endDate } = req.query;
+    if (!startDate || !endDate) {
+      return res.status(400).send("Please provide both start and end dates");
+    }
+    const orders = await Order.find({
+      date: { $gte: new Date(startDate), $lte: new Date(endDate) },
+    }).populate("user");
 
     // Check if no orders were found
     if (!orders || orders.length === 0) {

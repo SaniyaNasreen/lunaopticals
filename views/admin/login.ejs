@@ -52,7 +52,7 @@ novalidate
   >
   <input
     type="email"
-    class="form-control1-login form-control"
+    class="form-control1-login form-control <%- (typeof errorWith != 'undefined' && errorWith ==='ADMIN') ? 'is-invalid' : '' %>"
     id="validationCustomUsername"
     aria-describedby="inputGroupPrepend"
     required
@@ -66,7 +66,7 @@ novalidate
       background-color: rgb(50, 50, 50);
     "
   />
-  <div class="invalid-feedback">Please enter a valid email address.</div>
+  <div class="invalid-feedback">  <%- (typeof errorWith != 'undefined') ? message : "Email is required" %></div>
 </div>
 <div class="mb-3">
   <label for="validationCustom03" class="form-label" style="color: white"
@@ -74,7 +74,7 @@ novalidate
   >
   <input
     type="password"
-    class="form-control1-login form-control"
+    class="form-control1-login form-control <%- (typeof errorWith != 'undefined' && errorWith ==='Password') ? 'is-invalid' : '' %>"
     id="validationCustom03"
     required
     name="password"
@@ -87,7 +87,7 @@ novalidate
       background-color: rgb(50, 50, 50);
     "
   />
-  <div class="invalid-feedback">Password is Invalid</div>
+  <div class="invalid-feedback">  <%- (typeof errorWith != 'undefined') ? message : "Password is required" %></div>
 </div>
 <h4 class="sub1-login">
   Forgot your password?<a href="/forget-password">Click here</a>

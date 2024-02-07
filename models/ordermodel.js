@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema({
     },
     type: {
       type: String,
-      enum: ["Cash on delivery", "Razorpay"],
+      enum: ["Cash on delivery", "Razorpay", "Wallet"],
     },
     details: {
       type: Object,

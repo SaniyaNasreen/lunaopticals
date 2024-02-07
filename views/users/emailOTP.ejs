@@ -36,7 +36,7 @@
       </h1>
       <form
         action="/forgotPassword"
-        class="sentotp"
+        class="sentotp needs-validation"
         id="emailValidate"
         method="post"
         novalidate
@@ -50,13 +50,16 @@
           >
           <input
             type="email"
-            class="sentotp1 form-control"
+            class="sentotp1 form-control <%- (typeof errorWith != 'undefined' && errorWith ==='USER') ? 'is-invalid' : '' %>"
+            id="validationCustomUsername"
+            aria-describedby="inputGroupPrepend"
             name="email"
             required
             style="width: 400px; position: relative; left: 50px"
           />
-          <div class="invalid-feedback">
-            Please enter a valid email address.
+          <div class="invalid-feedback" style="position: relative; left: 50px">
+            <!-- prettier-ignore -->
+            <%- (typeof errorWith != 'undefined') ? message : "Email is required" %>
           </div>
           <br />
           <input
@@ -77,7 +80,6 @@
           />
           <div class="error" id="emailErr"></div>
         </div>
-        <h5 class=""><%= message %></h5>
       </form>
     </div>
   </div>

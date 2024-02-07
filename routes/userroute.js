@@ -19,13 +19,24 @@ user_route.get(
 // user management
 user_route.get("/register", usercontroller.loadRegister);
 user_route.post("/register", usercontroller.insertUser);
-user_route.get("/verify", auth.isUser, usercontroller.verifyMail);
+user_route.get("/verify", usercontroller.verifyMail);
 user_route.get("/login", usercontroller.loginLoad);
 user_route.post("/login", usercontroller.verifyLogin);
 user_route.get("/logout", auth.isUser, usercontroller.userLogout);
 user_route.get("/edituser", auth.isUser, usercontroller.userProfile);
 user_route.get("/addAddress", auth.isUser, usercontroller.loadAddAddress);
+user_route.get(
+  "/users/addAddress/:id",
+  auth.isUser,
+  usercontroller.loadAddAddress
+);
 user_route.post("/addAddress", auth.isUser, usercontroller.addAddress);
+user_route.post(
+  "/users/addAddress/:id",
+  auth.isUser,
+  usercontroller.addAddress
+);
+
 user_route.get(
   "/users/editAddress/:id",
   auth.isUser,
@@ -80,6 +91,7 @@ user_route.get(
   auth.isUser,
   ordercontroller.loadOrderDetails
 );
+
 //Checkout
 user_route.get("/checkout", auth.isUser, usercontroller.loadCheckout);
 user_route.get(
@@ -95,6 +107,8 @@ user_route.post(
   auth.isUser,
   couponcontroller.applyCoupon
 );
+user_route.get("/wallet/payment", auth.isUser, ordercontroller.walletPayment);
+user_route.post("/wallet/payment", auth.isUser, ordercontroller.walletPayment);
 
 //Offer
 user_route.get("/offers", auth.isUser, offercontroller.loadUserOffer);

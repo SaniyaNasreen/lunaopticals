@@ -12,7 +12,6 @@
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-               
                 <li
                   class="breadcrumb-item position-relative active"
                   aria-current="page"
@@ -27,58 +26,104 @@
     </div>
   </div>
 </div>
-<div class="shop-grid-s pt-120" style="background-color: white; height:auto">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="d-flex">
-            <div class="col-xl-3 col-lg-4 col-md-12">
-              <div class="sidebar">
-                <!-- Include sidebar content -->
-                <%- include('../users/layouts/sidebar.ejs') %>
-              </div>
-            </div>
-            <div class="col-xl-9 col-lg-8 col-md-12">
-              <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
-                <div style="margin-bottom: 20px;">
-                  <div style="padding: 10px; width: 1000px;">
-                    <% if (orders && orders.length > 0) { %>
-                      <% orders.forEach(order => { %>
-                        <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
-                         
-              
-                          <p style="float:right; font-weight: bold; color: black; font-size:14px; position: relative;top: 50px; right: 100px;">  <%= order.date instanceof Date ? order.date.toDateString() : ''%></p>
-                
-                          <!-- Display all products in one order within a single div -->
-                          <div>
-                            <% let totalAmount = 0; %>
-                            <% order.purchasedItems.forEach(purchasedItem => { %>
-                              <img src="<%= purchasedItem.product.images[0]%>" alt="<%= purchasedItem.product.name %> Image" style="width: 50px;"> 
-                              <p style="font-weight: bold; color: black; font-size:14px;">  <%= purchasedItem.product.name %></p>
-                              <% totalAmount += purchasedItem.price; %>
-                              <p style="float: right; position: relative; bottom: 40px; font-weight: 500; right: 350px; color: black; font-size: 13px;"> ₹ <%= totalAmount %></p>
-                              <% if (purchasedItem.status === 'cancelled') { %>
-                                <button style="float: right; position: relative;   font-weight: 500; color: white; font-size: 13px; background-color: red; border-style: none;">
-                                  <%= purchasedItem.status %>
-                                </button>
-                              <% } else { %>
-                                <button style="float: right; position: relative;   font-weight: 500; color: rgb(250, 249, 249); font-size: 13px; background-color: blue; border-style: none;">
-                                  <%= purchasedItem.status %>
-                                </button>
-                              <% } %>
-                            <% }) %>
-                           
-                          </div> 
-                          <!-- Add other order details as needed -->
-                          <a href="/users/orderInfo/<%= encodeURIComponent(order._id) %>" class="view-order-btn" style="color:orangered; font-size:medium;">View Details</a>
-                        </div>
-                      <% }) %>
-                    <% } else { %>
-                      <p>No orders found</p>
-                    <% } %>
+
+<div class="shop-grid-s pt-120" style="background-color: white; height: auto">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-3 col-lg-4 col-md-12">
+        <div class="sidebar">
+          <!-- Include sidebar content -->
+          <%- include('../users/layouts/sidebar.ejs') %>
+        </div>
+      </div>
+      <div class="col-xl-9 col-lg-8 col-md-12">
+        <div class="useraddress">
+          <div class="row">
+            <div class="col-12">
+              <div>
+                <!-- prettier-ignore -->
+                <% if (orders && orders.length > 0) { %> 
+                  <% orders.forEach(order=> { %>
+                <div class="border mb-3 p-3">
+                  <div class="d-flex justify-content-between">
+                    <p
+                      class="font-weight-bold"
+                      style="font-weight: bold; color: black"
+                    >
+                      <%= order.date instanceof Date ? order.date.toDateString()
+                      : ''%>
+                    </p>
+                    <a
+                      href="/users/orderInfo/<%= encodeURIComponent(order._id) %>"
+                      class="view-order-btn"
+                      style="color: orangered; font-size: 16px"
+                      >View Details</a
+                    >
                   </div>
+                  <% order.purchasedItems.forEach(purchasedItem => { %>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <div class="d-flex align-items-center">
+                      <img
+                        src="<%= purchasedItem.product.images[0]%>"
+                        alt="<%= purchasedItem.product.name %> Image"
+                        style="width: 50px"
+                      />
+                      <p
+                        class="font-weight-bold mb-0 ml-2"
+                        style="font-weight: bold; color: black"
+                      >
+                        <%= purchasedItem.product.name %>
+                      </p>
+                    </div>
+                    <div>
+                      <% if (purchasedItem.status === 'cancelled') { %>
+                      <button
+                        style="
+                          font-weight: 500;
+                          color: white;
+                          font-size: 14px;
+                          background-color: red;
+                          border-style: none;
+                          width: 90px;
+                          height: 30px;
+                        "
+                      >
+                        <%= purchasedItem.status %>
+                      </button>
+                      <% } else { %>
+                      <button
+                        style="
+                          font-weight: 500;
+                          color: rgb(250, 249, 249);
+                          font-size: 14px;
+                          background-color: blue;
+                          border-style: none;
+                          width: 100px;
+                          height: 30px;
+                        "
+                      >
+                        <%= purchasedItem.status %>
+                      </button>
+                      <% } %>
+                      <p
+                        class="mb-0 ml-2"
+                        style="font-weight: 600; font-size: 13px; color: black"
+                      >
+                        ₹ <%= Math.round(purchasedItem.quantity *
+                        (purchasedItem.price -
+                        purchasedItem.productDiscountAmount)) %>
+                      </p>
+                    </div>
+                  </div>
+                  <% }) %>
                 </div>
-                
+                <!-- prettier-ignore -->
+                <% }) %> 
+                <% } else { %>
+                <p>No orders found</p>
+                <% } %>
               </div>
             </div>
           </div>
@@ -86,14 +131,6 @@
       </div>
     </div>
   </div>
-  
-  <%- include('../users/layouts/footer.ejs') %>
-        </div>
-      </div>
-    </div>
-  </div>
-   
-   
+</div>
 
- 
-  
+<%- include('../users/layouts/footer.ejs') %>

@@ -55,13 +55,16 @@
             >
             <input
               type="email"
-              class="checkotp1 form-control"
+              class="checkotp1 form-control <%- (typeof errorWith != 'undefined' && errorWith ==='USER') ? 'is-invalid' : '' %>"
+              id="validationCustomUsername"
+              aria-describedby="inputGroupPrepend"
               name="email"
               required
               style="position: relative; top: 30px; width: 430px"
             />
-            <div class="invalid-feedback" style="position: relative; top: 30px">
-              Please enter a valid email address.
+            <div class="invalid-feedback" style="position: relative;  top: 30px;">
+              <!-- prettier-ignore -->
+              <%- (typeof errorWith != 'undefined') ? message : "Email is required" %>
             </div>
           </div>
           <div class="mb-3">
@@ -74,12 +77,15 @@
               >
             <input
               type="number"
-              class="checkotp1 form-control"
+              class="checkotp1 form-control  <%- (typeof errorWith != 'undefined' && errorWith ==='OTP') ? 'is-invalid' : '' %>"
               name="otp"
               required
               style="width: 430px;position: relative; bottom: 20px"
             />
-            <div class="invalid-feedback">Please enter the OTP.</div>
+            <div class="invalid-feedback" style="position: relative;  ">
+              <!-- prettier-ignore -->
+              <%- (typeof errorWith != 'undefined') ? message : "Otp is required" %>
+            </div>
           </div>
           <div class="mb-3">
             <input

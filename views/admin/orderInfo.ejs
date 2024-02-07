@@ -32,7 +32,7 @@
                                         <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
                                             <p>Order Date: <%= order.date %></p>
                                             <p>Order ID: <%= order.orderNumber %></p>
-                                            <p>Total Price: $<%= order.totalAmount %></p>
+                                            <p>Total Price:₹<%=Math.round( order.totalAmount) %></p>
                                         </div>
                                         <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 20px; padding: 10px; font-size: larger; font-weight: bold; position: relative; bottom: 10px;">
                                           <a href="http://localhost:4000/download-invoice/<%= order.orderNumber %>" style="font-size: large; font-weight: 300;">Download Invoice</a>
@@ -56,7 +56,7 @@
                                             <% order.purchasedItems.forEach(item => { %>
                                                 <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
                                                     <p><%= item.product.name %></p>
-                                                    <p><%= item.price %></p>
+                                                    <p><%=Math.round( item.price) %></p>
                                                     <p>Qty: <%= item.quantity %></p> 
                                                     
                                                     <button style="border-radius: 20px; border-style: none; position: relative; left: 950px; bottom: 120px; background-color: blue; width: 110px; height: 40px;">

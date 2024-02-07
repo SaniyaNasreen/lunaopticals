@@ -1,28 +1,87 @@
-<%- include('../layouts/header.ejs') %>
+<%-include('../layouts/header')%>
+<header>
+  <div class="header-1">
+    <div class="container">
+      <div class="row align-items-center">
+        <div
+          class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-7 order-md-2 order-lg-1"
+        >
+          <div class="logo3 text-md-center text-lg-left">
+            <a href="/">
+              <div
+                class="logo3"
+                style="background-image: url('/public/images\ \(1\).jpg')"
+              ></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
 
-<div class="container-fluid2">
+<div class="container-fluid0">
   <div class="logoimage">
     <img src="/images (1).jpg" alt="" />
-    <div class="box-forget1">
-      <h1 class="headforget2">ResetPassword</h1>
+    <div class="box-sentotp">
+      <h1 class="headsentotp1" style="position: relative; right: 20px">
+        ResetPassword
+      </h1>
+      <form
+        action="/forget-password"
+        class="sentotp needs-validation"
+        id="emailValidate"
+        method="post"
+        novalidate
+      >
+        <div class="mb-3">
+          <label
+            for="validationCustomUsername"
+            class="form-label"
+            style="color: white; position: relative; left: 50px; top: 20px"
+            >Email</label
+          >
+          <input
+            type="email"
+            class="formforget11 form-control <%- (typeof errorWith != 'undefined' && errorWith ==='USER') ? 'is-invalid' : '' %>"
+            id="validationCustomUsername"
+            aria-describedby="inputGroupPrepend"
+            name="email"
+            required
+            placeholder="Enter email"
+            style="width: 400px; position: relative; right: 50px; bottom: 60px"
+          />
 
-      <% if(typeof message !== 'undefined'){ %>
-      <h4><%= message %></h4>
-      <% } %>
-      <form action="/forget-password" class="forgetpassword1" method="post">
-        <input
-          type="email"
-          class="formforget11"
-          name="email"
-          required
-          placeholder="Enter email"
-        />
-        <br /><br />
+          <div
+            class="invalid-feedback"
+            style="position: relative; bottom: 50px; left: 50px"
+          >
+            <!-- prettier-ignore -->
+            <%- (typeof errorWith != 'undefined') ? message : "Email is required" %>
+          </div>
+          <br />
+          <input
+            type="submit"
+            class="formforget22"
+            value="Send Reset Link"
+            style="
+              width: 400px;
+              position: relative;
+              bottom: 50px;
+              right: 100px;
+              border-radius: 10px;
+              color: white;
+              height: 40px;
+              font-weight: 500;
+              background-color: rgb(197, 95, 22);
+              border-style: hidden;
+            "
+          />
 
-        <input type="submit" class="formforget22" value="Send Reset Link" />
+          <div class="error" id="emailErr"></div>
+        </div>
       </form>
     </div>
   </div>
 </div>
-
-<%- include('../layouts/footer.ejs') %>
+<%-include('../layouts/footer')%>

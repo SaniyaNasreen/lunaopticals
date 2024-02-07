@@ -149,7 +149,15 @@
                         </div>
                       </td>
                       <td>
-                        $<%= item.product.price %>
+                        <% if (hasOffer) { %>  
+                          <div class="price pt-15 pb-10"> 
+                            <span class="final-price"> ₹<%=Math.round (item.product.price - item.discountAmount) %></span>
+                          </div>
+                        <% } else { %>
+                          <div class="price pt-15 pb-10"> 
+                            <span class="final-price"> ₹<%=Math.round( item.product.price ) %></span>
+                          </div>
+                        <% } %>
                       </td>
                       
                       <td>
@@ -166,7 +174,11 @@
                         
                       </td>
                       <td>
-                        $<%= item.quantity * item.product.price %>
+                        <% if (hasOffer) { %>  
+                        ₹<%= Math.round(item.quantity * (item.product.price- item.discountAmount)) %>
+                        <% } else { %>
+                          ₹<%=Math.round( item.quantity * (item.product.price)) %>
+                          <% } %>
                       </td>
                       <td>
                         <button class="remove-item-btn" style="background-color: red; border-style: none;  " data-product-id="<%= item.product._id %>">
@@ -210,13 +222,23 @@
       <div class="col-xl-6 col-lg-6 col-md-6">
         <div class="cart-total pt-30 pl-40 pr-30 pb-50 mt-40 mt-md-0">
           <h6>Cart Total</h6>
+          <% let total = 0; %>
+
           <% let subtotal = 0; %> <% user.cart.forEach(item => { %>
-            <ul>
-              <li>Sub Total <span class="float-right">$<%= item.quantity * item.product.price %></span></li>
-              <li>Grand Total <span class="float-right"> <% subtotal += subtotal %></span></li>
-              
-            </ul> <% });
+            <% if (hasOffer) { %>  
+            <ul> 
+            
+             <% total += item.quantity * (item.product.price - item.discountAmount); %> 
+             
+            </ul>
+            <% } else { %>
+              <% total += item.quantity * item.product.price; %>
+              ₹<%= total %>
+              <% } %>
+            <% });
             %>
+            <li>Grand Total <span class="float-right">  ₹<%=total %></span></li>
+            
         
           <p class="pt-15">Checkout with Mutilple Adresses</p>
           <form action="/checkoutCart" method="post">

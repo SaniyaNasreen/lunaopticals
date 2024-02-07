@@ -179,18 +179,19 @@
             </ul>
             <span>03 Customer Review</span>
             
-            <div class="price pt-15 pb-10">
-              <span>   ₹<%= product.price.toFixed(2) %></span>
-            </div>
+          
             
             <% if (hasOffer) { %> 
+              <div class="price pt-15 pb-10">
+                <span style="text-decoration: line-through; color: red;">   ₹<%= product.price.toFixed(2) %></span>
+              </div>
               
               <div class="price pt-15 pb-10"> 
                 <span class="final-price">  ₹<%= (product.price - discountAmount).toFixed(2) %></span>
               </div>
             <% } else { %>
               <div class="price pt-15 pb-10"> 
-                <span class="final-price">  ₹<%= product.price.toFixed(2) %></span>
+                <span class="final-price">  ₹<%=Math.round(product.price)  %></span>
               </div>
             <% } %>
             
@@ -198,12 +199,7 @@
               <%= product.richDescription %>
             </p>
   
-            <div class="product-color pt-10 d-flex">
-              <div class="color-code pl-20">
-                <span></span>
-                <span></span>
-              </div>
-            </div>
+              
   
             <div class="product-size d-flex pt-10">
               <h6>SELECT SIZE</h6>
@@ -217,14 +213,14 @@
             </div>
   
             <div class="product-count d-flex mt-25">
-              <div class="quty mr-20">
-                <input class="qty" type="number" value="1">
-              </div>
+ 
               <div class="add-tocart mr-20 mt-15 mt-sm-0">
-                <a class="p-btn add-btn float-left position-relative add-to-cart-btn" href="/add-to-cart/<%= encodeURIComponent(product._id) %>" data-product-id="<%= product._id %>">
-                    <span>Add to cart</span>
-                </a>
-                
+               
+                <% if (isUserLoggedIn===true) { %>
+                  <a class="p-btn add-btn float-left position-relative add-to-cart-btn" href="/add-to-cart/<%= encodeURIComponent(product._id) %>">Add To Cart</a>
+                <% } else { %>
+                  <a href="/login"class="p-btn add-btn float-left position-relative  " >Add To Cart</a>
+                <% } %>
             </div>
             
             <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="cartModalLabel" aria-hidden="true">

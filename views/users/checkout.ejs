@@ -43,20 +43,16 @@
          
               <form action="/checkout/applyCoupon" class="coupon-form pt-25"  method="post">
                 <input type="text" name="code" placeholder="Enter your code here">
-                <button class="p-btn border-0 ml-20">APPLY COUPON</button>
+                <button class="p-btn border-0  ">APPLY COUPON</button>
               </form>
+              
+              
            
           </div>
 
           <form action="/saveOrder" method="post" class="bill-form pt-5" id="orderForm">
             <h3>Shipping Address</h3>
-<select id="address-dropdown">
-  <% for (const address of userAddresses) { %>
-    <option value="<%= address._id %>" <%= address._id === selectedAddress._id ? 'selected' : '' %>>
-      <%= address.firstname %>,<%= address.lastname %>,<%= address.address %> <%= address.city %>, <%= address.country %> <%= address.pincode %>,<%= address.email %>,<%= address.mobile %>
-    </option>
-  <% } %>
-</select>
+          <button style="background-color: blue; border-style: none; width: 170px;height: 45px;border-radius: 3px;"><a style="color: white;" href="/users/addaddress/<%= user._id %>">ADD ADDRESS</a></button> 
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30" id="address-fields">
@@ -108,16 +104,57 @@
                   <input type="text" name="mobile" id="mob"  value="<%= selectedAddress.mobile %>" />
                 </div>
               </div>
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                <div class="first-name pt-30">
+                  <label for="first-nem">Select Address</label>
+              <select id="address-dropdown"  style="width: 550px;  ">
+                <% for (const address of userAddresses) { %>
+                  <option value="<%= address._id %>" <%= address._id === selectedAddress._id ? 'selected' : '' %>>
+                    <%= address.firstname %>,<%= address.lastname %>,<%= address.address %> <%= address.city %>, <%= address.country %> <%= address.pincode %>,<%= address.email %>,<%= address.mobile %>
+                  </option>
+                <% } %>
+              </select>
+                </div>
+            </div>
             </div> 
         </div>
        
       </div>
      
       
-          <div class="col-xl-6 col-lg-6 col-md-6" >
-            <div class="product-order pl-50 pr-50 pt-35 pb-55 mt-50 mt-md-0">
-              <h6 class="text-center pb-10">Your Order</h6>
-    <table>
+          <div class="col-xl-6 col-lg-6 col-md-6 "  >
+            <div class="coupon-list d-flex flex-wrap pb-10 ">
+                  
+              <% if (coupon && coupon.length > 0) { %> 
+                <% coupon.forEach(coupon => { %>
+                 
+                  <div class="border p-5 mr-3 " style="width: 255px;">
+                    <div class="d-flex justify-content-between  ">
+                      <p class="font-weight-bold" style="font-weight: bold; color: black">
+                        <%= coupon.name %>
+                      </p>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <p>
+                          <strong>Code:</strong> <%= coupon.code %>
+                        </p>
+                        <p>
+                          <strong>Discount:</strong> <%= coupon.discount %>%<br> 
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <p>No coupons available</p>
+              <% } %>
+            </div>
+            <div class="product-order pl-50 pr-50 pt-80 pb-15 mt-50 mt-md-0"  >
+                
+          
+              <h6 class="text-center pb-10 pt-10 " style="font-size: 30px;">Your Order</h6>
+    <table >
       <thead>
         <tr>
           <th scope="col">PRODUCT</th>
@@ -127,23 +164,20 @@
       </thead>
       <table> 
         <tbody>
-          <% let subtotal = 0; %>
+          
           <% userCart.forEach(item => { %>
             <tr>
               <td><%= item.product.name %></td>
-              <td><%= item.quantity %></td>
-              <% if (item.product.discountedPrice) { %>
-                <td>
-                  $<%= (item.quantity * item.product.discountedPrice).toFixed(2) %>
-                  <span class="discount-amount">
-                    (Discount: $<%= (item.quantity * (item.product.price - item.product.discountedPrice)).toFixed(2) %>)
-                  </span>
-                </td>
-              <% } else { %>
-                <td>$<%= (item.quantity * item.product.price).toFixed(2) %></td>
-              <% } %>
-            </tr>
-            <% subtotal += (item.quantity * (item.product.discountedPrice || item.product.price))%>
+              <td><%= item.quantity %></td> 
+              
+              <td>    <% if (hasOffer) { %>  
+                ₹<%=Math.round( item.quantity * (item.product.price - item.discountAmount)) %>
+                <% } else { %>
+                  ₹<%=Math.round( item.quantity * (item.product.price)) %>
+                  <% } %></td> 
+            </tr> 
+            <% subtotal %>
+            
           <% }); %>
         </tbody>
         
@@ -155,7 +189,7 @@
         <p class="pt-15">
           Sub Total
           <span id="subTotal" class="float-right">
-            $<%= subtotal.toFixed(2) %>
+            ₹<%= subtotal  %>
           </span>
         </p>
         <!-- Calculate discount and show -->
@@ -163,46 +197,35 @@
         <p class="pt-15">
           Discount
           <span id="discount" class="float-right">
-            $<%= discountAmount%>
+            ₹<%=Math.round( discountPrice )%>
           </span>
         </p>
-      <% } else { %>
-        <!-- If there's no code provided -->
+      <% } else { %> 
         <hr class="mt-5" />
         <p class="pt-15">
           Sub Total
           <span id="subTotal" class="float-right">
-            $<%= subtotal.toFixed(2) %>
+            ₹<%=Math.round( subtotal) %>
           </span>
-        </p>
-        <!-- No discount in this case -->
+        </p> 
       <% } %>
     
       <!-- Shipping -->
       <hr />
-      <% if (subtotal > 2000) { %>
-        <p class="pt-15">Shipping <span class="float-right">$0</span></p>
-      <% } else { %>
-        <p class="pt-15">Shipping <span class="float-right">$100</span></p>
-      <% } %>
+       
+        <p class="pt-15">Shipping <span class="float-right"> $<%= Shipping %></span></p>
+      
     
       <!-- Total -->
       <hr />
-      <% if (req.body.code&&coupon.status === "Active") { %> 
+       
         <p class="price-total pt-15">
           Total
           <span id="total" class="float-right">
-            $<%= (subtotal - discountAmount).toFixed(2) %>
+            
+            ₹<%=Math.round( user.totalAmount )%>
           </span>
-        </p>
-      <% } else { %>
-        <p class="price-total pt-15">
-          Total 
-          <span id="total" class="float-right">
-            $<%= (subtotal + (subtotal > 2000 ? 0 : 100)).toFixed(2) %>
-          </span>
-        </p>
-      <% } %>
+        </p> 
                
               <div class="payment-method mt-55">
                 <div class="direct-bank position-relative pl-25">
@@ -216,6 +239,13 @@
                   <span class="check-mark"></span>
                   <label for="Cod">Cash on delivery </label>
                 </div>
+
+                <div class="wallet position-relative pl-25 mt-20">
+                  <input type="radio" id="Wallet" name="paymentMethod" value="Wallet" />
+                  <span class="check-mark"></span>
+                  <label for="Wallet">Wallet</label>
+                </div>
+                
                  
                 <button type="submit" class="p-btn border-0 mt-45"  id="placeOrderBtn">PLACE ORDER</button>
                 
@@ -253,33 +283,32 @@
      
     <!-- prettier-ignore--> 
     <script>
-     document.getElementById('address-dropdown').addEventListener('change', (event) => {
-  const addressId = event.target.value;
-  console.log(addressId);
-
-  fetch(`/checkout/address/${addressId}`)
-  .then((response) => {
-    if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-    }
-    return response.json();
-})
-    .then((fetchedAddress) => {  
-      document.querySelector("#first-nem").value = fetchedAddress.firstname;
-      document.querySelector("#last-nam").value = fetchedAddress.lastname;
-      document.querySelector("#addres").value = fetchedAddress.address;
-      document.querySelector("#country").value = fetchedAddress.country;
-      document.querySelector("#city").value = fetchedAddress.city;
-      document.querySelector("#pincode").value = fetchedAddress.pincode;
-      document.querySelector("#email").value = fetchedAddress.email;
-      document.querySelector("#mob").value = fetchedAddress.mobile;
-    })
-    .catch((error) => {
-      console.error('Error fetching address:', error);
-    });
-});
-    </script>
-    
+      document.getElementById('address-dropdown').addEventListener('change', (event) => {
+   const addressId = event.target.value;
+   console.log(addressId);
+ 
+   fetch(`/checkout/address/${addressId}`)
+   .then((response) => {
+     if (!response.ok) {
+         throw new Error(`HTTP error ${response.status}`);
+     }
+     return response.json();
+ })
+     .then((fetchedAddress) => {  
+       document.querySelector("#first-nem").value = fetchedAddress.firstname;
+       document.querySelector("#last-nam").value = fetchedAddress.lastname;
+       document.querySelector("#addres").value = fetchedAddress.address;
+       document.querySelector("#country").value = fetchedAddress.country;
+       document.querySelector("#city").value = fetchedAddress.city;
+       document.querySelector("#pincode").value = fetchedAddress.pincode;
+       document.querySelector("#email").value = fetchedAddress.email;
+       document.querySelector("#mob").value = fetchedAddress.mobile;
+     })
+     .catch((error) => {
+       console.error('Error fetching address:', error);
+     });
+ });
+     </script>
     <script>
       $(document).ready(function () {
       $('#orderForm').submit(async function (event) {
@@ -354,7 +383,39 @@
               }
             },
           }); 
-          }
+          }else if (selectedPaymentMethod === "Wallet") {
+  const response = await fetch('/wallet/payment');
+  const walletAmount = await response.json();
+
+   
+
+  await $.ajax({
+    type: 'POST',
+    url: '/saveOrder',
+    data: {
+      firstname: $('#first-nem').val().trim(),
+      lastname: $('#last-nam').val().trim(),
+      address: $('#addres').val().trim(),
+      country: $('#country').val().trim(),
+      city: $('#city').val().trim(),
+      pincode: $('#pincode').val().trim(),
+      email: $('#email').val().trim(),
+      mobile: $('#mob').val().trim(),
+      paymentMethod: 'Wallet',
+    },
+    success: function (paymentResponse) {
+      $('#success_tic').modal('show');
+    },
+    error: function (xhr, status, error) {
+      console.error('Error placing order:', error);
+      if (xhr.status === 400) {
+        console.log('Toast will be shown.');
+        $('#toast').toast('show');
+      }
+    },
+  });
+}
+
         });
 
        

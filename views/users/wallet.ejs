@@ -1,6 +1,6 @@
 <%- include('../users/layouts/navbar.ejs') %>
 
-<div class="page-title-area pt-150 pb-55">
+<div class="page-title-area pt-5 pb-3 pb-md-5">
   <div class="container">
     <div class="row">
       <div class="col-xl-12">
@@ -12,12 +12,11 @@
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-               
                 <li
                   class="breadcrumb-item position-relative active"
                   aria-current="page"
                 >
-                  <a href="/edituser">profile</a>
+                  <a href="/edituser">Profile</a>
                 </li>
               </ol>
             </nav>
@@ -27,59 +26,118 @@
     </div>
   </div>
 </div>
-<div class="shop-grid-s pt-120" style="background-color: white; height:auto">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="d-flex">
-            <div class="col-xl-3 col-lg-4 col-md-12">
-              <div class="sidebar">
-                <!-- Include sidebar content -->
-                <%- include('../users/layouts/sidebar.ejs') %>
-              </div>
+
+<div
+  class="shop-grid-s pt-3 pb-5 pb-md-3"
+  style="background-color: white; height: auto"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-3 col-lg-4 col-md-12">
+        <div class="sidebar">
+          <!-- Include sidebar content -->
+          <%- include('../users/layouts/sidebar.ejs') %>
+        </div>
+      </div>
+      <div class="col-xl-9 col-lg-8 col-md-12">
+        <div class="useraddress">
+          <div class="px-3 mb-3">
+            <% if (wallets && wallets.length > 0) { %>
+            <div>
+              <h5 style="color: rgb(29, 28, 28); font-weight: 600">
+                Total Balance: <%=Math.round(wallets.reduce((total, wallet) =>
+                total + wallet.amount, 0)) %>
+              </h5>
             </div>
-            <div class="col-xl-9 col-lg-8 col-md-12">
-                <div class="useraddress" style="width: 640px; height: auto; position: relative; left: 30px;">
-                  <div style="margin-bottom: 20px;">
-                    <div style="padding: 10px; width: 990px;">
-                      <% if (wallets && wallets.length > 0) { %>
-                        <div  >
-                            <h5>Total Balance:<%= wallets.amount %></h5>
-                        </div>
-                        <% wallets.forEach(wallet => { %> 
-                          <div style="position: relative; top: 100px; border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold; overflow: hidden;">
-                            <div style="width: 50%; float: left;"> 
-                                <p style="font-weight: bold; color: black; font-size: 14px;">Amount through: <%= wallet.method ? wallet.method : '' %></p>
-                              </div>
-                            <div style="width: 50%; float: right;">
-                              <p style="font-weight: bold; color: black; font-size: 14px;">Amount: <%= wallet.amount ? wallet.amount : '' %></p> 
-                            </div>
-                            <div style="width: 50%; float: right; position: relative; left: 200px; bottom: 30px;">
-                              <p style="font-weight: bold; color: black; font-size: 14px;">Date: <%= wallet.date instanceof Date ? wallet.date.toDateString() : '' %></p>
-                            </div>
-                          </div>
-                        <% }) %>
-                      <% } else { %>
-                        <p>No orders found</p>
-                      <% } %>
-                    </div>
-                  </div>
+            <% let accumulatedAmount = 0; wallets.forEach((wallet, index) => {
+            accumulatedAmount += wallet.amount; %> <% if
+            (accumulatedAmount>=user.totalAmount&&
+            order.paymentMethod==="Wallet") { %>
+            <div
+              class="border border-secondary mb-3 px-3 py-2"
+              style="
+                position: relative;
+                top: 30px;
+                border: 1px solid #ccc;
+                background-color: red;
+                margin-bottom: 10px;
+                padding: 10px;
+                font-size: larger;
+                font-weight: 500;
+                color: black;
+                overflow: hidden;
+              "
+            >
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p
+                    class="font-weight-bold;"
+                    style="color: rgb(29, 28, 28); font-weight: 600"
+                  >
+                    Amount through: <%= wallet.method ? wallet.method : '' %>
+                  </p>
+                </div>
+                <div>
+                  <p style="color: rgb(29, 28, 28); font-weight: 600">
+                    Amount: <%=Math.round(wallet.amount ? wallet.amount : '' )
+                    %>
+                  </p>
                 </div>
               </div>
-              
+              <div class="text-left">
+                <p style="color: rgb(29, 28, 28); font-weight: 600">
+                  Date: <%= wallet.date instanceof Date ?
+                  wallet.date.toDateString() : '' %>
+                </p>
+              </div>
+            </div>
+            <% } else { %>
+            <div
+              class="border border-secondary mb-3 px-3 py-2"
+              style="
+                position: relative;
+                top: 30px;
+                border: 1px solid #ccc;
+                background-color: white;
+                margin-bottom: 10px;
+                padding: 10px;
+                font-size: larger;
+                font-weight: 500;
+                color: black;
+                overflow: hidden;
+              "
+            >
+              <div class="d-flex justify-content-between">
+                <div>
+                  <p
+                    class="font-weight-bold;"
+                    style="color: rgb(29, 28, 28); font-weight: 600"
+                  >
+                    Amount through: <%= wallet.method ? wallet.method : '' %>
+                  </p>
+                </div>
+                <div>
+                  <p style="color: rgb(29, 28, 28); font-weight: 600">
+                    Amount: <%=Math.round(wallet.amount ? wallet.amount : '' )
+                    %>
+                  </p>
+                </div>
+              </div>
+              <div class="text-left">
+                <p style="color: rgb(29, 28, 28); font-weight: 600">
+                  Date: <%= wallet.date instanceof Date ?
+                  wallet.date.toDateString() : '' %>
+                </p>
+              </div>
+            </div>
+            <% } %> <% }) %> <% } else { %>
+            <p>No orders found</p>
+            <% } %>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
-  <%- include('../users/layouts/footer.ejs') %>
-        </div>
-      </div>
-    </div>
-  </div>
-   
-   
+</div>
 
- 
-  
+<%- include('../users/layouts/footer.ejs') %>

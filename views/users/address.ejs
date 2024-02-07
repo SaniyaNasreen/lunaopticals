@@ -1,86 +1,146 @@
-  <%- include('../users/layouts/navbar.ejs') %>
+<%- include('../users/layouts/navbar.ejs') %>
 
-  <div class="page-title-area pt-150 pb-55">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="page-titel-detalis">
-            <div class="section-title">
-              <h2>User Profile</h2>
-            </div>
-            <div class="page-bc">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="/">Home</a></li>
-                  <li
-                    class="breadcrumb-item position-relative active"
-                    aria-current="page"
+<div class="page-title-area pt-150 pb-55">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="page-titel-detalis">
+          <div class="section-title">
+            <h2>User Profile</h2>
+          </div>
+          <div class="page-bc">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li
+                  class="breadcrumb-item position-relative active"
+                  aria-current="page"
+                >
+                  <a href="/edituser">profile</a>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="shop-grid-s pt-120" style="background-color: white">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="sidebar">
+          <%- include('../users/layouts/sidebar.ejs') %>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="d-flex flex-column align-items-center align-items-md-start">
+          <a href="/addAddress" class="mb-3">
+            <button class="btn btn-primary">Add Address</button>
+          </a>
+          <div
+            class="bill-details"
+            style="background-color: white; width: 100%"
+          >
+            <div class="useraddress">
+              <% if (userAddress && userAddress.length > 0) { %> <%
+              userAddress.forEach((address, index) => { %>
+              <div style="margin-bottom: 20px">
+                <div
+                  style="
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                    background-color: rgb(246, 247, 251);
+                  "
+                >
+                  <p
+                    style="
+                      font-weight: bold;
+                      color: black;
+                      font-size: 14px;
+                      margin: 5px;
+                    "
                   >
-                    <a href="/edituser">profile</a>
-                  </li>
-                </ol>
-              </nav>
+                    <%= `${address.firstname}${address.lastname}` %>
+                  </p>
+                  <p
+                    style="
+                      color: black;
+                      font-weight: 600;
+                      font-size: 12px;
+                      margin: 5px;
+                    "
+                  >
+                    <%= address.address %>,
+                  </p>
+                  <p
+                    style="
+                      color: black;
+                      font-weight: 600;
+                      font-size: 12px;
+                      margin: 5px;
+                    "
+                  >
+                    <%= address.email %>,
+                  </p>
+                  <p
+                    style="
+                      color: black;
+                      font-weight: 600;
+                      font-size: 12px;
+                      margin: 5px;
+                    "
+                  >
+                    <%= address.city %>,
+                  </p>
+                  <p
+                    style="
+                      color: black;
+                      font-weight: 600;
+                      font-size: 12px;
+                      margin: 5px;
+                    "
+                  >
+                    <%= address.country %>,
+                  </p>
+                  <p
+                    style="
+                      color: black;
+                      font-weight: 600;
+                      font-size: 12px;
+                      margin: 5px;
+                    "
+                  >
+                    <%= address.pincode %>,
+                  </p>
+                  <p
+                    style="
+                      color: black;
+                      font-weight: 600;
+                      font-size: 12px;
+                      margin: 5px;
+                    "
+                  >
+                    <%= address.mobile %>
+                  </p>
+                </div>
+                <a href="/users/editAddress/<%= user._id%>?index=<%= index %> ">
+                  <button id="editAddressBtn" class="btn btn-danger mt-2">
+                    Edit
+                  </button>
+                </a>
+              </div>
+              <% }); %> <% } else { %>
+              <p>No address found</p>
+              <% } %>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="shop-grid-s pt-120" style="background-color: white; height: 850px">
-    <div class="container">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="d-flex">
-            <div class="col-xl-3 col-lg-4 col-md-12">
-              <div class="sidebar">
-                <!-- Include sidebar content -->
-                <%- include('../users/layouts/sidebar.ejs') %>
-              </div>
-            </div>
-            <div class="col-xl-9 col-lg-8 col-md-12">
-                  
-              <a href="/addAddress"><button  style="width: 330px; height: 40px; background-color: blue; position: relative; bottom: 100px; left: 465px; color: white; border-style: none;">
-                Add Address
-              </button>
-          </a> 
-                <div   class="bill-details pt-15" style="background-color: white; position: relative; bottom: 55px; left: 100px; width: 700px;  ">
-                  <div class="useraddress" style="width: 640px; height: auto;  position: relative; left: 30px;">
-                    <% if (userAddress && userAddress.length > 0) { %>
-                      <% userAddress.forEach((address, index) => { %>
-                              <div style="margin-bottom: 20px;">
-                                  <div style="border: 1px solid #ccc; padding: 10px; display: flex; flex-wrap: wrap; width: 670px; word-wrap: break-word; background-color:rgb(246, 247, 251) ; ">
-                                  
-                                      <p style="font-weight: bold; color: black; font-size:14px; margin: 5px;"><%= `${address.firstname}${address.lastname}` %>-</p>
-                                      <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px;"><%= address.address %>,</p>
-                                      <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; "><%= address.email %>,</p>
-                                      <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.city %>,</p>
-                                      <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.country %>,</p>
-                                      <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.pincode %>,</p>
-                                      <p style="color: black; font-weight: 600; font-size: 12px; margin: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= address.mobile %></p>
-                                    <a href="/users/editAddress/<%= user._id%>?index=<%= index %>"><button id="editAddressBtn" style="float: right;position: relative; left: 600px; background-color: rgb(255, 82, 53); border-style: none; color: white; font-size: 14px;  font-weight: 600; width: 50px;">Edit</button></a> 
-                                  </div>
-                              
-                              </div>
-                              <% }); %>
-                              <% } else { %>
-                                <p>No address found</p>
-                              <% } %>
-                  </div>
-                
-                    
-              </div>
-            
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
 
-  <%- include('../users/layouts/footer.ejs') %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  
+<%- include('../users/layouts/footer.ejs') %>
