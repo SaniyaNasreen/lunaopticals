@@ -44137,4 +44137,8 @@ canvas {
   overflow: clip;
 }
 
+.wallet-red-background {
+  background-color: red;
+}
+
 /*! END @iO */

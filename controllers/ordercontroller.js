@@ -3,6 +3,7 @@ const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const User = require("../models/usermodel");
 const Order = require("../models/ordermodel");
+const Coupon = require("../models/couponmodel");
 const Offer = require("../models/offermodel");
 const Wallet = require("../models/walletmodel");
 const Razorpay = require("razorpay");
@@ -21,17 +22,109 @@ const loadOrder = async (req, res, next) => {
     } else {
       sortOption = { createdAt: -1 };
     }
-
     const totalOrders = await Order.countDocuments();
     const sortedOrders = await Order.find()
       .sort(sortOption)
       .populate("purchasedItems.product")
       .sort({ date: -1 });
+
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 8;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
     const paginatedOrders = sortedOrders.slice(startIndex, endIndex);
+    let offer;
+    let productDiscountAmount = 0;
+    const user = await User.find();
+
+    const userId = await Order.find({ _id: user._id });
+    for (const order of paginatedOrders) {
+      for (const purchasedItem of order.purchasedItems) {
+        const product = purchasedItem.product;
+        const currentDate = new Date();
+        offer = await Offer.findOne({
+          $and: [
+            {
+              $or: [
+                {
+                  category: product.category,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+                {
+                  product: product._id,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+                {
+                  referral: userId,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+              ],
+            },
+            { validity: { $gte: currentDate } },
+          ],
+        }).populate("category", "referral");
+
+        console.log("Product Category:", product.category);
+        console.log("Found Offer:", offer);
+
+        const coupon = await Coupon.findOne({
+          category: product.category,
+          validity: { $gte: currentDate },
+          minAmount: { $lte: purchasedItem.price },
+          maxAmount: { $gte: purchasedItem.price },
+        });
+
+        if (offer) {
+          if (
+            offer.referral &&
+            req?.session?.userId == offer.referral.toString()
+          ) {
+            productDiscountAmount = (
+              product.price *
+              (offer.discount / 100)
+            ).toFixed(2);
+          } else {
+            console.log("heyy", product.price);
+            productDiscountAmount = (
+              product.price *
+              (offer.discount / 100)
+            ).toFixed(2);
+            console.log("discountAmount", productDiscountAmount);
+          }
+        }
+        purchasedItem.productDiscountAmount = productDiscountAmount;
+        if (order.couponApplied === true && coupon) {
+          console.log("hoihoi");
+          if (productDiscountAmount) {
+            const couponDiscount = (
+              (product.price - purchasedItem.productDiscountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            purchasedItem.productDiscountAmount = (
+              parseFloat(purchasedItem.productDiscountAmount) +
+              parseFloat(couponDiscount)
+            ).toFixed(2);
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              purchasedItem.productDiscountAmount
+            );
+          } else {
+            const discount = (
+              (product.price - purchasedItem.productDiscountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            purchasedItem.productDiscountAmount = couponDiscount;
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              purchasedItem.productDiscountAmount
+            );
+          }
+        }
+      }
+    }
     const totalPages = Math.ceil(totalOrders / limit);
     const currentPage = page;
     const selectedSort = sortQuery;
@@ -39,10 +132,12 @@ const loadOrder = async (req, res, next) => {
       selectedSort,
       currentPage,
       totalPages,
-
       totalItems: totalOrders,
       orders: paginatedOrders,
       limit,
+      user,
+      productDiscountAmount,
+      offer,
       section: "orders",
     });
   } catch (error) {
@@ -169,6 +264,12 @@ const loadOrderDetails = async (req, res, next) => {
         }).populate("category", "referral");
         console.log("Product Category:", product.category);
         console.log("Found Offer:", offer);
+        const coupon = await Coupon.findOne({
+          category: product.category,
+          validity: { $gte: currentDate },
+          minAmount: { $lte: item.price },
+          maxAmount: { $gte: item.price },
+        });
 
         if (offer) {
           if (
@@ -187,10 +288,35 @@ const loadOrderDetails = async (req, res, next) => {
           }
         }
         item.discountAmount = discountAmount;
+        if (order.couponApplied === true) {
+          console.log("hoihoi");
+          if (discountAmount) {
+            const couponDiscount = (
+              (product.price - item.discountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            item.discountAmount = (
+              parseFloat(item.discountAmount) + parseFloat(couponDiscount)
+            ).toFixed(2);
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              item.discountAmount
+            );
+          } else {
+            const discount = (
+              (product.price - item.discountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            item.discountAmount = couponDiscount;
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              item.discountAmount
+            );
+          }
+        }
       }
       order.purchasedItems = products;
     }
-
     res.render("users/orderInfo", {
       orders,
       isUserLoggedIn,
@@ -213,7 +339,7 @@ const loadAdminOrderDetails = async (req, res, next) => {
         .status(400)
         .json({ error: "Order ID not found in the request" });
     }
-
+    const orders = await Order.find();
     const order = await Order.findById(orderId)
       .populate("purchasedItems.product")
       .exec();
@@ -221,9 +347,104 @@ const loadAdminOrderDetails = async (req, res, next) => {
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
+    let offer;
+    let productDiscountAmount = 0;
+    const user = await User.find();
+
+    const userId = await Order.find({ _id: user._id });
+    for (const order of orders) {
+      for (const purchasedItem of order.purchasedItems) {
+        const product = purchasedItem.product;
+        const currentDate = new Date();
+        offer = await Offer.findOne({
+          $and: [
+            {
+              $or: [
+                {
+                  category: product.category,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+                {
+                  product: product._id,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+                {
+                  referral: userId,
+                  status: "Active",
+                  validity: { $gte: new Date() },
+                },
+              ],
+            },
+            { validity: { $gte: currentDate } },
+          ],
+        }).populate("category", "referral");
+
+        console.log("Product Category:", product.category);
+        console.log("Found Offer:", offer);
+
+        const coupon = await Coupon.findOne({
+          category: product.category,
+          validity: { $gte: currentDate },
+          minAmount: { $lte: purchasedItem.price },
+          maxAmount: { $gte: purchasedItem.price },
+        });
+
+        if (offer) {
+          if (
+            offer.referral &&
+            req?.session?.userId == offer.referral.toString()
+          ) {
+            productDiscountAmount = (
+              product.price *
+              (offer.discount / 100)
+            ).toFixed(2);
+          } else {
+            console.log("heyy", product.price);
+            productDiscountAmount = (
+              product.price *
+              (offer.discount / 100)
+            ).toFixed(2);
+            console.log("discountAmount", productDiscountAmount);
+          }
+        }
+        purchasedItem.productDiscountAmount = productDiscountAmount;
+        if (order.couponApplied === true && coupon) {
+          console.log("hoihoi");
+          if (productDiscountAmount) {
+            const couponDiscount = (
+              (product.price - purchasedItem.productDiscountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            purchasedItem.productDiscountAmount = (
+              parseFloat(purchasedItem.productDiscountAmount) +
+              parseFloat(couponDiscount)
+            ).toFixed(2);
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              purchasedItem.productDiscountAmount
+            );
+          } else {
+            const discount = (
+              (product.price - purchasedItem.productDiscountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            purchasedItem.productDiscountAmount = couponDiscount;
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              purchasedItem.productDiscountAmount
+            );
+          }
+        }
+      }
+    }
 
     res.render("admin/orderInfo", {
       order,
+      user,
+      productDiscountAmount,
+      offer,
     });
   } catch (error) {
     next(error);
@@ -345,7 +566,6 @@ const walletPayment = async (req, res, next) => {
 
     userWallet.amount -= totalAmount;
     await userWallet.save();
-
     res.json(userWallet.amount);
   } catch (error) {
     next(error);

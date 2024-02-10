@@ -81,9 +81,7 @@ const addCategory = async (req, res, next) => {
       error.statusCode = 500;
       throw error;
     }
-    return res.redirect(
-      "/admin/categories?success=Category added successfully"
-    );
+    return res.redirect("/admin/categories");
   } catch (error) {
     next(error);
   }

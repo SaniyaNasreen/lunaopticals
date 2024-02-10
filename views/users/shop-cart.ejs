@@ -149,9 +149,9 @@
                         </div>
                       </td>
                       <td>
-                        <% if (hasOffer) { %>  
+                        <% if (item.productDiscountAmount) { %>  
                           <div class="price pt-15 pb-10"> 
-                            <span class="final-price"> ₹<%=Math.round (item.product.price - item.discountAmount) %></span>
+                            <span class="final-price"> ₹<%=Math.round (item.product.price - item.productDiscountAmount) %></span>
                           </div>
                         <% } else { %>
                           <div class="price pt-15 pb-10"> 
@@ -174,8 +174,8 @@
                         
                       </td>
                       <td>
-                        <% if (hasOffer) { %>  
-                        ₹<%= Math.round(item.quantity * (item.product.price- item.discountAmount)) %>
+                        <% if (item.productDiscountAmount) { %>  
+                        ₹<%= Math.round(item.quantity * (item.product.price- item.productDiscountAmount)) %>
                         <% } else { %>
                           ₹<%=Math.round( item.quantity * (item.product.price)) %>
                           <% } %>
@@ -225,10 +225,10 @@
           <% let total = 0; %>
 
           <% let subtotal = 0; %> <% user.cart.forEach(item => { %>
-            <% if (hasOffer) { %>  
+            <% if (item.productDiscountAmount) { %>  
             <ul> 
             
-             <% total += item.quantity * (item.product.price - item.discountAmount); %> 
+             <% total += item.quantity * (item.product.price - item.productDiscountAmount); %> 
              
             </ul>
             <% } else { %>

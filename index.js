@@ -70,11 +70,12 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
           if (offer.status === "Active" && offer.validity > new Date()) {
             const discountAmount = product.price * (offer.discount / 100);
             console.log(discountAmount);
-            product.price -= discountAmount;
+            discountAmount;
           }
         }
         return {
-          description: item.product.name || "N/A",
+          name: item.product.name,
+          description: item.product.description || "N/A",
           quantity: item.quantity || 0,
           price: product.price || 0,
         };
@@ -106,7 +107,7 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
         <td>${product.name}</td>
           <td>${product.description}</td>
           <td>${product.quantity}</td>
-          <td>$${product.price}</td>
+          <td>$${product.price}</td> 
           <td>$${user.totalAmount}</td>
         </tr>
       `
@@ -174,7 +175,7 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
                 <th >Name</th>
                   <th>Description</th>
                   <th>Quantity</th>
-                  <th>Price</th>
+                  <th>Price</th> 
                   <th>Total</th>
                 </tr> 
               </thead>

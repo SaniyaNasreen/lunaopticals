@@ -111,7 +111,6 @@ const userSchema = new mongoose.Schema({
       ref: "Wallet",
     },
   ],
-
   coupon: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Coupon",

@@ -353,9 +353,10 @@ function submitForm() {
   })
     .then(response => {
       if (response.ok) {
+        alert('Coupon added successfully');
         console.log('Coupon added successfully');
-        // Optionally, redirect or perform other actions upon successful addition
-      } else {
+
+      } else { 
         console.error('Failed to add coupon');
         // Handle errors or show an error message
       }

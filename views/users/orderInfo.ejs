@@ -43,7 +43,7 @@
                 <div class="card p-3">
                   <p>Order Date: <%= order.date %></p>
                   <p>Order ID: <%= order.orderNumber %></p>
-                  <p>Total Price: ₹<%= Math.round(user.totalAmount) %></p>
+                  <p>Total Price: ₹<%= Math.round( order.totalAmount) %></p>
                   <a
                     href="http://localhost:4000/download-invoice/<%= order.orderNumber %>"
                     style="
@@ -135,7 +135,11 @@
                           Return
                         </button>
                       </form>
-                      <% } %> <% } %>
+                      <% } %> <% }else if (item.status === 'Returned') { %>
+                      <button type="button" class="btn btn-danger" disabled>
+                        Item Returned
+                      </button>
+                      <% } %>
                     </div>
                   </div>
                 </div>
@@ -169,10 +173,8 @@
         cancelButtonText: "No, keep it",
       }).then((result) => {
         if (result.isConfirmed) {
-          // If user confirms, submit the form
           document.getElementById("cancelOrderForm").submit();
         } else {
-          // If user cancels, do nothing or provide feedback
           Swal.fire("Cancel", "Your order is safe :)", "info");
         }
       });
@@ -182,23 +184,42 @@
   document
     .getElementById("returnButton")
     .addEventListener("click", function () {
-      // Show SweetAlert confirmation dialog
       Swal.fire({
-        title: "Are you sure?",
-        text: "You will not be able to recover this order!",
-        icon: "warning",
+        title: "Select Your Reason",
+        input: "select",
+        inputOptions: {
+          notgood: "Did not meet expectations",
+          different: " Incorrect order",
+          mind: "Changed mind or impulse purchase",
+          damage: " Damaged or defective item",
+          deley: "Delivery delays",
+          info: " Misleading product information",
+        },
+        inputPlaceholder: "Select a reason for returning the order",
         showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, return it!",
-        cancelButtonText: "No, keep it",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // If user confirms, submit the form
-          document.getElementById("returnOrderForm").submit();
-        } else {
-          // If user cancels, do nothing or provide feedback
-          Swal.fire("Cancel", "Your order is safe :)", "info");
-        }
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value) {
+              Swal.fire({
+                title: "Are you sure?",
+                text: "You will not be able to recover this order!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, return it!",
+                cancelButtonText: "No, keep it",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  document.getElementById("returnOrderForm").submit();
+                } else {
+                  Swal.fire("Return", "Your order is safe :)", "info");
+                }
+              });
+            } else {
+              resolve("You need to select a reason :)");
+            }
+          });
+        },
       });
     });
 </script>

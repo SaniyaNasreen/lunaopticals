@@ -41,10 +41,12 @@
             <h6>Coupon discount</h6>
             <p>Enter your code if you have one...</p>
          
-              <form action="/checkout/applyCoupon" class="coupon-form pt-25"  method="post">
-                <input type="text" name="code" placeholder="Enter your code here">
-                <button class="p-btn border-0  ">APPLY COUPON</button>
-              </form>
+                <form action="/checkout/applyCoupon" class="coupon-form pt-25"  method="post">
+                  <input type="text" name="code" placeholder="Enter your code here"> 
+                  
+                <input type="hidden" name="couponCode" value="<%= couponCode %>"> 
+                  <button class="p-btn border-0  ">APPLY COUPON</button>
+                </form>
               
               
            
@@ -52,7 +54,7 @@
 
           <form action="/saveOrder" method="post" class="bill-form pt-5" id="orderForm">
             <h3>Shipping Address</h3>
-          <button style="background-color: blue; border-style: none; width: 170px;height: 45px;border-radius: 3px;"><a style="color: white;" href="/users/addaddress/<%= user._id %>">ADD ADDRESS</a></button> 
+          <button style="background-color: blue; border-style: none; width: 170px;height: 45px;border-radius: 3px;"><a style="color: white;" href="/users/addaddress/<%= user._id %>?source=checkout">ADD ADDRESS</a></button> 
             <div class="row">
               <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                 <div class="first-name pt-30" id="address-fields">
@@ -170,7 +172,7 @@
               <td><%= item.product.name %></td>
               <td><%= item.quantity %></td> 
               
-              <td>    <% if (hasOffer) { %>  
+              <td>    <% if (item.discountAmount) { %>  
                 ₹<%=Math.round( item.quantity * (item.product.price - item.discountAmount)) %>
                 <% } else { %>
                   ₹<%=Math.round( item.quantity * (item.product.price)) %>

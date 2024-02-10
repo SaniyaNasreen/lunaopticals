@@ -204,7 +204,14 @@ height: 100vh;">
                 <div class="nk-tb-col tb-col-md">
                   <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
                     <% order.purchasedItems.forEach((item) => { %>  
-                        <span class="tb-lead" style="font-size: 12px;">₹<%- item.price %></span> 
+                      <% if (item.productDiscountAmount) { %>
+                        <span class="tb-lead" style="font-size: 12px;">  ₹ <%= Math.round(item.quantity *
+                          (item.price -
+                          item.productDiscountAmount)) %></span> 
+                          <% } else { %>
+                            <span class="tb-lead" style="font-size: 12px;">  ₹ <%= Math.round(item.quantity *
+                              (item.price )) %></span> 
+                              <% } %>
                     <% }); %>
                   <% } else { %>
                     <span class="tb-sub">No purchased items</span>

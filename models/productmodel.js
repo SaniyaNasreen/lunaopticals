@@ -60,6 +60,10 @@ const productSchema = mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  couponApplied: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("Product", productSchema);

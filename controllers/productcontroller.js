@@ -111,7 +111,7 @@ const addProduct = async (req, res, next) => {
     if (!productData) {
       res.status(500).send("Failed to add product");
     }
-    res.redirect("/admin/products?success=Product added successfully");
+    res.redirect("/admin/products");
   } catch (error) {
     next(error);
   }

@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 const { Number } = require("twilio/lib/twiml/VoiceResponse");
 
 const couponSchema = new mongoose.Schema({
-  image: {
-    type: String,
-    required: true,
-  },
   name: {
     type: String,
     required: true,

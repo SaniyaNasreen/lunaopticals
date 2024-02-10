@@ -78,7 +78,7 @@ const addCouponForCategory = async (req, res, next) => {
       maxAmount,
     });
     const savedCoupon = await newCoupon.save();
-    res.json({ message: "Coupon added successfully", coupon: savedCoupon });
+    res.redirect("/admin/coupon?success=Coupon added successfully");
   } catch (error) {
     next(error);
   }
@@ -130,11 +130,12 @@ const applyCoupon = async (req, res, next) => {
 
     let hasOffer;
     const { code } = req.body;
+    req.session.couponCode = code;
     const coupon = await Coupon.findOne({ code: code });
     console.log("coup", coupon.category);
     if (!coupon) {
       console.log("Coupon not found");
-      res.redirect("/users/checkout");
+      return res.redirect("/users/checkout");
     }
     const categoryMatched = usercart.filter((cartItem) => {
       if (cartItem.product.category === coupon.category) {
@@ -151,6 +152,7 @@ const applyCoupon = async (req, res, next) => {
         .status(400)
         .json({ message: "Coupon not applicable to items in the cart" });
     }
+
     const currentDate = new Date();
     if (currentDate > coupon.validity) {
       console.log("Coupon has expired");
@@ -212,19 +214,27 @@ const applyCoupon = async (req, res, next) => {
 
           console.log("copsub1", subtotal);
         }
+        cartItem.discountAmount = discountAmount;
       }
-      cartItem.discountAmount = discountAmount;
 
       let totalPrice = 0;
       if (req.body.code && coupon.status === "Active") {
         totalPrice = subtotal - cartItem.discountAmount;
         user.totalAmount = user.totalAmount - totalPrice;
       } else {
+        let Shipping = 0;
+        if (subtotal < 2000) {
+          Shipping = 100;
+        } else {
+          Shipping = 0;
+        }
         totalPrice = hasOffer ? subtotal : subtotal + Shipping;
         user.totalAmount = totalPrice;
       }
 
       await user.save();
+      cartItem.product.couponApplied = true;
+      await cartItem.product.save();
     }
 
     let Shipping = 0;
@@ -234,7 +244,7 @@ const applyCoupon = async (req, res, next) => {
       Shipping = 0;
     }
     const discountPrice = subtotal * discountPercentage;
-    totalPrice = subtotal - discountPrice + Shipping;
+    let totalPrice = subtotal - discountPrice + Shipping;
     user.totalAmount = totalPrice;
     console.log("discountPrice", discountPrice);
     console.log("discountAmount", discountAmount);
@@ -243,7 +253,7 @@ const applyCoupon = async (req, res, next) => {
 
     if (coupon.status !== "Active") {
       console.log("Coupon not found");
-      res.redirect("users/checkout");
+      return res.redirect("users/checkout");
     }
 
     await user.save();
@@ -268,6 +278,7 @@ const applyCoupon = async (req, res, next) => {
       hasOffer: discountAmount > 0,
       totalPrice,
       offer,
+      couponCode: req.session.couponCode,
     });
   } catch (error) {
     console.error(error);

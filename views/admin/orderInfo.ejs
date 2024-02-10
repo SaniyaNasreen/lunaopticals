@@ -53,10 +53,21 @@
                                 
                                             <!-- Ordered Items -->
                                             <h4>Ordered</h4>
-                                            <% order.purchasedItems.forEach(item => { %>
+                                            <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
+                                              <% order.purchasedItems.forEach((item) => { %>   
+                                              <% const currentDate = new Date(); %>
+                                              <% const orderDate = new Date(order.date); %>
+                                              <% const timeDifference = currentDate.getTime() - orderDate.getTime(); %>
+                                              <% const daysDifference = timeDifference / (1000 * 3600 * 24); %>
                                                 <div style="border: 1px solid #ccc; background-color: white; margin-bottom: 10px; padding: 10px; position: relative; font-size: larger; font-weight: bold;">
                                                     <p><%= item.product.name %></p>
-                                                    <p><%=Math.round( item.price) %></p>
+                                                    <% if (item.productDiscountAmount) { %>
+                                                    <p><%= Math.round(item.price-item.productDiscountAmount) %></p>
+                                                    <% } else { %>
+                                                      <p >  ₹ <%= Math.round(item.quantity *
+                                                        (item.price )) %></p> 
+                                                        <% } %>
+                                            
                                                     <p>Qty: <%= item.quantity %></p> 
                                                     
                                                     <button style="border-radius: 20px; border-style: none; position: relative; left: 950px; bottom: 120px; background-color: blue; width: 110px; height: 40px;">
@@ -64,7 +75,7 @@
                                                     </button>
                                                     <% if (item.status !== 'cancelled'&& item.status !=='Returned'){ %>
                                                    <ul> 
-                                                    <% if (item.status !== 'Processing') { %>
+                                                    <% if (item.status !== 'Processing'&&item.status !== 'Shipped'&&item.status !== 'Delivered') { %>
                                                       <li>
                                                         <a href="/admin/orderInfo/updateOrderStatus/<%= order._id.toString() %>/markProcessing/<%= item._id.toString() %>">
 
@@ -82,13 +93,23 @@
                                                         </a>
                                                       </li>
                                                       <% } %>
-                                                      <% if (item.status === 'Shipped') { %>
-                                                      <li>
-                                                        <a href="/admin/orderInfo/updateOrderStatus/<%= order._id.toString() %>/markDelivered/<%= item._id.toString() %>"> 
-                                                            <em class="icon ni ni-truck"></em>
-                                                            <span>Mark as Delivered</span>
-                                                          </a>
-                                                        </li>
+                                                      <% if (item.status === 'Shipped') { %> 
+                                                        <% if (daysDifference >= 7) { %>
+                                                          <li>
+                                                            <a href="/admin/orderInfo/updateOrderStatus/<%= order._id.toString() %>/markDelivered/<%= item._id.toString() %>"> 
+                                                                <em class="icon ni ni-truck"></em>
+                                                                <span>Mark as Delivered</span>
+                                                              </a>
+                                                            </li>
+                                                        <% } else { %>
+                                                          <li>
+                                                            <a href="/admin/orderInfo/updateOrderStatus/<%= order._id.toString() %>/markShipped/<%= item._id.toString() %>">
+    
+                                                              <em class="icon ni ni-money"></em>
+                                                              <span>Mark as Shipped</span>
+                                                            </a>
+                                                          </li>
+                                                        <% } %>
                                                         <% } %>
                                                        
                                                     
@@ -97,7 +118,10 @@
                                                 </div>
                                                 
                                                   
-                                            <% }) %>
+                                                <% }); %>
+                                                <% } else { %>
+                                                  <span class="tb-sub">No purchased items</span>
+                                                <% } %>
                                             
                                             <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
                                               <div class="modal-dialog">

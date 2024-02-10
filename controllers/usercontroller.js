@@ -920,7 +920,7 @@ const loginCart = async (req, res, next) => {
     }
 
     let cart = user.cart;
-    let discountAmount = 0;
+    let productDiscountAmount = 0;
     let offer;
     for (const cartItem of cart) {
       const product = cartItem.product;
@@ -957,14 +957,24 @@ const loginCart = async (req, res, next) => {
           offer.referral &&
           req?.session?.userId == offer.referral.toString()
         ) {
-          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+          productDiscountAmount = (
+            product.price *
+            (offer.discount / 100)
+          ).toFixed(2);
         } else {
           console.log("heyy", product.price);
-          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
-          console.log("discountAmount", discountAmount);
+          productDiscountAmount = (
+            product.price *
+            (offer.discount / 100)
+          ).toFixed(2);
+          console.log("discountAmount", productDiscountAmount);
         }
+        cartItem.productDiscountAmount = productDiscountAmount;
+        console.log(
+          "purchasedItem.productDiscountAmount",
+          cartItem.productDiscountAmount
+        );
       }
-      cartItem.discountAmount = discountAmount;
     }
 
     res.render("users/shop-cart", {
@@ -972,8 +982,7 @@ const loginCart = async (req, res, next) => {
       isUserLoggedIn: true,
       listed: true,
       insufficientStockItems: true,
-      hasOffer: discountAmount > 0,
-      discountAmount: discountAmount,
+      productDiscountAmount,
       cart: cart,
       offer,
     });
@@ -1100,7 +1109,7 @@ const loadCheckout = async (req, res, next) => {
     const user = await User.findById(userId).populate("cart.product");
 
     const isUserLoggedIn = !!req.session?.user_id;
-
+    let couponCode;
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
@@ -1162,19 +1171,21 @@ const loadCheckout = async (req, res, next) => {
           offer.referral &&
           req?.session?.userId == offer.referral.toString()
         ) {
-          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
-          subtotal -= discountAmount * quantity;
+          discountAmount =
+            (product.price * (offer.discount / 100)).toFixed(2) * quantity;
+          subtotal -= discountAmount;
           console.log("subu", subtotal);
         } else {
           console.log("heyy", product.price);
-          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+          discountAmount =
+            (product.price * (offer.discount / 100)).toFixed(2) * quantity;
           console.log("discountAmount", discountAmount);
-          subtotal -= discountAmount * quantity;
+          subtotal -= discountAmount;
           console.log("subu", subtotal);
         }
         hasOffer = true;
+        cartItem.discountAmount = discountAmount;
       }
-      cartItem.discountAmount = discountAmount;
     }
     let Shipping = 0;
     if (subtotal < 2000) {
@@ -1209,6 +1220,7 @@ const loadCheckout = async (req, res, next) => {
       order,
       totalPrice,
       hasOffer,
+      couponCode,
     });
   } catch (error) {
     next(error);
@@ -1366,8 +1378,6 @@ const loadAddAddress = async (req, res, next) => {
 const addAddress = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const users = req.params.id;
-    console.log("users", users);
     const {
       firstname,
       lastname,
@@ -1395,10 +1405,10 @@ const addAddress = async (req, res, next) => {
       return res.status(404).send("User not found");
     }
     user.address.push(newAddress);
+    console.log("hey", req.query.source);
     await user.save();
-
-    if (users === userId.toString()) {
-      console.log("hello");
+    if (req.query.source === "checkout") {
+      console.log("hey", req.query.source);
       res.redirect("/checkout");
     } else {
       res.redirect("/address");
@@ -1434,6 +1444,7 @@ const loadEditAddress = async (req, res, next) => {
 const updateAddress = async (req, res, next) => {
   try {
     const userId = req.user._id;
+    const addressIndex = req.query.index; // Index of the address to be edited
     const {
       firstname,
       lastname,
@@ -1444,6 +1455,7 @@ const updateAddress = async (req, res, next) => {
       pincode,
       mobile,
     } = req.body;
+
     const updatedAddress = {
       firstname,
       lastname,
@@ -1454,32 +1466,29 @@ const updateAddress = async (req, res, next) => {
       pincode,
       mobile,
     };
+
     const user = await User.findById(userId);
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
-    let addressFound = false;
-    for (let i = 0; i < user.address.length; i++) {
-      console.log("Checking address _id:", user.address[i]._id);
-      if (user.address[i]._id == req.params.addressId) {
-        console.log("Address found:", user.address[i]._id);
-        Object.assign(user.address[i], updatedAddress);
-        addressFound = true;
-        break;
-      }
-    }
-    if (!addressFound) {
+
+    if (!user.address || !user.address[addressIndex]) {
       console.error("Address not found");
       return res.status(404).send("Address not found");
     }
+
+    // Update the existing address at the specified index
+    user.address[addressIndex] = updatedAddress;
+
     await user.save();
-    console.log("Address updated successfully:", updatedAddress);
-    res.redirect("/address");
+
+    res.redirect("/address"); // Redirect to the address page after successful edit
   } catch (error) {
     next(error);
   }
 };
+
 const orderInfo = async (req, res, next) => {
   try {
     let isUserLoggedIn = !!req?.session?.user_id;
@@ -1494,10 +1503,7 @@ const orderInfo = async (req, res, next) => {
     const orders = await Order.find({ user: userId })
       .populate("purchasedItems.product")
       .sort({ date: -1 });
-    if (!orders || orders.length === 0) {
-      console.error("Order not found");
-      return res.status(404).send("Order not found");
-    }
+
     let offer;
     let productDiscountAmount = 0;
     for (const order of orders) {
@@ -1557,12 +1563,38 @@ const orderInfo = async (req, res, next) => {
             console.log("discountAmount", productDiscountAmount);
           }
         }
-        // if (coupon) {
-        //   productDiscountAmount += parseFloat(
-        //     (purchasedItem.price * (coupon.discount / 100)).toFixed(2)
-        //   );
-        // }
         purchasedItem.productDiscountAmount = productDiscountAmount;
+        console.log(
+          "purchasedItem.productDiscountAmount",
+          purchasedItem.productDiscountAmount
+        );
+        if (order.couponApplied === true && coupon) {
+          console.log("hoihoi");
+          if (productDiscountAmount) {
+            const couponDiscount = (
+              (product.price - purchasedItem.productDiscountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            purchasedItem.productDiscountAmount = (
+              parseFloat(purchasedItem.productDiscountAmount) +
+              parseFloat(couponDiscount)
+            ).toFixed(2);
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              purchasedItem.productDiscountAmount
+            );
+          } else {
+            const discount = (
+              (product.price - purchasedItem.productDiscountAmount) *
+              (coupon.discount / 100)
+            ).toFixed(2);
+            purchasedItem.productDiscountAmount = couponDiscount;
+            console.log(
+              "purchasedItem.productDiscountAmount",
+              purchasedItem.productDiscountAmount
+            );
+          }
+        }
       }
     }
     console.log("discountAmountcat", productDiscountAmount);
@@ -1579,6 +1611,7 @@ const generateOrderNumber = function () {
   return Math.floor(Math.random() * 1000000);
 };
 const saveOrder = async (req, res, next) => {
+  console.log("heelosaveOrder");
   try {
     let isUserLoggedIn = !!req.session.user_id;
     const userId = req.user._id;
@@ -1590,6 +1623,7 @@ const saveOrder = async (req, res, next) => {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
+
     const cartItems = user.cart;
 
     if (!cartItems || cartItems.length === 0) {
@@ -1614,28 +1648,38 @@ const saveOrder = async (req, res, next) => {
       mobile,
       paymentMethod,
       paymentStatus,
-      couponCode,
     } = req.body;
+    console.log("req.body", req.body);
     const updatedUser = await User.findById(userId).populate(
       "cart.product",
       "cart.total"
     );
 
-    let discountAmount = 0;
-    const couponDetails = await Coupon.findOne({ code: couponCode });
-    if (couponDetails) {
-      const discountPercentage = couponDetails.discount
-        ? parseFloat(couponDetails.discount) / 100
-        : 0;
-      discountAmount = updatedSubtotal * discountPercentage;
-    }
-    if (!couponDetails) {
-      console.error("Coupon not found");
-    }
-
     let updatedSubtotal = 0;
     for (const cartItem of updatedUser.cart) {
       updatedSubtotal += cartItem.product.price * cartItem.quantity;
+    }
+    const couponCode = req.session.couponCode || req.body.couponCode;
+    let couponApplied = false;
+    let couponDetails;
+    if (couponCode) {
+      console.log("hyhui");
+      couponDetails = await Coupon.findOne({ code: couponCode });
+      if (couponDetails) {
+        couponApplied = true;
+      } else {
+        console.error("Coupon not found");
+      }
+    }
+    let discountAmount = 0;
+    if (couponApplied) {
+      couponDetails = await Coupon.findOne({ code: couponCode });
+      if (couponDetails) {
+        const discountPercentage = couponDetails.discount
+          ? parseFloat(couponDetails.discount) / 100
+          : 0;
+        discountAmount = updatedSubtotal * discountPercentage;
+      }
     }
 
     let newOrder = {
@@ -1660,6 +1704,7 @@ const saveOrder = async (req, res, next) => {
       },
       coupon: couponDetails,
       discountAmount,
+      couponApplied,
     };
 
     for (const cartItem of cartItems) {
@@ -1723,6 +1768,7 @@ const removeOrder = async (req, res) => {
       const cancelledItem = cancelledOrder.purchasedItems.find(
         (item) => item._id.toString() === req.params.itemId
       );
+      const currentDate = Date.now();
       const offer = await Offer.findOne({
         $and: [
           {
@@ -1754,7 +1800,7 @@ const removeOrder = async (req, res) => {
         cancelledItem.price -= discountAmount;
       }
       if (cancelledItem) {
-        const walletAmount = cancelledItem.price * cancelledItem.quantity;
+        const walletAmount = cancelledOrder.totalAmount;
         const walletDate = Date.now();
         const walletProduct = cancelledItem.product;
 
@@ -1788,18 +1834,35 @@ const userWallet = async (req, res, next) => {
       path: "wallets",
       model: "Wallet",
     });
-    const order = await Order.find();
+    const order = await Order.find({ "payment.type": "Wallet" });
+    console.log("orderwalet", order);
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
     const wallets = user.wallets;
     console.log("walleting", wallets);
+    let walletsToPush = [];
+    if (order) {
+      walletsToPush.push(order);
+    }
+    console.log(" walet", walletsToPush);
+    const totalWalletAmount = wallets.reduce(
+      (total, wallet) => total + wallet.amount,
+      0
+    );
+    const totalOrderAmount = walletsToPush
+      .flat()
+      .reduce((total, order) => total + order.totalAmount, 0);
+    const totalAmount = totalWalletAmount - totalOrderAmount;
+
     res.render("users/wallet", {
       wallets,
       isUserLoggedIn,
       user,
       order,
+      walletsToPush,
+      totalAmount,
     });
   } catch (error) {
     next(error);
@@ -1818,6 +1881,7 @@ const loadReferral = async (req, res, next) => {
       {
         $match: {
           method: "Referral",
+          user: userId,
         },
       },
       {
