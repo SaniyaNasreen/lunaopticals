@@ -73,7 +73,7 @@ const addCategory = async (req, res, next) => {
 
     const category = new Category({
       name: name,
-      image: `http://localhost:4000/${req.file.path}`,
+      image: `/${req.file.path}`,
     });
     const categoryData = await category.save();
     if (!categoryData) {
@@ -99,7 +99,7 @@ const updateCategory = async (req, res, next) => {
 
     let imagePath = category.image;
     if (req.file && req.file.path) {
-      imagePath = `http://localhost:4000/${req.file.path}`;
+      imagePath = `/${req.file.path}`;
     }
 
     const updatedCategory = await Category.findByIdAndUpdate(

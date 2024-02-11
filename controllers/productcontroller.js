@@ -100,7 +100,7 @@ const addProduct = async (req, res, next) => {
         console.log("cropped");
         filePromises.push(cropPromise);
 
-        const fileUrl = `http://localhost:4000/public/uploads/cropped_${file.filename}`;
+        const fileUrl = `/public/uploads/cropped_${file.filename}`;
         product.images.push(fileUrl);
       }
 
@@ -169,7 +169,7 @@ const updateProduct = async (req, res, next) => {
 
         filePromises.push(cropPromise);
 
-        const fileUrl = `http://localhost:4000/public/uploads/cropped_${file.filename}`;
+        const fileUrl = `/public/uploads/cropped_${file.filename}`;
         product.images.push(fileUrl);
       }
 
