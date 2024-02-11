@@ -230,15 +230,14 @@ const loadOrderDetails = async (req, res, next) => {
     if (!orders || orders.length === 0) {
       return res.status(404).json({ message: "Order not found" });
     }
-    let discountAmount = 0;
+    let offer;
+    let productDiscountAmount = 0;
     for (const order of orders) {
-      const products = order.purchasedItems;
-
-      for (const item of products) {
-        const product = item.product;
-        console.log("product", product);
+      for (const purchasedItem of order.purchasedItems) {
+        const product = purchasedItem.product;
+        const quantity = purchasedItem.quantity;
         const currentDate = new Date();
-        const offer = await Offer.findOne({
+        offer = await Offer.findOne({
           $and: [
             {
               $or: [
@@ -248,7 +247,7 @@ const loadOrderDetails = async (req, res, next) => {
                   validity: { $gte: new Date() },
                 },
                 {
-                  product: product,
+                  product: product._id,
                   status: "Active",
                   validity: { $gte: new Date() },
                 },
@@ -262,13 +261,15 @@ const loadOrderDetails = async (req, res, next) => {
             { validity: { $gte: currentDate } },
           ],
         }).populate("category", "referral");
+
         console.log("Product Category:", product.category);
         console.log("Found Offer:", offer);
+
         const coupon = await Coupon.findOne({
           category: product.category,
           validity: { $gte: currentDate },
-          minAmount: { $lte: item.price },
-          maxAmount: { $gte: item.price },
+          minAmount: { $lte: purchasedItem.price },
+          maxAmount: { $gte: purchasedItem.price },
         });
 
         if (offer) {
@@ -276,51 +277,54 @@ const loadOrderDetails = async (req, res, next) => {
             offer.referral &&
             req?.session?.userId == offer.referral.toString()
           ) {
-            discountAmount = (product.price * (offer.discount / 100)).toFixed(
-              2
-            );
+            productDiscountAmount =
+              (product.price * (offer.discount / 100)).toFixed(2) * quantity;
           } else {
             console.log("heyy", product.price);
-            discountAmount = (product.price * (offer.discount / 100)).toFixed(
-              2
-            );
-            console.log("discountAmount", discountAmount);
+            productDiscountAmount =
+              (product.price * (offer.discount / 100)).toFixed(2) * quantity;
+            console.log("discountAmount", productDiscountAmount);
           }
         }
-        item.discountAmount = discountAmount;
-        if (order.couponApplied === true) {
+        purchasedItem.productDiscountAmount = productDiscountAmount;
+        console.log(
+          "purchasedItem.productDiscountAmount",
+          purchasedItem.productDiscountAmount
+        );
+        if (order.couponApplied === true && coupon) {
           console.log("hoihoi");
-          if (discountAmount) {
+          if (productDiscountAmount) {
             const couponDiscount = (
-              (product.price - item.discountAmount) *
+              (product.price - purchasedItem.productDiscountAmount) *
               (coupon.discount / 100)
             ).toFixed(2);
-            item.discountAmount = (
-              parseFloat(item.discountAmount) + parseFloat(couponDiscount)
+            purchasedItem.productDiscountAmount = (
+              parseFloat(purchasedItem.productDiscountAmount) +
+              parseFloat(couponDiscount)
             ).toFixed(2);
             console.log(
               "purchasedItem.productDiscountAmount",
-              item.discountAmount
+              purchasedItem.productDiscountAmount
             );
           } else {
-            const discount = (
-              (product.price - item.discountAmount) *
+            const couponDiscount = (
+              (product.price - purchasedItem.productDiscountAmount) *
               (coupon.discount / 100)
             ).toFixed(2);
-            item.discountAmount = couponDiscount;
+            purchasedItem.productDiscountAmount = couponDiscount;
             console.log(
               "purchasedItem.productDiscountAmount",
-              item.discountAmount
+              purchasedItem.productDiscountAmount
             );
           }
         }
       }
-      order.purchasedItems = products;
     }
+    console.log("discountAmountcat", productDiscountAmount);
     res.render("users/orderInfo", {
       orders,
       isUserLoggedIn,
-      discountAmount,
+      productDiscountAmount,
       totalAmount: 0,
       user,
     });

@@ -59,6 +59,7 @@
                       style="color: orangered; font-size: 16px"
                       >View Details</a
                     >
+                    <h6>heyy</h6>
                   </div>
                   <% order.purchasedItems.forEach(purchasedItem => { %>
                   <div
@@ -106,7 +107,7 @@
                       >
                         <%= purchasedItem.status %>
                       </button>
-                      <% } %>
+                      <% } %> <% if (purchasedItem.productDiscountAmount) { %>
                       <p
                         class="mb-0 ml-2"
                         style="font-weight: 600; font-size: 13px; color: black"
@@ -115,6 +116,15 @@
                         (purchasedItem.price -
                         purchasedItem.productDiscountAmount)) %>
                       </p>
+                      <% } else { %>
+                      <p
+                        class="mb-0 ml-2"
+                        style="font-weight: 600; font-size: 13px; color: black"
+                      >
+                        ₹ <%= Math.round(purchasedItem.quantity *
+                        (purchasedItem.price)) %>
+                      </p>
+                      <% } %>
                     </div>
                   </div>
                   <% }) %>

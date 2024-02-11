@@ -92,7 +92,10 @@
                     </div>
                     <div class="col-md-9">
                       <p><%= item.product.name %></p>
-                      <p><%= Math.round(item.price - item.discountAmount) %></p>
+                      <p>
+                        <%= Math.round(item.price - item.productDiscountAmount)
+                        %>
+                      </p>
                       <p>Qty: <%= item.quantity %></p>
                       <% const currentDate = new Date(); %> <% const orderDate =
                       new Date(order.date); %> <% const timeDifference =

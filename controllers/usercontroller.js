@@ -1509,6 +1509,7 @@ const orderInfo = async (req, res, next) => {
     for (const order of orders) {
       for (const purchasedItem of order.purchasedItems) {
         const product = purchasedItem.product;
+        const quantity = purchasedItem.quantity;
         const currentDate = new Date();
         offer = await Offer.findOne({
           $and: [
@@ -1550,16 +1551,12 @@ const orderInfo = async (req, res, next) => {
             offer.referral &&
             req?.session?.userId == offer.referral.toString()
           ) {
-            productDiscountAmount = (
-              product.price *
-              (offer.discount / 100)
-            ).toFixed(2);
+            productDiscountAmount =
+              (product.price * (offer.discount / 100)).toFixed(2) * quantity;
           } else {
             console.log("heyy", product.price);
-            productDiscountAmount = (
-              product.price *
-              (offer.discount / 100)
-            ).toFixed(2);
+            productDiscountAmount =
+              (product.price * (offer.discount / 100)).toFixed(2) * quantity;
             console.log("discountAmount", productDiscountAmount);
           }
         }
@@ -1584,7 +1581,7 @@ const orderInfo = async (req, res, next) => {
               purchasedItem.productDiscountAmount
             );
           } else {
-            const discount = (
+            const couponDiscount = (
               (product.price - purchasedItem.productDiscountAmount) *
               (coupon.discount / 100)
             ).toFixed(2);
