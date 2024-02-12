@@ -487,19 +487,22 @@
                                                   Price is required.
                                               </div>
                                           </div>
+                                          
+                                        
                                           <div class="mb-3">
                                             <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Category</label>
-                                              <select class="form-control1-editp form-control" name="category" required>
-                                                  <% categories.forEach(category => { %>
-                                                  <option value="<%= category._id %>">
-                                                      <%= category.name %>
-                                                  </option>
-                                                  <% }); %>
-                                              </select>
-                                              <div class="invalid-feedback">
-                                                  Category is required.
-                                              </div>
-                                          </div>
+                                            <select class="form-control1-editp form-control" name="category" required>
+                                                <% categories.forEach(category => { %>
+                                                    <option value="<%= category._id %>" <%= category._id.toString() === product.category.toString() ? 'selected' : '' %>>
+                                                        <%= category.name %>
+                                                    </option>
+                                                <% }); %>
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Category is required.
+                                            </div>
+                                        </div>
+                                        
                                           <div class="mb-3">
                                             <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Stock</label>
                                               <input type="number" class="form-control1-editp form-control" name="countInStock" placeholder="Enter stock" value="<%= product.countInStock %>" required>
@@ -549,20 +552,26 @@
 
 <script>
   function validatePrice(event) {
-    const priceInput = event.target.querySelector('[name="price"]');
-    const price = parseFloat(priceInput.value);
-
-    if (price <= 0 || isNaN(price)) {
-      event.preventDefault();  
+      const priceInput = event.target.querySelector('[name="price"]');
+      const price = parseFloat(priceInput.value);
       const priceErrorMessage = event.target.querySelector('.price-error-message');
-      priceErrorMessage.innerText = 'Price must be a valid number greater than zero.';
-      priceErrorMessage.style.display = 'block';  
-    }
+      
+      if (price <= 0 || isNaN(price)) {
+          event.preventDefault();
+          priceErrorMessage.innerText = 'Price must be a valid number greater than zero.';
+          priceErrorMessage.style.display = 'block';
+      } else {
+          priceErrorMessage.style.display = 'none';
+      }
   }
 
-  document.getElementById('addProductForm').addEventListener('submit', validatePrice);
-  document.getElementById('editProductForm').addEventListener('submit', validatePrice);
+  // Assuming each form has a unique ID, like "editProductForm1", "editProductForm2", etc.
+  const editProductForms = document.querySelectorAll('[id^="editProductForm"]');
+  editProductForms.forEach(form => {
+      form.addEventListener('submit', validatePrice);
+  });
 </script>
+
 
 <script>
   function clearImage() {

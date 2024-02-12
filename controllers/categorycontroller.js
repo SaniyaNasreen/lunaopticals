@@ -61,14 +61,7 @@ const addCategory = async (req, res, next) => {
 
     const existingCategory = await Category.findOne({ name });
     if (existingCategory) {
-      const categories = await Category.find({});
-      res.render("admin/categories", {
-        errorWith: "CATEGORY",
-        message: "Category with this name already exists",
-        categories,
-      });
-      error.statusCode = 409;
-      throw error;
+      return res.status(400).send("Category with this name already exists.");
     }
 
     const category = new Category({
@@ -83,13 +76,20 @@ const addCategory = async (req, res, next) => {
     }
     return res.redirect("/admin/categories");
   } catch (error) {
-    next(error);
+    if (error.code === 11000) {
+      res
+        .status(400)
+        .send("Category with the same name or image already exists.");
+    } else {
+      next(error);
+    }
   }
 };
 
 const updateCategory = async (req, res, next) => {
   try {
     const categoryId = req.params.id;
+
     const category = await Category.findById(categoryId);
     if (!categoryId || !mongoose.Types.ObjectId.isValid(categoryId)) {
       const error = new Error("Invalid Category ID");

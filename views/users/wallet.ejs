@@ -44,18 +44,16 @@
           <div class="px-3 mb-3">
             <div>
               <h5 style="color: rgb(29, 28, 28); font-weight: 600">
-                Total Balance: <%=Math.round(totalAmount)  %>
+                Total Balance: <%= Math.round(totalAmount) %>
               </h5>
             </div>
-            <% if (wallets && wallets.length > 0) { %>
-            <!-- prettier ignore -->
-            <% wallets.forEach(wallet=> { %>
-
+            <% let allWallets = wallets.concat(walletsToPush.flat()) %> <%
+            allWallets.sort((a, b) => new Date(b.date) - new Date(a.date)) %> <%
+            if (allWallets && allWallets.length > 0) { %> <%
+            allWallets.forEach(wallet => { %>
             <div
               class="border border-secondary mb-3 px-3 py-2"
               style="
-                position: relative;
-                top: 30px;
                 border: 1px solid #ccc;
                 background-color: white;
                 margin-bottom: 10px;
@@ -68,17 +66,28 @@
             >
               <div class="d-flex justify-content-between">
                 <div>
+                  <% if (wallet.method) { %>
                   <h5>Credited</h5>
                   <p
                     class="font-weight-bold;"
                     style="color: rgb(29, 28, 28); font-weight: 600"
                   >
-                    Amount through: <%= wallet.method ? wallet.method : '' %>
+                    Amount through: <%= wallet.method %>
                   </p>
+                  <% } else { %>
+                  <h5>Debited</h5>
+                  <p
+                    class="font-weight-bold;"
+                    style="color: rgb(29, 28, 28); font-weight: 600"
+                  >
+                    OrderId: <%= wallet.orderNumber %>
+                  </p>
+                  <% } %>
                 </div>
                 <div>
                   <p style="color: rgb(29, 28, 28); font-weight: 600">
-                    Amount: <%= Math.round(wallet.amount ? wallet.amount : 0) %>
+                    Amount: <%= Math.round(wallet.amount ? wallet.amount :
+                    wallet.totalAmount ? wallet.totalAmount : 0) %>
                   </p>
                 </div>
               </div>
@@ -90,41 +99,8 @@
               </div>
             </div>
             <% }) %> <% } else { %>
-            <p>No orders found</p>
-            <% } %> <% if (walletsToPush && walletsToPush.length > 0) { %>
-              <% walletsToPush.forEach(orderList => { %>
-                <% orderList.forEach(order => { %>
-                  <div class="border border-secondary mb-3 px-3 py-2" style="position: relative; top: 30px; border: 1px solid #ccc; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: 500; color: black; overflow: hidden;">
-                    <div class="d-flex justify-content-between">
-                      <div>
-                        <h5>Debited</h5>
-                        <p class="font-weight-bold;" style="color: rgb(29, 28, 28); font-weight: 600;">
-                          OrderId: <%= order.orderNumber ? order.orderNumber : '' %>
-                        </p>
-                      </div>
-                     
-                      
-                      <div>
-                        <p style="color: rgb(29, 28, 28); font-weight: 600">
-                          Amount: <%= Math.round(order.totalAmount ? order.totalAmount: 0) %>
-                        </p>
-                      </div>
-                      
-                    </div>
-                    <div class="text-left">
-                      <p style="color: rgb(29, 28, 28); font-weight: 600">
-                        Date: <%= order.date instanceof Date ?
-                        order.date.toDateString() : '' %>
-                      </p>
-                    </div>
-                  </div>
-                <% }) %>
-              <% }) %>
-            <% } else { %>
-              <p>No orders found</p>
+            <p>No wallets found</p>
             <% } %>
-            
-            </div>
           </div>
         </div>
       </div>

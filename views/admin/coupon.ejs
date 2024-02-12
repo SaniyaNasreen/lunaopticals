@@ -206,7 +206,7 @@
                                                 <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Category</label>
                                                   <select class="form-control1-editp form-control" name="category" required>
                                                       <% categories.forEach(category => { %>
-                                                        <option value="<%= category._id %>" <%= coupon.category._id == category._id ? "selected" : "" %>>
+                                                        <option value="<%= category._id %>" <%= category._id.toString() === coupon.category.toString() ? 'selected' : '' %>>
                                                           <%= category.name %>
                                                       </option>
                                                       <% }); %>

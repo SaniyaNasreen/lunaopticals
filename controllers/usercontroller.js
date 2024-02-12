@@ -673,6 +673,7 @@ const loadProductList = async (req, res, next) => {
 
     let filter = { listed: true };
     let categoryFilter = {};
+    let searchFilter = {};
     if (req.query.category) {
       const category = await Category.findOne({
         name: req.query.category,
@@ -685,9 +686,12 @@ const loadProductList = async (req, res, next) => {
         filter = { listed: true };
       }
     }
-
-    const totalProducts = await Product.countDocuments(filter);
-    const sortedProducts = await Product.find(filter)
+    if (req.query.search) {
+      searchFilter = { $text: { $search: req.query.search } };
+    }
+    const combinedFilter = { ...filter, ...searchFilter };
+    const totalProducts = await Product.countDocuments(combinedFilter);
+    const sortedProducts = await Product.find(combinedFilter)
       .populate("category")
       .sort(sortOption)
       .lean()
@@ -793,20 +797,12 @@ const searchProduct = async (req, res, next) => {
     let sortOption = {};
     const sortQuery = req.query.sort;
 
-    if (sortQuery === "price-low-to-high") {
-      sortOption = { price: 1 };
-    } else if (sortQuery === "price-high-to-low") {
-      sortOption = { price: -1 };
-    } else {
-      sortOption = { createdAt: -1 };
-    }
-
     const filterConditions = [
       {
         $or: [
-          { name: { $regex: searchquery, $options: "i" } },
-          { brand: { $regex: searchquery, $options: "i" } },
-          { description: { $regex: searchquery, $options: "i" } },
+          { name: { $regex: "^" + searchquery, $options: "i" } },
+          { name: { $regex: "\\b" + searchquery, $options: "i" } },
+          { brand: { $regex: "^" + searchquery, $options: "i" } },
         ],
       },
     ];
@@ -815,15 +811,13 @@ const searchProduct = async (req, res, next) => {
       filterConditions.push({ category: filterByCategory });
     }
 
-    // Removed the 'listed' condition from combinedConditions
-    const combinedConditions = { $or: filterConditions };
+    const combinedConditions = { $and: filterConditions };
 
     const products = await Product.find(combinedConditions)
       .populate("category")
       .lean()
       .exec();
 
-    // Sorting the searched products after fetching them
     products.sort((a, b) => {
       if (sortOption.price) {
         return (a.price - b.price) * sortOption.price;
@@ -843,7 +837,7 @@ const searchProduct = async (req, res, next) => {
     const currentPage = page;
     const selectedSort = sortQuery;
     res.render("users/shop-list", {
-      products: paginatedProducts, // Send paginated products instead of all products
+      products: paginatedProducts,
       isUserLoggedIn,
       searchquery,
       selectedSort,
@@ -858,6 +852,7 @@ const searchProduct = async (req, res, next) => {
     next(error);
   }
 };
+
 //....Cart Managment....//
 const addCart = async (req, res, next) => {
   const productId = req.params.id;
@@ -1196,7 +1191,7 @@ const loadCheckout = async (req, res, next) => {
     let totalPrice = 0;
     if (req.body.code && coupon.status === "Active") {
       totalPrice = subtotal - discountAmount;
-      user.totalAmount =Number(totalPrice + Shipping);
+      user.totalAmount = Number(totalPrice + Shipping);
     } else {
       totalPrice = hasOffer ? subtotal : subtotal;
       user.totalAmount = totalPrice + Shipping;

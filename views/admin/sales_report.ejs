@@ -53,11 +53,11 @@
             <div class="form-row mb-2"style="font-size: 14px; position: relative; left: 300px; max-width: 600px; ">
         <div class="col-md-3">
             <label for="from">From Date:</label>
-            <input type="date" class="form-control" id="from" name="startDate" value="" required style="font-size: 12px;">
+            <input type="date" class="form-control" id="salesfrom" name="startDate" value="" required style="font-size: 12px;">
         </div>
         <div class="col-md-3">
             <label for="to">To Date:</label>
-            <input type="date" class="form-control" id="to" name="endDate" value="" required min="" style="font-size: 12px;">
+            <input type="date" class="form-control" id="salesto" name="endDate" value="" required min="" style="font-size: 12px;">
             <div id="ending-error" class="error-message"></div>
         </div>
         <div class="col-md-3">
@@ -187,6 +187,61 @@
 </div>
       </div>
     </div>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () { 
+        var currentDate = new Date();
+         
+        var fromDateInput = document.getElementById('from');
+        var toDateInput = document.getElementById('to'); 
+        fromDateInput.addEventListener('change', function () {
+          validateDates();
+        });
+        toDateInput.addEventListener('change', function () {
+          validateDates();
+        });
+     
+        function validateDates() {
+          var fromDate = new Date(fromDateInput.value);
+          var toDate = new Date(toDateInput.value);
+           
+          if (fromDate > toDate) {
+        Swal.fire("Error", "From Date should be less than or equal to To Date", "error"); 
+      } else if (fromDate > currentDate || toDate > currentDate) {
+        Swal.fire("Error", "Dates should be less than or equal to the current date", "error"); 
+      }
+        }
+        
+      });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () { 
+        var currentDate = new Date();
+         
+        var fromDateInput = document.getElementById('salesfrom');
+        var toDateInput = document.getElementById('salesto'); 
+        fromDateInput.addEventListener('change', function () {
+          validateDates();
+        });
+        toDateInput.addEventListener('change', function () {
+          validateDates();
+        });
+     
+        function validateDates() {
+          var fromDate = new Date(fromDateInput.value);
+          var toDate = new Date(toDateInput.value);
+           
+          if (fromDate > toDate) {
+        Swal.fire("Error", "From Date should be less than or equal to To Date", "error"); 
+      } else if (fromDate > currentDate || toDate > currentDate) {
+        Swal.fire("Error", "Dates should be less than or equal to the current date", "error"); 
+      }
+        }
+        
+      });
+    </script>
+    
 <%- include('../layouts/footer.ejs') %>
 
     </div>

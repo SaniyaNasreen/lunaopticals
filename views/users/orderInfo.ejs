@@ -41,7 +41,7 @@
               <div class="col-md-12">
                 <h4>View order details</h4>
                 <div class="card p-3">
-                  <p>Order Date: <%= order.date %></p>
+                  <p>Order Date: <%= formattedOrderDate %></p>
                   <p>Order ID: <%= order.orderNumber %></p>
                   <p>Total Price: ₹<%= Math.round( order.totalAmount) %></p>
                   <a

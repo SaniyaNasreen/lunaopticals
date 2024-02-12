@@ -7,6 +7,7 @@ const Coupon = require("../models/couponmodel");
 const Offer = require("../models/offermodel");
 const Wallet = require("../models/walletmodel");
 const Razorpay = require("razorpay");
+const moment = require("moment");
 const instance = new Razorpay({
   key_id: process.env.KEY_ID,
   key_secret: process.env.KEY_SECRET,
@@ -231,8 +232,10 @@ const loadOrderDetails = async (req, res, next) => {
       return res.status(404).json({ message: "Order not found" });
     }
     let offer;
+    let formattedOrderDate;
     let productDiscountAmount = 0;
     for (const order of orders) {
+      formattedOrderDate = moment(order.date).format("MMMM Do YYYY, h:mm a");
       for (const purchasedItem of order.purchasedItems) {
         const product = purchasedItem.product;
         const quantity = purchasedItem.quantity;
@@ -320,6 +323,7 @@ const loadOrderDetails = async (req, res, next) => {
         }
       }
     }
+
     console.log("discountAmountcat", productDiscountAmount);
     res.render("users/orderInfo", {
       orders,
@@ -327,6 +331,7 @@ const loadOrderDetails = async (req, res, next) => {
       productDiscountAmount,
       totalAmount: 0,
       user,
+      formattedOrderDate,
     });
   } catch (error) {
     next(error);
