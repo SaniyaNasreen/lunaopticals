@@ -1196,7 +1196,7 @@ const loadCheckout = async (req, res, next) => {
     let totalPrice = 0;
     if (req.body.code && coupon.status === "Active") {
       totalPrice = subtotal - discountAmount;
-      user.totalAmount = totalPrice + Shipping;
+      user.totalAmount =Number(totalPrice + Shipping);
     } else {
       totalPrice = hasOffer ? subtotal : subtotal;
       user.totalAmount = totalPrice + Shipping;

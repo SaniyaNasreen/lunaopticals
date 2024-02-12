@@ -232,7 +232,7 @@ const applyCoupon = async (req, res, next) => {
         user.totalAmount = totalPrice;
       }
 
-      await user.save();
+      //await user.save();
       cartItem.product.couponApplied = true;
       await cartItem.product.save();
     }

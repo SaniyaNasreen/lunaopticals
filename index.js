@@ -225,7 +225,6 @@ app.get("/download-sales-report", async (req, res) => {
       date: { $gte: new Date(startDate), $lte: new Date(endDate) },
     }).populate("user");
 
-    // Check if no orders were found
     if (!orders || orders.length === 0) {
       return res
         .status(404)
@@ -334,7 +333,7 @@ app.get("/download-sales-report", async (req, res) => {
     </table>
   `;
 
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
     await page.setContent(htmlContent);
 
@@ -349,6 +348,7 @@ app.get("/download-sales-report", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 function checkEnvVariables() {
   const requiredEnvVariables = [
     "PORT",
