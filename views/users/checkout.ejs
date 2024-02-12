@@ -127,8 +127,11 @@
           <div class="col-xl-6 col-lg-6 col-md-6 "  >
             <div class="coupon-list d-flex flex-wrap pb-10 ">
                   
-              <% if (coupon && coupon.length > 0) { %> 
+             <!-- prettier-ignore    -->
+              <%  if (coupon && coupon.length > 0 ) { %>
+              
                 <% coupon.forEach(coupon => { %>
+                  <%  if (coupon.status==="Active") { %>
                  
                   <div class="border p-5 mr-3 " style="width: 255px;">
                     <div class="d-flex justify-content-between  ">
@@ -146,8 +149,10 @@
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </div> 
+                  <% } %>
                 <% }) %>
+                
               <% } else { %>
                 <p>No coupons available</p>
               <% } %>
