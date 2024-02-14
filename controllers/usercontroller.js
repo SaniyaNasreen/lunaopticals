@@ -1030,6 +1030,7 @@ const updateCart = async (req, res, next) => {
     if (updateQuantity === "increase") {
       if (product.countInStock > newQuantity) {
         newQuantity++;
+        productInCart.total = newQuantity * product.price;
         productInCart.quantity = newQuantity;
         await user.save();
       } else {
@@ -1041,7 +1042,9 @@ const updateCart = async (req, res, next) => {
       }
     } else if (updateQuantity === "decrease" && newQuantity > 1) {
       newQuantity--;
+      productInCart.total = newQuantity * product.price;
       productInCart.quantity = newQuantity;
+      console.log("Received datahyyu:", req.body);
 
       await user.save();
     } else {
@@ -1086,12 +1089,15 @@ const updateCart = async (req, res, next) => {
       }
     }
     console.log("discountAmountis", discountAmount);
-    {
-      productInCart.total = newQuantity * product.price;
 
-      await user.save();
-      return res.redirect("/shop-cart");
-    }
+    productInCart.total = newQuantity * product.price;
+
+    const updatedQuantity = productInCart.quantity;
+    const totalPrice = productInCart.total;
+    const productId = productInCart._id;
+    console.log("totalPrice", totalPrice);
+    res.json({ updatedQuantity, totalPrice, productId });
+    await user.save();
   } catch (error) {
     console.error("Error updating quantity:", error);
     next(error);

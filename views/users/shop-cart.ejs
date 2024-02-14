@@ -148,15 +148,11 @@
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td class="total-price">
                         <% if (item.productDiscountAmount) { %>  
-                          <div class="price pt-15 pb-10"> 
-                            <span class="final-price"> ₹<%=Math.round (item.product.price - item.productDiscountAmount) %></span>
-                          </div>
+                        ₹<%= Math.round(item.total - item.productDiscountAmount) %>
                         <% } else { %>
-                          <div class="price pt-15 pb-10"> 
-                            <span class="final-price"> ₹<%=Math.round( item.product.price ) %></span>
-                          </div>
+                          ₹<%= Math.round(item.total) %>
                         <% } %>
                       </td>
                       
@@ -174,11 +170,12 @@
                         </div>
                         
                       </td>
-                      <td>
+                      <td id="totals<%= item.product._id %>">
+                       
                         <% if (item.productDiscountAmount) { %>  
-                        ₹<%= Math.round(item.quantity * (item.product.price- item.productDiscountAmount)) %>
+                        ₹<%= Math.round(item.total-(item.quantity *  item.productDiscountAmount)) %>
                         <% } else { %>
-                          ₹<%=Math.round( item.quantity * (item.product.price)) %>
+                          ₹<%=Math.round(   (item.total)) %>
                           <% } %>
                       </td>
                       <td>
@@ -373,7 +370,8 @@ function updateCart(event) {
 
   const form = event.currentTarget;
   const productId = form.querySelector('input[name="product_id"]').value;
-  const updateQuantity = event.submitter.value;   
+  const updateQuantity = event.submitter.value;
+  
   fetch('/update-cart', {
     method: 'POST',
     body: JSON.stringify({ product_id: productId, updateQuantity }),
@@ -382,34 +380,32 @@ function updateCart(event) {
     },
   })
     .then(response => response.json())
-    .then(data => {
-      // Check if the response indicates insufficient stock or not
-      if (data && data.insufficientStock) {
-        // Handle case where there is insufficient stock
-        // Display an error message to the user
+    .then(data => { 
+      if (data && data.insufficientStock) { 
         Swal.fire({
           icon: 'error',
           title: 'Insufficient Stock',
           text: 'There is not enough stock for this item',
         });
-      } else {
-        // Update the quantity displayed on the page
+      } else { 
         const updatedQuantity = data.updatedQuantity;
-        form.querySelector('input[name="quantity"]').value = updatedQuantity;
-        // Optionally, you can also update the total price based on the updated quantity
-        const totalPriceElement = form.parentElement.parentElement.querySelector('.total-price');
-        const unitPriceElement = form.parentElement.parentElement.querySelector('.unit-price');
-        const unitPrice = parseFloat(unitPriceElement.dataset.unitPrice);
-        totalPriceElement.textContent = '₹' + (updatedQuantity * unitPrice).toFixed(2);
+        const totalPrice = data.totalPrice;  
+        
+
+        const totalId = "totals" + productId; // Assuming productId is defined and holds the correct ID
+        const totalElement = document.getElementById(totalId)
+        console.log(totalElement);
+        form.querySelector('input[name="quantity"]').value = updatedQuantity; 
+     
+        document.getElementById(totalId).textContent=totalPrice;
       }
     })
     .catch(error => console.error('Error:', error));
 }
 
-// Attach the updateCart function to the form submission event
 document.querySelectorAll('.quantity-form').forEach(form => {
   form.addEventListener('submit', updateCart);
-});
+}); 
 
   </script>
 

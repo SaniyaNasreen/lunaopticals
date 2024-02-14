@@ -23,7 +23,7 @@
                 </div>
                 <% if (orders && orders.length > 0) { %>
                   <form action="/download-sales-report" method="GET">
-                    <div class="form-row mb-2" style="font-size: 14px; position: relative; left: 365px; top: 120px; ">
+                    <div   class="form-row mb-2" style="font-size: 14px; position: relative; left: 365px; top: 120px; ">
                       <div class="col-md-3" style="width: 350px;">
                         <label for="from">From Date:</label>
                         <input type="date" class="form-control" id="from" name="startDate" value="" required style="font-size: 12px;">
@@ -34,7 +34,7 @@
                         <div id="ending-error" class="error-message"></div>
                       </div>
                       <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary" style="position: relative; top: 30px; width: 115px;">Download</button>
+                        <button type="submit" class="btn btn-primary" style="position: relative; top: 30px; width: 115px;" >Download</button>
                       </div>
                     </div>
                   </form>
