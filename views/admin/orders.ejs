@@ -193,9 +193,27 @@ height: 100vh;">
                 <div class="nk-tb-col tb-col-md">
                   <% if (order.purchasedItems && order.purchasedItems.length > 0) { %>
                     <% order.purchasedItems.forEach((item) => { %>
-                      <button style="border-radius: 20px; border-style: none; background-color: blue; width: 70px; height: 20px;">
+                      <% if (item.status === 'cancelled') { %>
+                        <button style="border-radius: 20px; border-style: none; background-color: rgb(255, 0, 17); width: 70px; height: 20px;">
+                          <span class="tb-lead" style="color: white; font-size: 9px; " ><%- item.status %></span>
+                        </button><br>
+                      <% } else if (item.status === 'Delivered') { %>
+                      <button style="border-radius: 20px; border-style: none; background-color: rgb(12, 126, 4); width: 70px; height: 20px;">
                         <span class="tb-lead" style="color: white; font-size: 9px; " ><%- item.status %></span>
                       </button><br>
+                      <% } else if (item.status === 'Processing') { %>
+                        <button style="border-radius: 20px; border-style: none; background-color: rgb(12, 211, 222); width: 70px; height: 20px;">
+                          <span class="tb-lead" style="color: white; font-size: 9px; " ><%- item.status %></span>
+                        </button><br>
+                        <% } else if (item.status === 'Shipping') { %>
+                          <button style="border-radius: 20px; border-style: none; background-color: rgb(225, 118, 17); width: 70px; height: 20px;">
+                            <span class="tb-lead" style="color: white; font-size: 9px; " ><%- item.status %></span>
+                          </button><br>
+                          <% } else if (item.status === 'Placed') { %>
+                            <button style="border-radius: 20px; border-style: none; background-color: rgb(17, 52, 225); width: 70px; height: 20px;">
+                              <span class="tb-lead" style="color: white; font-size: 9px; " ><%- item.status %></span>
+                            </button><br>
+                          <% } %> 
                     <% }); %>
                   <% } else { %>
                     <span class="tb-sub">No purchased items</span>

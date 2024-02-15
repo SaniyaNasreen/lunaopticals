@@ -178,9 +178,9 @@
               <td><%= item.quantity %></td> 
               
               <td>    <% if (item.discountAmount) { %>  
-                ₹<%=Math.round( item.quantity * (item.product.price - item.discountAmount)) %>
+                ₹<%=Math.round((item.product.price-discountAmount)) %>
                 <% } else { %>
-                  ₹<%=Math.round( item.quantity * (item.product.price)) %>
+                  ₹<%=Math.round( (item.product.price)) %>
                   <% } %></td> 
             </tr> 
             <% subtotal %>

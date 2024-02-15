@@ -92,13 +92,55 @@
                       >
                         <%= purchasedItem.status %>
                       </button>
-                      <% } else { %>
+                      <% } else if (purchasedItem.status === 'Placed') { %>
                       <button
                         style="
                           font-weight: 500;
                           color: rgb(250, 249, 249);
                           font-size: 14px;
                           background-color: blue;
+                          border-style: none;
+                          width: 100px;
+                          height: 30px;
+                        "
+                      >
+                        <%= purchasedItem.status %>
+                      </button>
+                      <% } else if (purchasedItem.status === 'Processing') { %>
+                      <button
+                        style="
+                          font-weight: 500;
+                          color: rgb(250, 249, 249);
+                          font-size: 14px;
+                          background-color: rgb(33, 223, 223);
+                          border-style: none;
+                          width: 100px;
+                          height: 30px;
+                        "
+                      >
+                        <%= purchasedItem.status %>
+                      </button>
+                      <% } else if (purchasedItem.status === 'Shipping') { %>
+                      <button
+                        style="
+                          font-weight: 500;
+                          color: rgb(250, 249, 249);
+                          font-size: 14px;
+                          background-color: rgb(255, 153, 0);
+                          border-style: none;
+                          width: 100px;
+                          height: 30px;
+                        "
+                      >
+                        <%= purchasedItem.status %>
+                      </button>
+                      <% } else if (purchasedItem.status === 'Delivered') { %>
+                      <button
+                        style="
+                          font-weight: 500;
+                          color: rgb(250, 249, 249);
+                          font-size: 14px;
+                          background-color: rgb(9, 130, 3);
                           border-style: none;
                           width: 100px;
                           height: 30px;

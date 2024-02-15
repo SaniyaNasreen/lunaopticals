@@ -38,12 +38,24 @@ const addCouponForCategory = async (req, res, next) => {
     console.log(req.body);
     const currentDate = new Date();
     const validityDate = new Date(validity);
+
     if (validityDate <= currentDate) {
       return res.render("admin/coupon", {
         categories,
         coupons,
+        section: coupons,
         errorWith: "DATE",
         message: "Validity date should not be less than current date",
+      });
+    }
+    const existingCoupon = await Coupon.findOne({ code: code });
+    if (existingCoupon) {
+      return res.render("admin/coupon", {
+        categories,
+        coupons,
+        section: coupons,
+        errorWith: "CODE",
+        message: "Code already exist",
       });
     }
 
@@ -51,6 +63,7 @@ const addCouponForCategory = async (req, res, next) => {
       return res.render("admin/coupon", {
         categories,
         coupons,
+        section: coupons,
         errorWith: "AMOUNT",
         message: "Minimum amount should be less than maximum amount",
       });
@@ -61,6 +74,7 @@ const addCouponForCategory = async (req, res, next) => {
       return res.render("admin/coupon", {
         categories,
         coupons,
+        section: coupons,
         errorWith: "CATEGORY",
         message: "Category not found",
       });
@@ -88,16 +102,23 @@ const editCouponForCategory = async (req, res, next) => {
   try {
     const couponId = req.params.id;
     const coupon = await Coupon.findById(couponId).populate("category");
+    const coupons = await Coupon.find().populate("category");
+    const categories = await Category.find();
     if (!coupon) {
       return res.status(404).send("Coupon not found.");
     }
     const categoryId = req.body.category;
-    const foundCategory = await Category.findOne({ _id: categoryId });
+    const foundCategory = await Category.findById(categoryId);
     if (!foundCategory) {
-      console.log("Category not found or undefined");
-      return res.status(404).send("Category not found or undefined");
+      return res.render("admin/coupon", {
+        categories,
+        coupons,
+        section: coupon,
+        errorWith: "CATEGORY1",
+        message: "Category not found",
+      });
     }
-
+    console.log(foundCategory);
     console.log(req.body);
     coupon.name = req.body.name;
     coupon.status = req.body.status;
@@ -105,6 +126,16 @@ const editCouponForCategory = async (req, res, next) => {
     coupon.category = foundCategory._id;
     coupon.minAmount = req.body.minAmount;
     coupon.maxAmount = req.body.maxAmount;
+    if (req.body.minAmount >= req.body.maxAmount) {
+      return res.render("admin/coupon", {
+        categories,
+        coupons,
+        section: coupon,
+        errorWith: "AMOUNT1",
+        message: "Minimum amount should be less than maximum amount",
+      });
+    }
+
     await coupon.save();
     console.log("Coupon updated successfully:", coupon);
     res.redirect("/admin/coupon");

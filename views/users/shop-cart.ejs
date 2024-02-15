@@ -150,9 +150,9 @@
                       </td>
                       <td class="total-price">
                         <% if (item.productDiscountAmount) { %>  
-                        ₹<%= Math.round(item.total - item.productDiscountAmount) %>
+                        ₹<%= Math.round(item.product.price - item.productDiscountAmount) %>
                         <% } else { %>
-                          ₹<%= Math.round(item.total) %>
+                          ₹<%= Math.round(item.product.price) %>
                         <% } %>
                       </td>
                       
@@ -173,9 +173,9 @@
                       <td id="totals<%= item.product._id %>">
                        
                         <% if (item.productDiscountAmount) { %>  
-                        ₹<%= Math.round(item.total-(item.quantity *  item.productDiscountAmount)) %>
+                        ₹<%= Math.round(item.quantity*(item.product.price-item.productDiscountAmount)) %>
                         <% } else { %>
-                          ₹<%=Math.round(   (item.total)) %>
+                          ₹<%=Math.round(item.quantity*(item.product.price)) %>
                           <% } %>
                       </td>
                       <td>
@@ -220,18 +220,8 @@
       <div class="col-xl-6 col-lg-6 col-md-6">
         <div class="cart-total pt-30 pl-40 pr-30 pb-50 mt-40 mt-md-0">
           <h6>Cart Total</h6>
-          <% let total = 0; %>
-
-          <% let subtotal = 0; %> <% user.cart.forEach(item => { %>
-            <% if (item.productDiscountAmount) { %>   
-             <% total += item.quantity * (item.product.price - item.productDiscountAmount); %>  
-            <% } else { %>
-              <% total += item.quantity * item.product.price; %>
-               
-              <% } %>
-            <% });
-            %>
-            <li>Grand Total <span class="float-right">  ₹<%=Math.round (total) %></span></li>
+          
+          <li >Grand Total <span id="grand" class="float-right">   ₹<%= Math.round(grandtotal) %></span></li>
             
         
           <p class="pt-15">Checkout with Mutilple Adresses</p>
@@ -390,14 +380,14 @@ function updateCart(event) {
       } else { 
         const updatedQuantity = data.updatedQuantity;
         const totalPrice = data.totalPrice;  
-        
-
-        const totalId = "totals" + productId; // Assuming productId is defined and holds the correct ID
+        const grandtotal = data.grandtotal; 
+        const totalId = "totals" + productId;  
         const totalElement = document.getElementById(totalId)
         console.log(totalElement);
         form.querySelector('input[name="quantity"]').value = updatedQuantity; 
      
-        document.getElementById(totalId).textContent=totalPrice;
+        document.getElementById(totalId).textContent="₹"+totalPrice;
+        document.getElementById("grand").textContent="₹"+grandtotal
       }
     })
     .catch(error => console.error('Error:', error));

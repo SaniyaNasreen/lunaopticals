@@ -907,6 +907,7 @@ const loginCart = async (req, res, next) => {
     if (user?.cart?.length <= 0) {
       res.render("users/shop-cart", {
         user,
+        grandtotal,
         isUserLoggedIn: true,
         emptyCart: true,
         listed: true,
@@ -915,6 +916,7 @@ const loginCart = async (req, res, next) => {
     }
 
     let cart = user.cart;
+    let total = 0;
     let productDiscountAmount = 0;
     let offer;
     for (const cartItem of cart) {
@@ -971,7 +973,10 @@ const loginCart = async (req, res, next) => {
         );
       }
     }
-
+    user.cart.forEach((item) => {
+      total += item.total;
+    });
+    const grandtotal = total;
     res.render("users/shop-cart", {
       user,
       isUserLoggedIn: true,
@@ -980,6 +985,7 @@ const loginCart = async (req, res, next) => {
       productDiscountAmount,
       cart: cart,
       offer,
+      grandtotal,
     });
   } catch (error) {
     console.error("Error fetching user cart:", error);
@@ -1027,6 +1033,7 @@ const updateCart = async (req, res, next) => {
     }
     let newQuantity = productInCart.quantity;
     const cart = user.cart;
+    let total = 0;
     if (updateQuantity === "increase") {
       if (product.countInStock > newQuantity) {
         newQuantity++;
@@ -1081,22 +1088,33 @@ const updateCart = async (req, res, next) => {
     console.log("Found Offer:", offer);
 
     let discountAmount = 0;
+
     if (offer) {
       if (offer.referral && req?.session?.userId == offer.referral.toString()) {
         discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+        productInCart.total = newQuantity * (product.price - discountAmount);
       } else {
         discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
+        productInCart.total = newQuantity * (product.price - discountAmount);
+
+        console.log("productts", product.price);
       }
+    } else {
+      productInCart.total = newQuantity * product.price;
     }
+
+    console.log("productt", product.price);
     console.log("discountAmountis", discountAmount);
-
-    productInCart.total = newQuantity * product.price;
-
     const updatedQuantity = productInCart.quantity;
     const totalPrice = productInCart.total;
+    user.cart.forEach((item) => {
+      total += item.total;
+    });
+    console.log("tots", total);
+    const grandtotal = total;
     const productId = productInCart._id;
     console.log("totalPrice", totalPrice);
-    res.json({ updatedQuantity, totalPrice, productId });
+    res.json({ updatedQuantity, totalPrice, productId, grandtotal });
     await user.save();
   } catch (error) {
     console.error("Error updating quantity:", error);
@@ -1172,16 +1190,12 @@ const loadCheckout = async (req, res, next) => {
           offer.referral &&
           req?.session?.userId == offer.referral.toString()
         ) {
-          discountAmount =
-            (product.price * (offer.discount / 100)).toFixed(2) * quantity;
-          subtotal -= discountAmount;
+          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
           console.log("subu", subtotal);
         } else {
           console.log("heyy", product.price);
-          discountAmount =
-            (product.price * (offer.discount / 100)).toFixed(2) * quantity;
+          discountAmount = (product.price * (offer.discount / 100)).toFixed(2);
           console.log("discountAmount", discountAmount);
-          subtotal -= discountAmount;
           console.log("subu", subtotal);
         }
         hasOffer = true;

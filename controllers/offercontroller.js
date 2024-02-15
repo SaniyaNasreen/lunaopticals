@@ -54,6 +54,7 @@ const addOffer = async (req, res, next) => {
       return res.render("admin/offer", {
         categories,
         offers,
+        products,
         section: "offers",
         errorWith: "DATE",
         message: "Validity date should not be less than the current date",

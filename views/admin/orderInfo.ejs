@@ -16,16 +16,16 @@
           <div class="nk-block-head nk-block-head-sm">
             <div class="nk-block-between">
               <div class="nk-block-head-content">
-                <h3 class="nk-block-title page-title">Coupons</h3>
+                <h3 class="nk-block-title page-title">Order Details</h3>
             
 
 
               <div class="col-xl-9 col-lg-8 col-md-12">
                 <div class="useraddress" style="width: 640px; height: auto; position: relative;top: 50px;  ">
                   <div style="margin-bottom: 20px;">
-                    <div style="background-color:white; padding: 10px; width: 1130px; height: auto;">
+                    <div style="  padding: 10px; width: 1130px; height: auto;">
                       
-                                <div style="  background-color: white; margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
+                                <div style="    margin-bottom: 10px; padding: 10px; font-size: larger; font-weight: bold;">
                                    
                                                
                                         <h4>View order details</h4>
@@ -70,9 +70,28 @@
                                             
                                                     <p>Qty: <%= item.quantity %></p> 
                                                     
-                                                    <button style="border-radius: 20px; border-style: none; position: relative; left: 950px; bottom: 120px; background-color: blue; width: 110px; height: 40px;">
-                                                      <span class="tb-lead" style="color: white; font-size: 15px; " ><%- item.status %></span>
-                                                    </button>
+                                                   
+                                                    <% if (item.status === 'cancelled') { %>
+                                                      <button style="border-radius: 20px; border-style: none; background-color: rgb(255, 0, 17);width: 110px; height: 40px;position: relative; left: 950px; bottom: 120px;">
+                                                        <span class="tb-lead" style="color: white; font-size: 17px; " ><%- item.status %></span>
+                                                      </button><br>
+                                                    <% } else if (item.status === 'Delivered') { %>
+                                                    <button style="border-radius: 20px; border-style: none; background-color: rgb(12, 126, 4);width: 110px; height: 40px;position: relative; left: 950px; bottom: 120px;">
+                                                      <span class="tb-lead" style="color: white; font-size: 17px; " ><%- item.status %></span>
+                                                    </button><br>
+                                                    <% } else if (item.status === 'Processing') { %>
+                                                      <button style="border-radius: 20px; border-style: none; background-color: rgb(12, 211, 222); width: 110px; height: 40px;position: relative; left: 950px; bottom: 120px;">
+                                                        <span class="tb-lead" style="color: white; font-size: 17px; " ><%- item.status %></span>
+                                                      </button><br>
+                                                      <% } else if (item.status === 'Shipping') { %>
+                                                        <button style="border-radius: 20px; border-style: none; background-color: rgb(225, 118, 17); width: 110px; height: 40px;position: relative; left: 950px; bottom: 120px;">
+                                                          <span class="tb-lead" style="color: white; font-size: 17px; " ><%- item.status %></span>
+                                                        </button><br>
+                                                        <% } else if (item.status === 'Placed') { %>
+                                                          <button style="border-radius: 20px; border-style: none; background-color: rgb(17, 52, 225); width: 110px; height: 40px;position: relative; left: 950px; bottom: 120px;">
+                                                            <span class="tb-lead" style="color: white; font-size: 17px; " ><%- item.status %></span>
+                                                          </button><br>
+                                                        <% } %> 
                                                     <% if (item.status !== 'cancelled'&& item.status !=='Returned'){ %>
                                                    <ul> 
                                                     <% if (item.status !== 'Processing'&&item.status !== 'Shipped'&&item.status !== 'Delivered') { %>

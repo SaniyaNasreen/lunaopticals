@@ -48,8 +48,8 @@
                                 
                                   <div class="mb-3">
                                     <label for="category" class="form-label" style="color: rgb(109, 103, 103);">Code</label>
-                                    <input type="text" class="form-control1-addp form-control" name="code" required>
-                                    <div id="errorContainer" class="invalid-feedback"> Code is required.  </div>
+                                    <input type="text" class="form-control1-addp form-control  <%- (typeof errorWith != 'undefined' && errorWith ==='CODE') ? 'is-invalid' : '' %>" name="code" required>
+                                    <div id="errorContainer" class="invalid-feedback"><%- (typeof errorWith != 'undefined') ? message : "Code is required" %></div>
                                   </div>
                                 
                                   <div class="mb-3">
@@ -216,19 +216,19 @@
                                                   </div>
                                               </div>
                                               <div class="mb-3">
-                                                <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Price</label>
-                                                  <input type="number" class="form-control1-editp form-control" name="minAmount" placeholder="Enter price" value="<%= coupon.minAmount %>" required>
+                                                <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Minimum amount</label>
+                                                  <input type="number" class="form-control1-editp form-control <%- (typeof errorWith != 'undefined' && errorWith ==='AMOUNT1') ? 'is-invalid' : '' %>" name="minAmount" placeholder="Enter price" value="<%= coupon.minAmount %>" required>
                                                   <span class="price-error-message" style="display: none; color: red; font-size: small;"></span>
                                                   <div class="invalid-feedback">
-                                                      Price is required.
+                                                    <%- (typeof errorWith != 'undefined') ? message : "Minimum amount  is required" %>
                                                   </div>
                                               </div>
                                             
                                               <div class="mb-3">
-                                                <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Stock</label>
-                                                  <input type="number" class="form-control1-editp form-control" name="maxAmount" placeholder="Enter stock" value="<%= coupon.maxAmount %>" required>
+                                                <label for="name" class="form-label" style="color: rgb(109, 103, 103);">Maximum amount</label>
+                                                  <input type="number" class="form-control1-editp form-control <%- (typeof errorWith != 'undefined' && errorWith ==='AMOUNT1') ? 'is-invalid' : '' %>" name="maxAmount" placeholder="Enter stock" value="<%= coupon.maxAmount %>" required>
                                                   <div class="invalid-feedback">
-                                                      Stock count is required.
+                                                    <%- (typeof errorWith != 'undefined') ? message : "Minimum amount  is required" %>
                                                   </div>
                                               </div>
                                               <input type="hidden" name="id" value="<%= coupon._id %>">

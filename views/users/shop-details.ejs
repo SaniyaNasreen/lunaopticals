@@ -183,11 +183,11 @@
             
             <% if (hasOffer) { %> 
               <div class="price pt-15 pb-10">
-                <span style="text-decoration: line-through; color: red;">   ₹<%= product.price.toFixed(2) %></span>
+                <span style="text-decoration: line-through; color: red;">   ₹<%= product.price %></span>
               </div>
               
               <div class="price pt-15 pb-10"> 
-                <span class="final-price">  ₹<%= (product.price - discountAmount).toFixed(2) %></span>
+                <span class="final-price">  ₹<%=Math.round(product.price - discountAmount) %></span>
               </div>
             <% } else { %>
               <div class="price pt-15 pb-10"> 
