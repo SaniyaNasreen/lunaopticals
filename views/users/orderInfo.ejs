@@ -101,7 +101,7 @@
                       new Date(order.date); %> <% const timeDifference =
                       currentDate.getTime() - orderDate.getTime(); %> <% const
                       daysDifference = timeDifference / (1000 * 3600 * 24); %>
-                      <% if (item.status === 'Processing') { %> <% if
+                      <% if (item.status === 'Placed') { %> <% if
                       (daysDifference <= 7) { %>
                       <form
                         id="cancelOrderForm"
