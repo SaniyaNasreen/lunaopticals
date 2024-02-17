@@ -668,31 +668,34 @@ const loadProductList = async (req, res, next) => {
     } else if (sortQuery === "price_desc") {
       sortOption = { price: -1 };
     } else {
-      sortOption = { createdAt: -1 }; // Default to latest first
+      sortOption = { createdAt: -1 };
     }
 
     let filter = { listed: true };
     let categoryFilter = {};
     let searchFilter = {};
-
     if (req.query.category) {
-      categoryFilter = { category: req.query.category }; // Directly use category for filtering
-    }
+      const category = await Category.findOne({
+        name: req.query.category,
+      });
 
+      if (category) {
+        filter.category = category._id;
+        categoryFilter = { category: category._id };
+      } else {
+        filter = { listed: true };
+      }
+    }
     if (req.query.search) {
       searchFilter = { $text: { $search: req.query.search } };
     }
-
-    const combinedFilter = { ...filter, ...categoryFilter, ...searchFilter };
+    const combinedFilter = { ...filter, ...searchFilter };
     const totalProducts = await Product.countDocuments(combinedFilter);
-
-    // Apply category filter before sorting for accurate results
     const sortedProducts = await Product.find(combinedFilter)
       .populate("category")
       .sort(sortOption)
       .lean()
       .exec();
-
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 3;
     const startIndex = (page - 1) * limit;
@@ -713,7 +716,6 @@ const loadProductList = async (req, res, next) => {
       limit,
       category: req.query.category || "",
       categoryFilter,
-      ...searchFilter,
     });
   } catch (error) {
     next(error);
@@ -790,23 +792,20 @@ const searchProduct = async (req, res, next) => {
     if (req?.session?.user_id) {
       isUserLoggedIn = true;
     }
-
     const searchquery = req.query.search || "";
     const filterByCategory = req.query.category || "";
     let sortOption = {};
     const sortQuery = req.query.sort;
 
-    const filterConditions = [];
-
-    if (searchquery) {
-      filterConditions.push({
+    const filterConditions = [
+      {
         $or: [
           { name: { $regex: "^" + searchquery, $options: "i" } },
           { name: { $regex: "\\b" + searchquery, $options: "i" } },
           { brand: { $regex: "^" + searchquery, $options: "i" } },
         ],
-      });
-    }
+      },
+    ];
 
     if (filterByCategory) {
       filterConditions.push({ category: filterByCategory });
@@ -823,7 +822,7 @@ const searchProduct = async (req, res, next) => {
       if (sortOption.price) {
         return (a.price - b.price) * sortOption.price;
       } else {
-        return b.createdAt - a.createdAt; // Default to latest first
+        return b.createdAt - a.createdAt;
       }
     });
 
@@ -837,7 +836,6 @@ const searchProduct = async (req, res, next) => {
     const totalPages = Math.ceil(totalProducts / limit);
     const currentPage = page;
     const selectedSort = sortQuery;
-
     res.render("users/shop-list", {
       products: paginatedProducts,
       isUserLoggedIn,
