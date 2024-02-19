@@ -563,9 +563,7 @@
       } else {
           priceErrorMessage.style.display = 'none';
       }
-  }
-
-  // Assuming each form has a unique ID, like "editProductForm1", "editProductForm2", etc.
+  } 
   const editProductForms = document.querySelectorAll('[id^="editProductForm"]');
   editProductForms.forEach(form => {
       form.addEventListener('submit', validatePrice);
@@ -588,7 +586,7 @@
       const files = this.files;
       const imagePreviewContainer = document.getElementById('image-preview-container');
       console.log(imagePreviewContainer);
-      imagePreviewContainer.innerHTML = ''; // Clear previous images
+      imagePreviewContainer.innerHTML = '';  
   console.log(files);
   
       for (let i = 0; i < files.length; i++) {

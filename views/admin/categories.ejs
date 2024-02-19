@@ -354,17 +354,10 @@
                 <%- include('../admin/layouts/footer.ejs')%>
            
       
-          <script>
-            // Fetch products and display them in the UI
-        
-            // Check for a success message in the URL
+          <script> 
             const urlParams = new URLSearchParams(window.location.search);
-            const successMessage = urlParams.get('success');
-        
-            // If a success message exists, display a popup
-            if (successMessage) {
-                // Display the success message as a popup or notification using your preferred frontend framework or method
-                // For example, using an alert
+            const successMessage = urlParams.get('success'); 
+            if (successMessage) { 
                 alert(successMessage);
             }
         </script>

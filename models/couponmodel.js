@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { Number } = require("twilio/lib/twiml/VoiceResponse");
 
 const couponSchema = new mongoose.Schema({
   name: {

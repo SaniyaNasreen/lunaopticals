@@ -2,6 +2,7 @@ const path = require("path");
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const { upload, cropToSquare } = require("../utils/multer");
+
 const loadProducts = async (req, res) => {
   try {
     const categories = await Category.find();
@@ -24,7 +25,6 @@ const loadProducts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 8;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-
     const paginatedProducts = sortedProducts.slice(startIndex, endIndex);
     const totalPages = Math.ceil(totalProducts / limit);
     const currentPage = page;
@@ -104,7 +104,7 @@ const addProduct = async (req, res, next) => {
         product.images.push(fileUrl);
       }
 
-      await Promise.all(filePromises); // Wait for all image cropping operations to finish
+      await Promise.all(filePromises);
     }
     const productData = await product.save();
 
@@ -173,7 +173,7 @@ const updateProduct = async (req, res, next) => {
         product.images.push(fileUrl);
       }
 
-      await Promise.all(filePromises); // Wait for all image cropping operations to finish
+      await Promise.all(filePromises);
     }
 
     await product.save();

@@ -215,6 +215,7 @@ app.get("/download-invoice/:orderNumber", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 app.get("/download-sales-report", async (req, res) => {
   try {
     const { startDate, endDate } = req.query;

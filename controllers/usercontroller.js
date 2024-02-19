@@ -1249,10 +1249,7 @@ const fetchAddress = async (req, res, next) => {
     const user = await User.findById(req.session.user_id);
     console.log(user);
     const userAddress = user.address;
-
-    // Convert addressId to Mongoose ObjectId
     const mongooseAddressId = new mongoose.Types.ObjectId(addressId);
-
     const selectedAddress = userAddress.find((address) =>
       address._id.equals(mongooseAddressId)
     );
@@ -1335,8 +1332,6 @@ const updateUser = async (req, res, next) => {
     if (req.body.changePassword && req.body.changePassword.trim() !== "") {
       user.password = req.body.changePassword;
     }
-
-    // Validate if user input meets required criteria
     const validationResult = user.validateSync();
     if (validationResult) {
       console.error("Validation error:", validationResult.errors);
@@ -1458,7 +1453,7 @@ const loadEditAddress = async (req, res, next) => {
 const updateAddress = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const addressIndex = req.query.index; // Index of the address to be edited
+    const addressIndex = req.query.index;
     const {
       firstname,
       lastname,
@@ -1480,24 +1475,18 @@ const updateAddress = async (req, res, next) => {
       pincode,
       mobile,
     };
-
     const user = await User.findById(userId);
     if (!user) {
       console.error("User not found");
       return res.status(404).send("User not found");
     }
-
     if (!user.address || !user.address[addressIndex]) {
       console.error("Address not found");
       return res.status(404).send("Address not found");
     }
-
-    // Update the existing address at the specified index
     user.address[addressIndex] = updatedAddress;
-
     await user.save();
-
-    res.redirect("/address"); // Redirect to the address page after successful edit
+    res.redirect("/address");
   } catch (error) {
     next(error);
   }

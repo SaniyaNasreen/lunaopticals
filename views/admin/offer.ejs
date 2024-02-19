@@ -284,14 +284,12 @@ form.addEventListener('submit', function(event) {
 event.preventDefault();
 event.stopPropagation();
 
-form.classList.add('was-validated');
-  // Validate each input field
+form.classList.add('was-validated'); 
   const nameInput = form.querySelector('input[name="name"]'); 
   const discountInput = form.querySelector('input[name="discount"]');
   const statusInput = form.querySelector('select[name="status"]');
   const validityInput = form.querySelector('input[name="validity"]');
   const categoryInput = form.querySelector('select[name="category"]'); 
-
 
   if (!nameInput.checkValidity()) {
     nameInput.nextElementSibling.style.display = 'block';
@@ -323,7 +321,7 @@ form.classList.add('was-validated');
   } 
   const isFormValid = form.checkValidity();
 if (isFormValid) {
-  submitForm(); // Call the function to submit the form data
+  submitForm();  
 }
 });
 function submitForm() {
@@ -335,19 +333,15 @@ fetch('/admin/offer/add-offer', {
 })
   .then(response => {
     if (response.ok) {
-      console.log('Coupon added successfully');
-      // Optionally, redirect or perform other actions upon successful addition
+      console.log('Coupon added successfully'); 
     } else {
-      console.error('Failed to add coupon');
-      // Handle errors or show an error message
+      console.error('Failed to add coupon'); 
     }
   })
   .catch(error => {
     console.error('Error adding coupon:', error);
   });
-}
-
-// Enable/disable submit button on input change
+} 
 form.addEventListener('input', function() {
   const isFormValid = form.checkValidity();
 

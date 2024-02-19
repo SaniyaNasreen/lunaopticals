@@ -520,20 +520,7 @@
                         class="dropdown-toggle me-n1"
                         data-bs-toggle="dropdown"
                         >
-                        <div class="user-toggle">
-                          <!-- <div class="user-avatar sm">
-                            <em class="icon ni ni-user-alt"></em>
-                          </div> -->
-                        <!-- <div class="user-info d-none d-xl-block">  
-                            <div class="user-status user-status-active">
-                              Administator
-                            </div>
-                            <div class="user-name dropdown-indicator">
-                               Saniya Nasreen
-                            </div>
-                          </div>
-                        </div></a
-                      >  -->
+                        <div class="user-toggle"> 
                         <div
                           class="dropdown-menu dropdown-menu-md dropdown-menu-end"
                         >
@@ -1091,24 +1078,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
  <script>
   const thisWeekOrders = totalOrdersData[totalOrdersData.length - 1];
-const lastWeekOrders = totalOrdersData[totalOrdersData.length - 2];
-
-// Calculate percentage change
-const percentageChange = ((thisWeekOrders - lastWeekOrders) / lastWeekOrders) * 100;
-
-// Update the HTML elements
+const lastWeekOrders = totalOrdersData[totalOrdersData.length - 2]; 
+const percentageChange = ((thisWeekOrders - lastWeekOrders) / lastWeekOrders) * 100; 
 document.getElementById('thisWeekTotalOrders').innerText = `$${thisWeekOrders.toFixed(2)}`;
-document.getElementById('ordersPercentageChange').innerText = `${percentageChange.toFixed(2)}%`;
-
-// Change color based on positive/negative percentage
+document.getElementById('ordersPercentageChange').innerText = `${percentageChange.toFixed(2)}%`; 
 if (percentageChange > 0) {
   document.getElementById('ordersPercentageChange').classList.add('text-danger');
 } else {
   document.getElementById('ordersPercentageChange').classList.add('text-success');
 }
  </script>
-<script>
-  // Retrieve monthly sales data and create a line chart
+<script> 
   var ctxLabel = document.getElementById("labelChart").getContext('2d');
   let totalSales = JSON.parse(document.getElementById('totalSales').value);
 
@@ -1160,14 +1140,10 @@ var myChart = new Chart(ctx, {
 
    
   var ctxOrder = document.getElementById("orderChart").getContext('2d');
-let totalOrders = JSON.parse(document.getElementById('totalOrders').value);
-
-// Process totalOrders to extract month labels and sales data
+let totalOrders = JSON.parse(document.getElementById('totalOrders').value); 
 let monthlyLabels = [];
 let monthlySales = [];
-let backgroundColors = []; // Array to hold colors for each month
-
-// Array of 12 different colors for months
+let backgroundColors = [];   
 const colors = [
   'lightgreen', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow',
   'lightgray', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue',
@@ -1179,9 +1155,7 @@ totalOrders.forEach((item, index) => {
   const monthLabel = `${month}/${year}`;
   
   monthlyLabels.push(monthLabel);
-  monthlySales.push(item.itemCount);
-
-  // Assign a color to each month
+  monthlySales.push(item.itemCount);  
   backgroundColors.push(colors[index % colors.length]);
 });
 

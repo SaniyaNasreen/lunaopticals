@@ -124,16 +124,11 @@
 <script>
   $(document).ready(function () {
     $('#add-address-form').submit(function (event) {
-      event.preventDefault(); // Prevent the default form submission
-
-      // Validate the form fields
-      if (!validateAddAddressForm()) {
-        // If validation fails, prevent the form submission and return
+      event.preventDefault(); 
+      if (!validateAddAddressForm()) { 
         return;
-      }
-
-      // If validation passes, continue with form submission
-      this.submit(); // Submit the form
+      } 
+      this.submit();  
     });
 
     function validateAddAddressForm() {
@@ -150,9 +145,7 @@
         } else {
           $('#' + fieldId).parent().find('.error-message').remove();
         }
-      });
-
-      // Additional validation logic for email and phone number
+      }); 
       const email = $('#emai').val().trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
